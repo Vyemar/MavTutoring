@@ -52,7 +52,7 @@ The bugHouse project is a web application designed to manage student-tutor inter
 - **User-Friendly Interface**: Provides an intuitive experience for all users.
 
 ## Technical Requirements
-- **Platform**: The application is developed using a modern tech stack including [your chosen front-end framework], [your back-end technology], and [your database].
+- **Platform**: The application is developed using a modern tech stack including React front-end and MongoDB back-end database.
 - **Scalability**: Designed to handle a growing number of users and sessions.
 - **Performance**: Ensures fast load times and minimal latency.
 
