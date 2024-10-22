@@ -1,0 +1,102 @@
+.background {
+    background: linear-gradient(135deg, #007bff, #6f42c1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.productName {
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.formContainer .input {
+    font-size: 12px; 
+    padding: 10px; 
+    border: 1px solid #ced4da; 
+    border-radius: 4px; 
+    width: 100%;
+    box-sizing: border-box; 
+}
+
+.formContainer {
+    background-color: #fff;
+    width: 450px; /* Increased width to accommodate horizontal layout */
+    min-height: 450px;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Horizontal row for two form fields */
+.row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+/* Columns for form fields */
+.column {
+    flex: 0 0 48%; /* Take up 48% of the row, with space between */
+}
+
+.formContainer .signupButton {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 8px;
+    width: 100%;
+    border: none;
+    outline: none;
+    margin-top: 10px;
+}
+
+.formContainer .signupButton:hover {
+    background-color: #3399ff;
+}
+
+.title {
+    color: #343a40;
+    font-weight: bold;
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.label {
+    font-weight: 500;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.textDanger {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    min-height: 16px;
+}
+
+.link {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+.text-center {
+    text-align: center;
+}
