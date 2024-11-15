@@ -1,0 +1,29 @@
+/* TutorHome.module.css */
+.container {
+    padding: 20px;
+    text-align: center;
+    background-color: #f4f4f9;
+}
+
+.heading {
+    font-size: 2rem;
+    color: #4a4a8f;
+}
+
+.section {
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    border-radius: 8px;
+}
+
+.logoutButton {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #e63946;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}

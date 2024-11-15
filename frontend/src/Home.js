@@ -1,5 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import TutorHome from "./TutorHome";
+import AdminHome from "./AdminHome";
+import StudentHome from "./StudentHome";
 import styles from './styles/Home.module.css'; // Import CSS module
 
 function Home() {
@@ -12,13 +15,13 @@ function Home() {
     let heading;
     switch (role) {
         case 'Admin':
-            heading = 'Home Page (Admin)';
+            return <AdminHome />;
             break;
         case 'Tutor':
-            heading = 'Home Page (Tutor)';
+            return <TutorHome />;
             break;
         case 'Student':
-            heading = 'Home Page (Student)';
+            return <StudentHome />;
             break;
         default:
             heading = 'Home Page';
