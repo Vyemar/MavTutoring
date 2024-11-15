@@ -32,7 +32,7 @@ html, body {
     padding: 15px;
     color:#e0e7ed;
     border: 1px solid #ddd;
-    background: linear-gradient(135deg, #007bff, #6f42c1);
+    background: rgba(0, 0, 0, 0.2);
     border-radius: 8px;
 }
 
