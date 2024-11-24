@@ -2,10 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const router = require('./routes/auth');
+const usersRoute = require('./routes/users');
 const mongoose = require('mongoose'); // Import mongoose directly
 require('dotenv').config(); // Load environment variables
 
 const app = express();
+
 
 // Log incoming requests
 app.use((req, res, next) => {
@@ -26,6 +28,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Routes
+app.use('/users', usersRoute); // Mount the users route
 app.use('/', router);
 
 // Connect to MongoDB using mongoose without deprecated options

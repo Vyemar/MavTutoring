@@ -1,13 +1,18 @@
 /* TutorHome.module.css */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: linear-gradient(135deg, #007bff, #6f42c1); /* Full page gradient background */
+}
 .container {
     padding: 20px;
     text-align: center;
-    background-color: #f4f4f9;
 }
 
 .heading {
     font-size: 2rem;
-    color: #4a4a8f;
+    color: #ddd;
 }
 
 .section {
@@ -17,7 +22,9 @@
     background-color: #fff;
     border-radius: 8px;
 }
-
+.description {
+    color: white;
+}
 .logoutButton {
     margin-top: 20px;
     padding: 10px 20px;
