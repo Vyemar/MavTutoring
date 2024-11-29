@@ -10,6 +10,7 @@ function Signup() {
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [role, setRole] = useState('Student');
     const [errors, setErrors] = useState({}); // State for storing validation errors
     const [successMessage, setSuccessMessage] = useState(''); // State for success message
     const navigate = useNavigate(); // Hook for navigation
@@ -34,7 +35,8 @@ function Signup() {
                 lastName,
                 phone,
                 email,
-                password
+                password, 
+                role
             });
             console.log(response);
             setSuccessMessage("Signup successful!");
@@ -107,16 +109,29 @@ function Signup() {
                                 {errors.email && <div className={styles.textDanger}>{errors.email}</div>}
                             </div>
                         </div>
-                        <div className="mb-3">
-                            <label htmlFor="password" className={styles.label}>Password</label>
-                            <input
-                                type="password"
-                                placeholder="Password"
-                                className={`form-control ${styles.input}`}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                            {errors.password && <div className={styles.textDanger}>{errors.password}</div>}
+                        <div className={styles.row}>
+                            <div className={styles.column}>
+                                <label htmlFor="password" className={styles.label}>Password</label>
+                                <input
+                                    type="password"
+                                    placeholder="Password"
+                                    className={`form-control ${styles.input}`}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                                {errors.password && <div className={styles.textDanger}>{errors.password}</div>}
+                            </div>
+                            <div className={styles.column}>
+                                <label htmlFor="role" className={styles.label}>Role</label>
+                                <select
+                                    className={`form-control ${styles.select}`}
+                                    value={role} 
+                                    onChange={e => setRole(e.target.value)}>
+                                        <option value="Student">Student</option>
+                                        <option value="Tutor">Tutor</option>
+                                </select>
+                                {errors.email && <div className={styles.textDanger}>{errors.email}</div>}
+                            </div>
                         </div>
                         <button type="submit" className={`btn ${styles.signupButton}`}>
                             Sign Up

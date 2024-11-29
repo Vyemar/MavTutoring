@@ -28,6 +28,16 @@
     box-sizing: border-box; 
 }
 
+.formContainer .select {
+    font-size: 12px; 
+    padding: 11px; 
+    border: 1px solid #ced4da; 
+    border-radius: 4px; 
+    width: 100%;
+    box-sizing: border-box; 
+    appearance: auto;
+}
+
 .formContainer {
     background-color: #fff;
     width: 450px; /* Increased width to accommodate horizontal layout */
