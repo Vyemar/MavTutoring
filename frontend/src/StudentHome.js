@@ -25,7 +25,7 @@ function StudentHome() {
             {/* Section for viewing tutors */}
             <div className={styles.section}>
                 <h2>View Tutors</h2>
-                <button className={styles.button} onClick={() => navigate('/tutors')}>Find a Tutor</button>
+                <button className={styles.button} onClick={() => navigate('/Viewtutors')}>Find a Tutor</button>
             </div>
 
             {/* Section for scheduling a session */}

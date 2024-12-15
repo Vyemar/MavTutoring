@@ -1,0 +1,33 @@
+.container {
+    padding: 20px;
+    text-align: center;
+    
+}
+
+.heading {
+    font-size: 2rem;
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+.userTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.userTable th, .userTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.userTable th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.userTable tr:hover {
+    background-color: #f9f9f9;
+}
+

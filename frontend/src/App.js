@@ -3,6 +3,7 @@ import Login from './Login';
 import Signup from './Signup';
 import Home from './Home';
 import ManageUsers from './ManageUsers';
+import ViewTutors from './ViewTutors';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/home" element={<Home />} />
         <Route path="/manage-users" element={<ManageUsers />} />
+        <Route path="/Viewtutors" element={<ViewTutors />} />
       </Routes>
     </BrowserRouter>
   );
