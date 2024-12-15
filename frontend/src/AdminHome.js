@@ -13,38 +13,43 @@ function AdminHome() {
 
     return (
         <div className={styles.container}>
-            <h1 className={styles.heading}>Admin Dashboard</h1>
-            <p className={styles.welcome}>Welcome, Admin! Here’s an overview of your administrative tools.</p>
-
-            {/* User Management Section */}
-            <section className={styles.section}>
-                <h2>User Management</h2>
-                <p>Manage users in the system, including tutors and students.</p>
-                <button className={styles.button} onClick={() => navigate('/manage-users')}>
-                    View and Manage Users
+            {/* Sidebar */}
+            <div className={styles.sidebar}>
+                <h1>bugHouse</h1>
+                <button onClick={() => navigate('/home')}>Dashboard</button>
+                <button onClick={() => navigate('/manage-users')}>Manage Users</button>
+                <button onClick={() => navigate('/analytics')}>System Analytics</button>
+                <button onClick={() => navigate('/settings')}>Settings</button>
+                <button className={styles.logoutButton} onClick={handleLogout}>
+                    Log Out
                 </button>
-            </section>
+            </div>
 
-            {/* Analytics Section */}
-            <section className={styles.section}>
-                <h2>System Analytics</h2>
-                <p>View system analytics and performance data.</p>
-                <button className={styles.button} onClick={() => navigate('/analytics')}>
-                    View Analytics
-                </button>
-            </section>
+            {/* Main Content */}
+            <div className={styles.mainContent}>
+                <h1 className={styles.heading}>Admin Dashboard</h1>
 
-            {/* Settings Section */}
-            <section className={styles.section}>
-                <h2>Settings</h2>
-                <p>Configure system settings, roles, and permissions.</p>
-                <button className={styles.button} onClick={() => navigate('/settings')}>
-                    Go to Settings
-                </button>
-            </section>
+                {/* User Management Section */}
+                <section className={styles.section}>
+                    <h2>User Management</h2>
+                    <p>Manage users in the system, including tutors and students.</p>
+                    <button onClick={() => navigate('/manage-users')}>View and Manage Users</button>
+                </section>
 
-            {/* Logout Button */}
-            <button className={styles.logoutButton} onClick={handleLogout}>Logout</button>
+                {/* Analytics Section */}
+                <section className={styles.section}>
+                    <h2>System Analytics</h2>
+                    <p>View system analytics and performance data.</p>
+                    <button onClick={() => navigate('/analytics')}>View Analytics</button>
+                </section>
+
+                {/* Settings Section */}
+                <section className={styles.section}>
+                    <h2>Settings</h2>
+                    <p>Configure system settings, roles, and permissions.</p>
+                    <button onClick={() => navigate('/settings')}>Go to Settings</button>
+                </section>
+            </div>
         </div>
     );
 }

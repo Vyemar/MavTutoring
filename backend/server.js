@@ -1,10 +1,17 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const router = require('./routes/auth');
-const usersRoute = require('./routes/users');
+const cookieParser = require('cookie-parser'); // For parsing cookies
 const mongoose = require('mongoose'); // Import mongoose directly
 require('dotenv').config(); // Load environment variables
+
+// Import routes
+const authRoutes = require('./routes/auth'); // Authentication routes
+const usersRoutes = require('./routes/users'); // User management routes
+const studentScheduleRoutes = require('./routes/schedules/student'); // Student schedules
+const tutorScheduleRoutes = require('./routes/schedules/tutor'); // Tutor schedules
+const attendanceRoutes = require('./routes/attendance'); // Attendance routesS
+const availabilityRoutes = require("./routes/availability"); // Availability routes
 
 const app = express();
 
@@ -18,6 +25,7 @@ app.use((req, res, next) => {
 // Middleware to parse incoming JSON and URL-encoded data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser()); // Parse cookies
 
 // CORS configuration
 const corsOptions = {
@@ -27,9 +35,17 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// Routes
-app.use('/users', usersRoute); // Mount the users route
-app.use('/', router);
+// // Routes
+// app.use('/users', usersRoute); // Mount the users route
+// app.use('/', router);
+
+// Mount routes
+app.use('/api/auth', authRoutes); // Authentication routes
+app.use('/api/users', usersRoutes); // User management routes
+app.use('/api/schedules/student', studentScheduleRoutes); // Student schedules
+app.use('/api/schedules/tutor', tutorScheduleRoutes); // Tutor schedules
+app.use('/api/attendance', attendanceRoutes); // Attendance routes
+app.use("/api/availability", availabilityRoutes); // Availability routes
 
 // Connect to MongoDB using mongoose without deprecated options
 const dbUri = process.env.DB;
@@ -39,12 +55,13 @@ if (!dbUri) {
     process.exit(1); // Exit process if DB URI is not set
 }
 
-mongoose.connect(dbUri)
+mongoose
+    .connect(dbUri, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
-        console.log('Connected to the database');
+        console.log('Connected to MongoDB');
     })
     .catch((err) => {
-        console.error('Error connecting to the database:', err.message);
+        console.error('Error connecting to MongoDB:', err.message);
     });
 
 // Start the server

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import styles from './styles/Login.module.css'; // Import CSS module
 import { validateLogin } from './LoginValidation'; // Import validation function
-import { axiosPostData } from './api'; // Import your axios post function
+import { axiosPostData } from './api'; // Import axios post function
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -19,7 +19,7 @@ function Login() {
 
         if (!validationError.email && !validationError.password) {
             try {
-                const response = await axiosPostData('http://localhost:4000/login', {
+                const response = await axiosPostData('http://localhost:4000/api/auth/login', {
                     email,
                     password
                 });

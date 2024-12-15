@@ -8,7 +8,7 @@ function ManageUsers() {
 
     useEffect(() => {
         // Fetch all users from the backend
-        axios.get('http://localhost:4000/users')
+        axios.get('http://localhost:4000/api/users')
             .then((response) => {
                 // Filter users to only include those with the role "Tutor"
                 const tutors = response.data.filter(users => users.role === 'Tutor');

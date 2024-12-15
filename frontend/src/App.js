@@ -4,6 +4,7 @@ import Signup from './Signup';
 import Home from './Home';
 import ManageUsers from './ManageUsers';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import SetAvailability from './SetAvailability';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/availability" element={<SetAvailability />} />
         <Route path="/manage-users" element={<ManageUsers />} />
       </Routes>
     </BrowserRouter>

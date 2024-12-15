@@ -1,5 +1,3 @@
-/* StudentHome.module.css */
-
 html, body {
     margin: 0;
     padding: 0;
@@ -8,53 +6,78 @@ html, body {
 }
 
 .container {
+    display: flex;
     min-height: 100vh; /* Full viewport height */
-    padding: 20px;
-    text-align: center;
+}
+
+.sidebar {
+    width: 250px;
+    background: rgba(0, 0, 0, 0.8); /* Sidebar background */
+    color: white;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center; /* Center content vertically */
+    padding: 20px;
 }
 
-.heading {
-    font-size: 2.5rem;
-    color: #e0e7ed;
-}
-
-.welcome {
-    font-size: 1.2rem;
-    color: #eaeff4;
+.sidebar h1 {
+    font-size: 1.8rem;
     margin-bottom: 20px;
 }
 
-.section {
-    margin: 20px 0;
-    padding: 15px;
-    color: #e0e7ed;
-    border: 1px solid #ddd;
-    background: rgba(0, 0, 0, 0.2); /* Optional translucent overlay */
-    border-radius: 8px;
-    width: 80%;
-    max-width: 400px;
-}
-
-.button {
-    margin-top: 10px;
-    padding: 10px 20px;
+.sidebar button {
+    margin-bottom: 10px;
+    padding: 10px 15px;
     background-color: #007bff;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    text-align: left;
 }
 
-.logoutButton {
-    margin-top: 20px;
-    padding: 10px 20px;
+.sidebar button:hover {
+    background-color: #0056b3;
+}
+
+.sidebar .logoutButton {
     background-color: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+}
+
+.sidebar .logoutButton:hover {
+    background-color: #a71d2a;
+}
+
+.mainContent {
+    flex: 1;
+    padding: 20px;
+    color: #e0e7ed;
+}
+
+.heading {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.schedule {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.card {
+    background: white;
+    color: black;
+    padding: 10px;
+    border-radius: 8px;
+    width: 150px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.courseList, .notifications {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
 }

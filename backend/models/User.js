@@ -28,7 +28,13 @@ const userSchema = new Schema({
         type: String,
         enum: ['Admin', 'Tutor', 'Student'], // Role options
         default: 'Student' // Default role is Student
-    }
+    },
+    availability: [
+        {
+            day: { type: String, required: true }, // e.g., "Monday"
+            time: { type: String, required: true }, // e.g., "1:00pm - 3:00pm"
+        },
+    ]
 });
 
 // Pre-save hook to hash password before saving
