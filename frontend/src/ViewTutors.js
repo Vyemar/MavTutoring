@@ -29,7 +29,7 @@ function ViewTutors() {
 
     return (
         <div className={styles.container}>
-            <h1 className={styles.heading}>Manage Tutors</h1>
+            <h1 className={styles.heading}>Our Tutors</h1>
             {users.length > 0 ? (
                 <table className={styles.userTable}>
                     <thead>
