@@ -38,22 +38,21 @@ function StudentHome() {
                 </button>
             </div>
 
-            {/* Section for viewing tutors */}
-            <div className={styles.section}>
-                <h2>View Tutors</h2>
-                <button className={styles.button} onClick={() => navigate('/Viewtutors')}>Find a Tutor</button>
-            </div>
+            {/* Main Content */}
+            <div className={styles.mainContent}>
+                <h1 className={styles.heading}>Dashboard</h1>
 
-            {/* Section for scheduling a session */}
-            <div className={styles.section}>
-                <h2>Schedule a Session</h2>
-                <button className={styles.button} onClick={() => navigate('/schedule')}>Schedule Now</button>
-            </div>
+                {/* Schedule Section */}
+                <section>
+                    <h2>This Week's Schedule</h2>
+                    <StudentWeeklyCalendar schedule={schedule} />
+                </section>
 
-            {/* Section for leaving feedback */}
-            <div className={styles.section}>
-                <h2>Leave Feedback</h2>
-                <button className={styles.button} onClick={() => navigate('/feedback')}>Give Feedback</button>
+                {/* Notifications Section */}
+                <section className={styles.notifications}>
+                    <h2>Notifications</h2>
+                    <p>No new notifications</p>
+                </section>
             </div>
         </div>
     );
