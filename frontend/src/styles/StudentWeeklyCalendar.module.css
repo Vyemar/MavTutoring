@@ -1,0 +1,54 @@
+.weeklyCalendar {
+    display: flex;
+    border: 1px solid #e0e0e0;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 20px;
+    }
+    .timeLabels {
+        display: flex;
+        flex-direction: column;
+        width: 80px;
+        background-color: #f0f0f0;
+        padding-top: 60px; /* Equal to one row height */
+    }
+    .hourLabel {
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid #e0e0e0;
+        font-size: 0.9rem;
+        color: #666;
+    }
+    .calendarGrid {
+    display: flex;
+    flex-grow: 1;
+    }
+    .dayColumn {
+    flex: 1;
+    border-right: 1px solid #e0e0e0;
+    }
+    .dayHeader {
+    text-align: center;
+    padding: 10px;
+    background-color: #000508;
+    font-weight: bold;
+    color: white;
+    }
+    .timeSlot {
+    height: 60px;
+    border-bottom: 1px solid #e0e0e0;
+    position: relative;
+    background-color: white;
+    }
+    .timeSlot.hasSession {
+    background-color: #e6f3ff;
+    }
+    .sessionDetails {
+    padding: 5px;
+    font-size: 0.8rem;
+    text-align: center;
+    color: black;
+    }

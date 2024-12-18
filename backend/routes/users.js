@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User'); // Import your User model
+const User = require('../models/User'); // Import User model
 
 // Fetch all users (for reference)
 router.get('/', async (req, res) => {

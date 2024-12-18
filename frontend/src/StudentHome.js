@@ -1,25 +1,41 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import styles from './styles/StudentHome.module.css'; // Import CSS module
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styles from './styles/StudentHome.module.css';
+import StudentWeeklyCalendar from './StudentWeeklyCalendar';
 
 function StudentHome() {
     const navigate = useNavigate();
+    const [schedule, setSchedule] = useState([
+        { id: 1, day: 'Monday', time: '1:00 PM', title: 'CSE 1325 Tutoring' },
+        { id: 2, day: 'Wednesday', time: '3:00 PM', title: 'Coding Assignment Help' },
+    ]);
 
-    // Logout function to clear localStorage and navigate back to login page
+    useEffect(() => {
+        // Fetch schedule from MongoDB here
+        // Example:
+        // axios.get('/api/schedule').then(response => setSchedule(response.data));
+    }, []);
+
     const handleLogout = () => {
-        localStorage.removeItem('role');
-        navigate('/login');
+        localStorage.removeItem('role'); // Clear the role from localStorage
+        navigate('/login'); // Redirect to login page
     };
 
     return (
         <div className={styles.container}>
-            <h1 className={styles.heading}>Home Page (Student)</h1>
-            <p className={styles.welcome}>Welcome to your dashboard!</p>
-            
-            {/* Section for viewing courses */}
-            <div className={styles.section}>
-                <h2>View CSE Courses</h2>
-                <button className={styles.button} onClick={() => navigate('/courses')}>Browse Courses</button>
+            {/* Sidebar */}
+            <div className={styles.sidebar}>
+                <h1>bugHouse</h1>
+                <button onClick={() => navigate('/home')}>Dashboard</button>
+                <button onClick={() => navigate('/find-sessions')}>Find Sessions</button>
+                <button onClick={() => navigate('/find-tutors')}>Find Tutors</button>
+                <button onClick={() => navigate('/my-sessions')}>My Sessions</button>
+                <button onClick={() => navigate('/my-tutors')}>My Tutors</button>
+                <button onClick={() => navigate('/schedule')}>Schedule</button>
+                <button onClick={() => navigate('/notifications')}>Notifications</button>
+                <button className={styles.logoutButton} onClick={handleLogout}>
+                    Log Out
+                </button>
             </div>
 
             {/* Section for viewing tutors */}
@@ -39,9 +55,6 @@ function StudentHome() {
                 <h2>Leave Feedback</h2>
                 <button className={styles.button} onClick={() => navigate('/feedback')}>Give Feedback</button>
             </div>
-
-            {/* Logout button */}
-            <button className={styles.logoutButton} onClick={handleLogout}>Logout</button>
         </div>
     );
 }
