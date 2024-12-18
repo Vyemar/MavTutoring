@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './styles/StudentHome.module.css';
+import StudentWeeklyCalendar from './StudentWeeklyCalendar';
 
 function StudentHome() {
     const navigate = useNavigate();
-    const [schedule] = useState([
-        { id: 1, time: '1:00pm - 2:00pm' },
-        { id: 2, time: '3:00pm - 4:00pm' },
+    const [schedule, setSchedule] = useState([
+        { id: 1, day: 'Monday', time: '1:00 PM', title: 'CSE 1325 Tutoring' },
+        { id: 2, day: 'Wednesday', time: '3:00 PM', title: 'Coding Assignment Help' },
     ]);
 
     useEffect(() => {
@@ -44,14 +45,7 @@ function StudentHome() {
                 {/* Schedule Section */}
                 <section>
                     <h2>This Week's Schedule</h2>
-                    <div className={styles.schedule}>
-                        {schedule.map((session) => (
-                            <div key={session.id} className={styles.card}>
-                                <p>Session {session.id}</p>
-                                <p>{session.time}</p>
-                            </div>
-                        ))}
-                    </div>
+                    <StudentWeeklyCalendar schedule={schedule} />
                 </section>
 
                 {/* Notifications Section */}
