@@ -3,24 +3,9 @@ const router = express.Router();
 const User = require('../models/User');  // Assuming you have a User model
 const Feedback = require('../models/Feedback');  // Using the Feedback model we created earlier
 
-// GET /api/users - Get all tutors
-router.get('/api/users', async (req, res) => {
-    try {
-        const users = await User.find({})
-            .select('firstName lastName role _id');  // Only select necessary fields
-        
-        res.status(200).json(users);
-    } catch (error) {
-        console.error('Error fetching users:', error);
-        res.status(500).json({ 
-            message: 'Error fetching users', 
-            error: error.message 
-        });
-    }
-});
 
 // POST /feedback - Create new feedback
-router.post('/feedback', async (req, res) => {
+router.post('/api/feedback', async (req, res) => {
     try {
         const { studentUniqueId, tutorUniqueId, feedbackText, rating } = req.body;
 

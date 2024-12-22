@@ -19,6 +19,7 @@ router.post('/signup', async (req, res) => {
 
         const newUser = new User(userData);
         const saveUser = await newUser.save();
+        
 
         if (saveUser) {
             res.status(201).json({ message: 'Signup successful', user: saveUser });
@@ -54,10 +55,13 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ error: "Invalid email or password" });
         }
 
+       
+
         // If login is successful, return the user's role
         return res.status(200).json({
             success: true,
             role: user.role,
+            ID: user._id,
             message: `Login successful as ${user.role}`
         });
 
@@ -66,5 +70,7 @@ router.post('/login', async (req, res) => {
         return res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
+
+
 
 module.exports = router;

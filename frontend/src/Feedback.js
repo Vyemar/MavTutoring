@@ -9,11 +9,10 @@ function Feedback() {
     const [feedback, setFeedback] = useState('');
     const [rating, setRating] = useState(0);
     const [successMessage, setSuccessMessage] = useState('');
-
-    // Add state for current user (assuming you have user authentication)
-    const [currentUserId, setCurrentUserId] = useState('');
+    
 
     useEffect(() => {
+
         // Fetch tutors from the backend
         axios.get('http://localhost:4000/api/users')
             .then((response) => {
@@ -25,26 +24,45 @@ function Feedback() {
                 console.error("Error fetching tutors:", error);
                 setLoading(false);
             });
-        
-
-        // Fetch current user ID (you'll need to implement this based on your auth system)
-        // This is a placeholder - replace with actual user ID retrieval
-        const userId = localStorage.getItem('uniqueID'); // Example of getting user ID
-        setCurrentUserId(userId);
 
     }, []);
 
+ 
+
     const handleSubmit = (e) => {
         e.preventDefault();
-    
+        const StudentID = localStorage.getItem('userID'); // Safely access currentUser's ID
+        
+        // Validate inputs
+    if (!selectedTutor) {
+        alert('Please select a tutor.');
+        return;
+    }
+
+    if (!feedback.trim()) {
+        alert('Please provide valid feedback.');
+        return;
+    }
+
+    if (rating === 0) {
+        alert('Please select a rating.');
+        return;
+    }
+
+    if (!StudentID) {
+        alert('Unable to submit feedback. Please try again later.');
+        return;
+    }
+        
+
         // Extensive validation
-        if (!selectedTutor || !feedback || rating === 0 || !currentUserId) {
+        if (!selectedTutor || !feedback || rating === 0 || !StudentID) {
             alert('Please fill in all fields before submitting.');
             return;
         }
     
         axios.post('http://localhost:4000/api/feedback', {
-            studentUniqueId: currentUserId,
+            studentUniqueId: StudentID,  // Using MongoDB's _id
             tutorUniqueId: selectedTutor,
             feedbackText: feedback,
             rating,
