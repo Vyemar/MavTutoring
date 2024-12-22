@@ -43,7 +43,7 @@ function Feedback() {
             return;
         }
     
-        axios.post('http://localhost:4000/feedback', {
+        axios.post('http://localhost:4000/api/feedback', {
             studentUniqueId: currentUserId,
             tutorUniqueId: selectedTutor,
             feedbackText: feedback,
