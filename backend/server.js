@@ -47,7 +47,7 @@ app.use('/api/schedules/student', studentScheduleRoutes); // Student schedules
 app.use('/api/schedules/tutor', tutorScheduleRoutes); // Tutor schedules
 app.use('/api/attendance', attendanceRoutes); // Attendance routes
 app.use("/api/availability", availabilityRoutes); // Availability routes
-app.use(" /api/feedback", feedbackRoutes); //Feedback routes
+app.use("/api/feedback", feedbackRoutes); //Feedback routes
 
 // Connect to MongoDB using mongoose without deprecated options
 const dbUri = process.env.DB;
