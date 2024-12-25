@@ -12,7 +12,7 @@ const studentScheduleRoutes = require('./routes/schedules/student'); // Student 
 const tutorScheduleRoutes = require('./routes/schedules/tutor'); // Tutor schedules
 const attendanceRoutes = require('./routes/attendance'); // Attendance routesS
 const availabilityRoutes = require("./routes/availability"); // Availability routes
-const feedbackRoutes = require("./routes/feedback"); //feedback routes
+const feedbackRoutes = require('./routes/feedback'); //feedback routes
 
 const app = express();
 
@@ -47,7 +47,7 @@ app.use('/api/schedules/student', studentScheduleRoutes); // Student schedules
 app.use('/api/schedules/tutor', tutorScheduleRoutes); // Tutor schedules
 app.use('/api/attendance', attendanceRoutes); // Attendance routes
 app.use("/api/availability", availabilityRoutes); // Availability routes
-app.use("/api/feedback", feedbackRoutes); //Feedback routes
+app.use('/api/feedback', feedbackRoutes); //Feedback routes
 
 // Connect to MongoDB using mongoose without deprecated options
 const dbUri = process.env.DB;

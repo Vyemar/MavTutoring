@@ -5,7 +5,7 @@ const Feedback = require('../models/Feedback');  // Using the Feedback model we 
 
 
 // POST /feedback - Create new feedback
-router.post('/api/feedback', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const { studentUniqueId, tutorUniqueId, feedbackText, rating } = req.body;
 
