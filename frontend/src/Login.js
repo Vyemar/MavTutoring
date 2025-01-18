@@ -27,6 +27,7 @@ function Login() {
                 if (response.success) {
                     // Store role in localStorage or state
                     localStorage.setItem('role', response.role); // Storing role
+                    localStorage.setItem('userID', response.ID); // Storing ID
 
                     // Navigate to home
                     navigate('/home');

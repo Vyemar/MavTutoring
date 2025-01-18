@@ -1,0 +1,134 @@
+/* Overall background styling */
+.background {
+    background-color: #f5f5f5; /* Light gray background for a clean look */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Full viewport height */
+    padding: 20px;
+}
+
+
+/* Center the container */
+.container {
+    background: #ffffff; /* White background for the form */
+    border-radius: 10px; /* Smooth rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    padding: 30px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+
+        /* Center positioning */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+    /* Flexbox centering for horizontal alignment */
+    margin: 0 auto;
+}
+
+/* Title styling */
+.title {
+    font-size: 1.8rem;
+    color: #333333;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Label styling */
+.label {
+    display: block;
+    font-size: 1rem;
+    color: #555555;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+/* Select dropdown styling */
+.select {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+    color: #333333;
+}
+
+/* Textarea styling */
+.textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    height: 100px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+    color: #333333;
+    resize: none; /* Disable resizing */
+}
+
+/* Star rating container */
+.stars {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+/* Individual star styling */
+.star {
+    font-size: 2rem;
+    color: #cccccc; /* Default star color (unselected) */
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.starSelected {
+    color: #FFD700; /* Gold color for selected stars */
+}
+
+/* Button styling */
+.submitButton {
+    background-color: #007BFF; /* Primary blue color */
+    color: #ffffff;
+    font-size: 1rem;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.submitButton:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Error message styling */
+.textDanger {
+    color: #FF4D4D; /* Red for error messages */
+    font-size: 0.9rem;
+    margin-top: 5px;
+    text-align: left;
+}
+
+/* Success message styling */
+.successMessage {
+    color: green;
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Success message styling */
+.text-success {
+    color: #28a745; /* Green for success message */
+    font-size: 1rem;
+    margin-bottom: 15px;
+    text-align: center;
+}

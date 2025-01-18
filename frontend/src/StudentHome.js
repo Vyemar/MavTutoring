@@ -25,9 +25,22 @@ function StudentHome() {
       {/* Sidebar */}
       <StudentSideBar></StudentSideBar>
 
-      {/* Main Content */}
-      <div className={styles.mainContent}>
-        <h1 className={styles.heading}>Dashboard</h1>
+    return (
+        <div className={styles.container}>
+            {/* Sidebar */}
+            <div className={styles.sidebar}>
+                <h1>bugHouse</h1>
+                <button onClick={() => navigate('/home')}>Dashboard</button>
+                <button onClick={() => navigate('/find-tutors')}>Find Tutors</button>
+                <button onClick={() => navigate('/my-sessions')}>My Sessions</button>
+                <button onClick={() => navigate('/my-tutors')}>My Tutors</button>
+                <button onClick={() => navigate('/schedule')}>Schedule</button>
+                <button onClick={() => navigate('/notifications')}>Notifications</button>
+                <button onClick={() => navigate('/feedback')}>Leave Feedback</button>
+                <button className={styles.logoutButton} onClick={handleLogout}>
+                    Log Out
+                </button>
+            </div>
 
         {/* Schedule Section */}
         <section>
