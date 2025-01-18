@@ -1,11 +1,11 @@
-import './styles/App.css';
-import Login from './Login';
-import Signup from './Signup';
-import Home from './Home';
-import ManageUsers from './ManageUsers';
-import ViewTutors from './ViewTutors';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import SetAvailability from './SetAvailability';
+import "./styles/App.css";
+import Login from "./Login";
+import Signup from "./Signup";
+import Home from "./Home";
+import ManageUsers from "./ManageUsers";
+import ViewTutors from "./ViewTutors";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import SetAvailability from "./SetAvailability";
 
 function App() {
   return (
@@ -19,7 +19,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/availability" element={<SetAvailability />} />
         <Route path="/manage-users" element={<ManageUsers />} />
-        <Route path="/Viewtutors" element={<ViewTutors />} />
+        <Route path="/find-tutors" element={<ViewTutors />} />
       </Routes>
     </BrowserRouter>
   );

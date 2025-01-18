@@ -1,0 +1,121 @@
+.card {
+  background-color: #ffffff;
+  height: auto;
+  width: 604px;
+  margin: 10px auto;
+  border-radius: 25px;
+  padding-bottom: 1px;
+  box-shadow: 2px 2px 5px #4069e2;
+  text-align: left;
+}
+
+.tutor {
+  display: flex;
+  flex-direction: row;
+  height: auto;
+  justify-content: space-between;
+  align-items: left;
+  margin: 0 auto;
+  font-weight: 500;
+}
+
+.imageCrop {
+  display: block;
+  position: relative;
+  background-color: #e6ebee;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  margin-top: 30px;
+  overflow: hidden;
+}
+
+.avatar {
+  display: inline;
+  height: 200px;
+  width: 200px;
+}
+
+.bio {
+  display: block;
+  margin: 30px 30px 30px 0px;
+  width: 280px;
+  height: auto;
+}
+.bio .name {
+  font-size: 24px;
+  color: #333;
+  font-weight: bold;
+}
+
+.bio .skills {
+  margin: 10px 0;
+  color: #666;
+}
+
+.bio .ratings {
+  font-size: 20px;
+}
+
+.bio .ratings .color {
+  color: #ffc107;
+}
+
+.bio .ratings .ratingNum {
+  margin-left: 15px;
+}
+
+hr.separater {
+  margin: 30px 20px 0px 20px;
+  border-top: 1px solid #070707;
+}
+
+.tutorTimingButton {
+  display: flex;
+  flex-direction: row;
+  height: auto;
+  justify-content: space-between;
+  align-items: left;
+  margin: 0 auto;
+  font-weight: 500;
+}
+
+.timings {
+  margin: auto;
+}
+
+.timings .timing {
+  margin-left: 30px;
+}
+
+.tutorButtons {
+  display: flex;
+  margin: 0 auto;
+  justify-content: space-between;
+  width: 280px;
+}
+
+.tutorButton {
+  display: block;
+  position: relative;
+  padding: 10px 0;
+  width: 130px;
+  margin: 30px 0;
+  border-radius: 5px;
+  border: none;
+  font-size: 20px;
+  letter-spacing: 0.2px;
+  font-weight: 500;
+  background-color: #0064b1;
+  color: #e6ebee;
+}
+
+.tutorButton:focus {
+  display: none;
+}
+
+.tutorButton:hover {
+  transform: scale(1.03);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
