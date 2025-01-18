@@ -11,28 +11,30 @@ function Home() {
     // Get the role from localStorage (or context if you're using React Context API)
     const role = localStorage.getItem('role');
 
+    // Logout function to clear localStorage and navigate back to login page
+    const handleLogout = () => {
+        localStorage.removeItem('role');
+        navigate('/login'); // Redirect back to the login page
+    };
+
     // Conditional rendering based on the user's role
     let heading;
     switch (role) {
         case 'Admin':
-            return <AdminHome />;
+            return <AdminHome handleLogout={handleLogout}/>;
             break;
         case 'Tutor':
-            return <TutorHome />;
+            return <TutorHome handleLogout={handleLogout}/>;
             break;
         case 'Student':
-            return <StudentHome />;
+            return <StudentHome handleLogout={handleLogout}/>;
             break;
         default:
             heading = 'Home Page';
             break;
     }
 
-    // Logout function to clear localStorage and navigate back to login page
-    const handleLogout = () => {
-        localStorage.removeItem('role');
-        navigate('/login'); // Redirect back to the login page
-    };
+    
 
     return (
         <div className={styles.container}>
