@@ -20,6 +20,7 @@ const StudentSideBar = (props) => {
       <button onClick={() => navigate("/my-tutors")}>My Tutors</button>
       <button onClick={() => navigate("/schedule")}>Schedule</button>
       <button onClick={() => navigate("/notifications")}>Notifications</button>
+      <button onClick={() => navigate("/feedback")}>Leave Feedback</button>
       <button className={styles.logoutButton} onClick={handleLogout}>
         Log Out
       </button>
