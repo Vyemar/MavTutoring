@@ -26,7 +26,7 @@ function StudentHome({ handleLogout }) {
   return (
     <div className={styles.container}>
       {/* Sidebar */}
-      <StudentSideBar></StudentSideBar>
+      <StudentSideBar selected="home"></StudentSideBar>
 
       {/* Main Content */}
       <div className={styles.mainContent}>

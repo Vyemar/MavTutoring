@@ -1,85 +1,54 @@
 /* TutorHome.module.css */
 
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    background: linear-gradient(135deg, #007bff, #6f42c1); /* Full page gradient background */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    #007bff,
+    #6f42c1
+  ); /* Full page gradient background */
 }
 
 .container {
-    display: flex;
-    min-height: 100vh; /* Full viewport height */
-}
-
-.sidebar {
-    width: 250px;
-    background: rgba(0, 0, 0, 0.8); /* Sidebar background */
-    color: white;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-}
-
-.sidebar h1 {
-    font-size: 1.8rem;
-    margin-bottom: 20px;
-}
-
-.sidebar button {
-    margin-bottom: 10px;
-    padding: 10px 15px;
-    background-color: #007bff; /* Primary blue for buttons */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    text-align: left;
-}
-
-.sidebar button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-}
-
-.sidebar .logoutButton {
-    background-color: #dc3545; /* Red for logout button */
-}
-
-.sidebar .logoutButton:hover {
-    background-color: #a71d2a; /* Darker red on hover */
+  display: flex;
+  min-height: 100vh; /* Full viewport height */
 }
 
 .mainContent {
-    flex: 1;
-    padding: 20px;
-    color: #e0e7ed; /* Light text for better contrast */
+  flex: 1;
+  padding: 20px;
+  color: #e0e7ed; /* Light text for better contrast */
 }
 
 .heading {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
 }
 
 .schedule {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
 }
 
 .card {
-    background: white;
-    color: black;
-    padding: 10px;
-    border-radius: 8px;
-    width: 150px;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  background: white;
+  color: black;
+  padding: 10px;
+  border-radius: 8px;
+  width: 150px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
-.courseList, .notifications {
-    margin-top: 20px;
-    padding: 15px;
-    background: rgba(0, 0, 0, 0.2); /* Translucent black */
-    border-radius: 8px;
+.courseList,
+.notifications {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2); /* Translucent black */
+  border-radius: 8px;
 }

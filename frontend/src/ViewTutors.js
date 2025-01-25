@@ -33,7 +33,7 @@ function ViewTutors() {
   return (
     <div className={styles.container}>
       {/* Sidebar */}
-      <StudentSideBar></StudentSideBar>
+      <StudentSideBar selected="find-tutors"></StudentSideBar>
       {/* Main Content */}
       <div className={styles.mainContent}>
         <h1 className={styles.heading}>Our Tutors</h1>

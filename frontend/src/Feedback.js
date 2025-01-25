@@ -94,7 +94,7 @@ function Feedback() {
 
   return (
     <div className={styles.container}>
-      <StudentSideBar></StudentSideBar>
+      <StudentSideBar selected="feedback"></StudentSideBar>
       <div className={styles.mainContent}>
         <h1 className={styles.heading}>Give Feedback</h1>
         {successMessage && (
