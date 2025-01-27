@@ -50,6 +50,7 @@ html, body {
 }
 
 .mainContent {
+    margin-left: 250px;
     flex: 1;
     padding: 20px;
     color: #e0e7ed; /* Light text for better contrast */

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './styles/TutorHome.module.css';
+import TutorSidebar from './TutorSidebar';
 import axios from 'axios';
 
 function TutorHome() {
@@ -21,23 +22,14 @@ function TutorHome() {
 
     const handleLogout = () => {
         localStorage.removeItem('role'); // Clear the role from localStorage
+        localStorage.removeItem('userID'); // Clear the ID from localStorage
         navigate('/login'); // Redirect to login page
     };
 
     return (
         <div className={styles.container}>
-            {/* Sidebar */}
-            <div className={styles.sidebar}>
-                <h1>bugHouse</h1>
-                <button onClick={() => navigate('/home')}>Dashboard</button>
-                <button onClick={() => navigate('/availability')}>Set Availability</button>
-                <button onClick={() => navigate('/schedule')}>View Schedule</button>
-                <button onClick={() => navigate('/sessions')}>Sessions</button>
-                <button onClick={() => navigate('/notifications')}>Notifications</button>
-                <button className={styles.logoutButton} onClick={handleLogout}>
-                    Log Out
-                </button>
-            </div>
+            {/* Use the TutorSidebar component */}
+            <TutorSidebar onLogout={handleLogout} />
 
             {/* Main Content */}
             <div className={styles.mainContent}>

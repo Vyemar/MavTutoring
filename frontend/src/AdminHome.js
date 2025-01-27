@@ -8,6 +8,7 @@ function AdminHome() {
     // Function to handle logout and navigate back to login page
     const handleLogout = () => {
         localStorage.removeItem('role'); // Clear the role from localStorage
+        localStorage.removeItem('userID'); // Clear the ID from localStorage
         navigate('/login'); // Redirect to login page
     };
 

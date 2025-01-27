@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const Schema = mongoose.Schema;
 
+const availabilitySchema = new Schema({
+  day: { type: String, required: true }, // e.g., "Monday"
+  startTime: { type: String, required: true }, // Store as "HH:mm"
+  endTime: { type: String, required: true }, // Store as "HH:mm"
+});
+
 const userSchema = new Schema({
   firstName: {
     type: String,
@@ -32,12 +38,7 @@ const userSchema = new Schema({
   rating: {
     type: Number,
   },
-  availability: [
-    {
-      day: { type: String, required: true }, // e.g., "Monday"
-      time: { type: String, required: true }, // e.g., "1:00pm - 3:00pm"
-    },
-  ],
+  availability: [availabilitySchema],
 });
 
 // Pre-save hook to hash password before saving

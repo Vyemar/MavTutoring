@@ -5,8 +5,13 @@ import Home from './Home';
 import ManageUsers from './ManageUsers';
 import ViewTutors from './ViewTutors';
 import Feedback from './Feedback';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import SetAvailability from './SetAvailability';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+
+function ProtectedRoute({ children }) {
+  const userID = localStorage.getItem('userID'); // Check if user is logged in
+  return userID ? children : <Navigate to="/login" replace />; // Redirect to login if not authenticated
+}
 
 function App() {
   return (
@@ -14,15 +19,60 @@ function App() {
       <Routes>
         {/* Redirect from root to login */}
         <Route path="/" element={<Navigate to="/login" />} />
-        {/* Define login and signup routes */}
+        
+        {/* Public routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/availability" element={<SetAvailability />} />
-        <Route path="/manage-users" element={<ManageUsers />} />
-        <Route path="/find-tutors" element={<ViewTutors />} /> 
-        <Route path="/Viewtutors" element={<ViewTutors />} />
-        <Route path="/Feedback" element={<Feedback />} />
+        
+        {/* Protected routes */}
+        <Route 
+          path="/home" 
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/availability" 
+          element={
+            <ProtectedRoute>
+              <SetAvailability />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/manage-users" 
+          element={
+            <ProtectedRoute>
+              <ManageUsers />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/find-tutors" 
+          element={
+            <ProtectedRoute>
+              <ViewTutors />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/Viewtutors" 
+          element={
+            <ProtectedRoute>
+              <ViewTutors />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/Feedback" 
+          element={
+            <ProtectedRoute>
+              <Feedback />
+            </ProtectedRoute>
+          } 
+        />
       </Routes>
     </BrowserRouter>
   );

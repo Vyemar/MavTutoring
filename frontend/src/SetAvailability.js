@@ -1,174 +1,150 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import styles from "./styles/SetAvailability.module.css";
+import TutorSidebar from './TutorSidebar';
 
-function SetAvailability() {
-    const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+const localizer = momentLocalizer(moment);
 
-    // State to hold availability
-    const [availability, setAvailability] = useState(
-        DAYS.reduce((acc, day) => ({ ...acc, [day]: [] }), {})
-    );
+const SetAvailability = () => {
+    const [events, setEvents] = useState([]);
 
-    const [timeInputs, setTimeInputs] = useState({
-        day: "Monday",
-        startTime: "",
-        endTime: "",
-    });
+    const handleLogout = () => {
+        localStorage.removeItem('role');
+        localStorage.removeItem('userID');
+        window.location.href = '/login';
+    };
 
-    // Generate time slots in 15-minute intervals
-    const generateTimeSlots = () => {
-        const times = [];
-        let start = new Date();
-        start.setHours(10, 0, 0, 0); // Start at 10:00 AM
-        const end = new Date();
-        end.setHours(18, 0, 0, 0); // End at 6:00 PM
+    // Fetch availability from the backend when the component loads
+    useEffect(() => {
+        const fetchAvailability = async () => {
+            try {
+                const response = await fetch(`/api/availability/${localStorage.getItem("userID")}`);
+                const data = await response.json();
+    
+                // Update events with valid Date objects
+                const formattedEvents = data.map((slot) => ({
+                    id: slot.id,
+                    start: new Date(slot.start), // Already a valid date from backend
+                    end: new Date(slot.end), // Already a valid date from backend
+                }));
+    
+                setEvents(formattedEvents);
+            } catch (error) {
+                console.error("Error fetching availability:", error);
+            }
+        };
+    
+        fetchAvailability();
+    }, []);
+    
 
-        while (start <= end) {
-            const formattedTime = start.toLocaleTimeString("en-US", {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
+    // Prevent overlapping events
+    const hasOverlap = (newStart, newEnd) => {
+        return events.some(
+            ({ start, end }) =>
+                (newStart >= start && newStart < end) || // New start overlaps
+                (newEnd > start && newEnd <= end) || // New end overlaps
+                (newStart <= start && newEnd >= end) // Encompasses existing event
+        );
+    };
+
+    // Handle slot selection (add new events locally)
+    const handleSelectSlot = (slotInfo) => {
+        if (
+            !hasOverlap(slotInfo.start, slotInfo.end) &&
+            slotInfo.start.getHours() >= 10 &&
+            slotInfo.end.getHours() <= 18
+        ) {
+            const newEvent = {
+                id: Date.now(), // Temporary unique ID for the event
+                start: slotInfo.start,
+                end: slotInfo.end,
+            };
+            setEvents((prevEvents) => [...prevEvents, newEvent]);
+        }
+    };
+
+    // Handle event deletion (remove events locally)
+    const handleEventDelete = (event) => {
+        setEvents((prevEvents) => prevEvents.filter((e) => e.id !== event.id));
+    };
+
+    // Handle Submit Availability (send events to backend)
+    const handleSubmitAvailability = async () => {
+        const formattedEvents = events.length === 0 ? [] : events.map((event) => ({
+            day: moment(event.start).format("dddd"), // Save the day of the week
+            startTime: moment(event.start).format("HH:mm"), // Save as "HH:mm"
+            endTime: moment(event.end).format("HH:mm"), // Save as "HH:mm"
+        }));
+
+        try {
+            const response = await fetch(`/api/availability/${localStorage.getItem("userID")}/submit`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ availability: formattedEvents }),
             });
-            times.push(formattedTime);
-            start.setMinutes(start.getMinutes() + 15); // Increment by 15 minutes
+
+            if (response.ok) {
+                alert("Availability submitted successfully!");
+            } else {
+                alert("Failed to submit availability.");
+                alert(JSON.stringify(await response.json()));
+            }
+        } catch (error) {
+            console.error("Error submitting availability:", error);
         }
-        return times;
     };
-
-    const timeSlots = generateTimeSlots();
-
-    const handleAddTimeSlot = () => {
-        const { day, startTime, endTime } = timeInputs;
-
-        if (!startTime || !endTime) {
-            alert("Please select both start and end times.");
-            return;
-        }
-
-        // Prevent end time being before or equal to start time
-        if (timeSlots.indexOf(startTime) >= timeSlots.indexOf(endTime)) {
-            alert("End time must be after start time.");
-            return;
-        }
-
-        // Prevent overlapping times
-        const isOverlap = availability[day].some((slot) => {
-            const existingStart = timeSlots.indexOf(slot.startTime);
-            const existingEnd = timeSlots.indexOf(slot.endTime);
-            const newStart = timeSlots.indexOf(startTime);
-            const newEnd = timeSlots.indexOf(endTime);
-            return (
-                (newStart >= existingStart && newStart < existingEnd) ||
-                (newEnd > existingStart && newEnd <= existingEnd)
-            );
-        });
-
-        if (isOverlap) {
-            alert("This time slot overlaps with an existing time slot.");
-            return;
-        }
-
-        const newSlot = { startTime, endTime };
-
-        setAvailability((prev) => ({
-            ...prev,
-            [day]: [...prev[day], newSlot],
-        }));
-
-        setTimeInputs({ day: "Monday", startTime: "", endTime: "" });
-    };
-
-    const handleDeleteSlot = (day, index) => {
-        setAvailability((prev) => ({
-            ...prev,
-            [day]: prev[day].filter((_, i) => i !== index),
-        }));
-    };
-
-    const handleSubmit = () => {
-        console.log("Submitted Availability:", availability);
-        alert("Availability submitted successfully!");
+    
+    // Custom header to show only day names (e.g., Mon, Tue)
+    const customDayHeader = ({ label }) => {
+        const dayName = label.split(" ")[0]; // Extract only the day name
+        return <div style={{ textAlign: "center", fontWeight: "bold" }}>{dayName}</div>;
     };
 
     return (
         <div className={styles.container}>
+            {/* Sidebar */}
+            <TutorSidebar onLogout={handleLogout} />
+        
+        <div className={styles.mainContent}>
             <h1 className={styles.heading}>Set Availability</h1>
-
-            {/* Input Section */}
-            <div className={styles.inputSection}>
-                <select
-                    value={timeInputs.day}
-                    onChange={(e) => setTimeInputs((prev) => ({ ...prev, day: e.target.value }))}
-                    className={styles.select}
-                >
-                    {DAYS.map((day) => (
-                        <option key={day} value={day}>
-                            {day}
-                        </option>
-                    ))}
-                </select>
-                <select
-                    value={timeInputs.startTime}
-                    onChange={(e) =>
-                        setTimeInputs((prev) => ({ ...prev, startTime: e.target.value }))
-                    }
-                    className={styles.select}
-                >
-                    <option value="">Start Time</option>
-                    {timeSlots.map((time, index) => (
-                        <option key={index} value={time}>
-                            {time}
-                        </option>
-                    ))}
-                </select>
-                <select
-                    value={timeInputs.endTime}
-                    onChange={(e) =>
-                        setTimeInputs((prev) => ({ ...prev, endTime: e.target.value }))
-                    }
-                    className={styles.select}
-                >
-                    <option value="">End Time</option>
-                    {timeSlots.map((time, index) => (
-                        <option key={index} value={time}>
-                            {time}
-                        </option>
-                    ))}
-                </select>
-                <button className={styles.addButton} onClick={handleAddTimeSlot}>
-                    Add Time Slot
-                </button>
+            <div className={styles.calendarContainer}>
+                <Calendar
+                    localizer={localizer}
+                    events={events}
+                    startAccessor="start"
+                    endAccessor="end"
+                    style={{ height: 500, width: "100%" }}
+                    views={["work_week"]}
+                    defaultView="work_week"
+                    date={new Date()}
+                    toolbar={false}
+                    selectable
+                    onSelectSlot={handleSelectSlot}
+                    onSelectEvent={handleEventDelete}
+                    min={new Date(1970, 1, 1, 10, 0, 0)}
+                    max={new Date(1970, 1, 1, 18, 0, 0)}
+                    step={30}
+                    timeslots={2}
+                    components={{
+                        work_week: {
+                            header: customDayHeader,
+                        },
+                    }}
+                    formats={{
+                        dayFormat: (date, culture, localizer) =>
+                            localizer.format(date, "dddd", culture),
+                    }}
+                />
             </div>
-
-            {/* Availability Summary */}
-            <div className={styles.availability}>
-                {DAYS.map((day) => (
-                    <div key={day} className={styles.daySection}>
-                        <h3>{day}</h3>
-                        {availability[day].length > 0 ? (
-                            availability[day].map((slot, index) => (
-                                <div key={index} className={styles.timeSlot}>
-                                    {slot.startTime} - {slot.endTime}
-                                    <button
-                                        className={styles.deleteButton}
-                                        onClick={() => handleDeleteSlot(day, index)}
-                                    >
-                                        Remove
-                                    </button>
-                                </div>
-                            ))
-                        ) : (
-                            <p>No availability set</p>
-                        )}
-                    </div>
-                ))}
-            </div>
-
-            <button className={styles.submitButton} onClick={handleSubmit}>
+            <button className={styles.submitButton} onClick={handleSubmitAvailability}>
                 Submit Availability
             </button>
         </div>
+    </div>
     );
-}
+};
 
 export default SetAvailability;
