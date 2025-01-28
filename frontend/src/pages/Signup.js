@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import styles from './styles/Signup.module.css'; // Import CSS module
-import { validateSignup } from './SignupValidation'; // Import validation function
-import { axiosPostData } from './api'; // Import the axios post function
+import styles from '../styles/Signup.module.css'; // Import CSS module
+import { validateSignup } from '../utils/SignupValidation'; // Import validation function
+import { axiosPostData } from '../utils/api'; // Import the axios post function
 
 function Signup() {
     const [firstName, setFirstName] = useState('');

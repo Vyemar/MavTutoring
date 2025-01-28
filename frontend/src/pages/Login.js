@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import styles from './styles/Login.module.css'; // Import CSS module
-import { validateLogin } from './LoginValidation'; // Import validation function
-import { axiosPostData } from './api'; // Import axios post function
+import styles from '../styles/Login.module.css'; // Import CSS module
+import { validateLogin } from '../utils/LoginValidation'; // Import validation function
+import { axiosPostData } from '../utils/api'; // Import axios post function
 
 function Login() {
     const [email, setEmail] = useState('');

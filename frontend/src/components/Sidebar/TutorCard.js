@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import styles from "../styles/component/TutorCard.module.css";
+import styles from "../../styles/component/TutorCard.module.css";
 import { v4 as uuidv4 } from "uuid";
 
 const TutorCard = ({ user }) => {

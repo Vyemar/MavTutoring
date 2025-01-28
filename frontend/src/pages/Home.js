@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import TutorHome from "./TutorHome";
 import AdminHome from "./AdminHome";
 import StudentHome from "./StudentHome";
-import styles from './styles/Home.module.css'; // Import CSS module
+import styles from '../styles/Home.module.css'; // Import CSS module
 
 function Home() {
     const navigate = useNavigate();

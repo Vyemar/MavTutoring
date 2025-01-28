@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './styles/TutorSidebar.module.css';
+import styles from '../../styles/TutorSidebar.module.css';
 
 function TutorSidebar({ onLogout }) {
     const navigate = useNavigate();

@@ -1,8 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "../styles/component/StudentSideBar.module.css";
+import styles from "../../styles/component/StudentSidebar.module.css";
 
-const StudentSideBar = (props) => {
+const StudentSidebar = (props) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -28,4 +28,4 @@ const StudentSideBar = (props) => {
   );
 };
 
-export default StudentSideBar;
+export default StudentSidebar;

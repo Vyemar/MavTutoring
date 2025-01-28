@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './styles/TutorHome.module.css';
-import TutorSidebar from './TutorSidebar';
+import styles from '../styles/TutorHome.module.css';
+import TutorSidebar from '../components/Sidebar/TutorSidebar';
 import axios from 'axios';
 
 function TutorHome() {

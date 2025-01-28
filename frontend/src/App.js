@@ -1,11 +1,11 @@
 import './styles/App.css';
-import Login from './Login';
-import Signup from './Signup';
-import Home from './Home';
-import ManageUsers from './ManageUsers';
-import ViewTutors from './ViewTutors';
-import Feedback from './Feedback';
-import SetAvailability from './SetAvailability';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Home from './pages/Home';
+import ManageUsers from './pages/ManageUsers';
+import ViewTutors from './pages/ViewTutors';
+import Feedback from './pages/Feedback';
+import SetAvailability from './pages/SetAvailability';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 function ProtectedRoute({ children }) {
