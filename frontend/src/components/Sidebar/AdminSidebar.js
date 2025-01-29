@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from '../../styles/TutorSidebar.module.css';
+import styles from '../../styles/AdminSidebar.module.css';
 import { handleLogout } from "../../utils/authUtils";
 
 function TutorSidebar({ onLogout }) {
@@ -10,11 +10,9 @@ function TutorSidebar({ onLogout }) {
         <div className={styles.sidebar}>
             <h1>bugHouse</h1>
             <button onClick={() => navigate('/home')}>Dashboard</button>
-            <button onClick={() => navigate('/courses')}>Courses</button>
-            <button onClick={() => navigate('/availability')}>Set Availability</button>
-            <button onClick={() => navigate('/schedule')}>View Schedule</button>
-            <button onClick={() => navigate('/sessions')}>Sessions</button>
-            <button onClick={() => navigate('/notifications')}>Notifications</button>
+            <button onClick={() => navigate('/manage-users')}>Manage Users</button>
+            <button onClick={() => navigate('/analytics')}>System Analytics</button>
+            <button onClick={() => navigate('/settings')}>Settings</button>
             <button className={styles.logoutButton} onClick={handleLogout}>
                 Log Out
             </button>

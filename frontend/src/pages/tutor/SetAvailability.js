@@ -4,12 +4,12 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import styles from "../../styles/SetAvailability.module.css";
 import TutorSidebar from '../../components/Sidebar/TutorSidebar';
-import { handleLogout } from "../../utils/authUtils";
 
 const localizer = momentLocalizer(moment);
 
 const SetAvailability = () => {
     const [events, setEvents] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     
     // Fetch availability from the backend when the component loads
     useEffect(() => {
@@ -28,6 +28,8 @@ const SetAvailability = () => {
                 setEvents(formattedEvents);
             } catch (error) {
                 console.error("Error fetching availability:", error);
+            } finally {
+                setIsLoading(false);
             }
         };
     
@@ -82,7 +84,7 @@ const SetAvailability = () => {
             });
 
             if (response.ok) {
-                alert("Availability submitted for review.");
+                alert("Availability successsfully submitted!");
             } else {
                 alert("Failed to submit availability.");
                 alert(JSON.stringify(await response.json()));
@@ -101,45 +103,56 @@ const SetAvailability = () => {
     return (
         <div className={styles.container}>
             {/* Sidebar */}
-            <TutorSidebar onLogout={handleLogout} />
-        
-        <div className={styles.mainContent}>
-            <h1 className={styles.heading}>Set Availability</h1>
-            <div className={styles.calendarContainer}>
-                <Calendar
-                    localizer={localizer}
-                    events={events}
-                    startAccessor="start"
-                    endAccessor="end"
-                    style={{ height: 500, width: "100%" }}
-                    views={["work_week"]}
-                    defaultView="work_week"
-                    date={new Date()}
-                    toolbar={false}
-                    selectable
-                    onSelectSlot={handleSelectSlot}
-                    onSelectEvent={handleEventDelete}
-                    min={new Date(1970, 1, 1, 10, 0, 0)}
-                    max={new Date(1970, 1, 1, 18, 0, 0)}
-                    step={30}
-                    timeslots={2}
-                    components={{
-                        work_week: {
-                            header: customDayHeader,
-                        },
-                    }}
-                    formats={{
-                        dayFormat: (date, culture, localizer) =>
-                            localizer.format(date, "dddd", culture),
-                    }}
-                />
+            <TutorSidebar/>
+    
+            <div className={styles.mainContent}>
+                <h1 className={styles.heading}>Set Availability</h1>
+    
+                {/* Show spinner while loading */}
+                {isLoading ? (
+                    <div className={styles.spinnerContainer}>
+                        <div className={styles.spinner}></div>
+                        <p>Loading availability...</p>
+                    </div>
+                ) : (
+                    <>
+                        <div className={styles.calendarContainer}>
+                            <Calendar
+                                localizer={localizer}
+                                events={events}
+                                startAccessor="start"
+                                endAccessor="end"
+                                style={{ height: 500, width: "100%" }}
+                                views={["work_week"]}
+                                defaultView="work_week"
+                                date={new Date()}
+                                toolbar={false}
+                                selectable
+                                onSelectSlot={handleSelectSlot}
+                                onSelectEvent={handleEventDelete}
+                                min={new Date(1970, 1, 1, 10, 0, 0)}
+                                max={new Date(1970, 1, 1, 18, 0, 0)}
+                                step={30}
+                                timeslots={2}
+                                components={{
+                                    work_week: {
+                                        header: customDayHeader,
+                                    },
+                                }}
+                                formats={{
+                                    dayFormat: (date, culture, localizer) =>
+                                        localizer.format(date, "dddd", culture),
+                                }}
+                            />
+                        </div>
+                        <button className={styles.submitButton} onClick={handleSubmitAvailability}>
+                            Submit Availability
+                        </button>
+                    </>
+                )}
             </div>
-            <button className={styles.submitButton} onClick={handleSubmitAvailability}>
-                Submit Availability
-            </button>
         </div>
-    </div>
-    );
+    );    
 };
 
 export default SetAvailability;

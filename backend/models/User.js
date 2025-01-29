@@ -6,7 +6,6 @@ const availabilitySchema = new Schema({
   day: { type: String, required: true }, // e.g., "Monday"
   startTime: { type: String, required: true }, // Store as "HH:mm"
   endTime: { type: String, required: true }, // Store as "HH:mm"
-  status: { type: String, enum: ["pending", "approved"], default: "pending" } // Aprroval status
 });
 
 const userSchema = new Schema({

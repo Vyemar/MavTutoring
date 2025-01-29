@@ -16,16 +16,10 @@ function TutorHome() {
             .catch((err) => console.error('Error fetching notifications:', err));
     }, []);
 
-    const handleLogout = () => {
-        localStorage.removeItem('role'); // Clear the role from localStorage
-        localStorage.removeItem('userID'); // Clear the ID from localStorage
-        navigate('/login'); // Redirect to login page
-    };
-
     return (
         <div className={styles.container}>
             {/* Use the TutorSidebar component */}
-            <TutorSidebar onLogout={handleLogout} />
+            <TutorSidebar/>
 
             {/* Main Content */}
             <div className={styles.mainContent}>

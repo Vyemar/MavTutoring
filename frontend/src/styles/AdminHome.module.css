@@ -5,6 +5,7 @@ html, body {
     padding: 0;
     height: 100%;
     background: linear-gradient(135deg, #007bff, #6f42c1); /* Full page gradient background */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 .container {
@@ -12,52 +13,17 @@ html, body {
     min-height: 100vh; /* Full viewport height */
 }
 
-.sidebar {
-    width: 250px;
-    background: rgba(0, 0, 0, 0.8); /* Sidebar background */
-    color: white;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-}
-
-.sidebar h1 {
-    font-size: 1.8rem;
-    margin-bottom: 20px;
-}
-
-.sidebar button {
-    margin-bottom: 10px;
-    padding: 10px 15px;
-    background-color: #007bff; /* Primary blue for buttons */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    text-align: left;
-}
-
-.sidebar button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-}
-
-.sidebar .logoutButton {
-    background-color: #dc3545; /* Red for logout button */
-}
-
-.sidebar .logoutButton:hover {
-    background-color: #a71d2a; /* Darker red on hover */
-}
-
 .mainContent {
     flex: 1;
     padding: 20px;
+    padding-left: 270px; /* Adjust to avoid overlap with sidebar */
     color: #e0e7ed; /* Light text for better contrast */
 }
 
 .heading {
     font-size: 2.5rem;
     margin-bottom: 20px;
+    text-align: center;
 }
 
 .section {
@@ -86,6 +52,7 @@ html, body {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-size: 1rem;
 }
 
 .section button:hover {
