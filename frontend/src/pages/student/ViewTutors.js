@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import styles from "../styles/ViewTutors.module.css";
-import TutorCard from "../components/Sidebar/TutorCard";
-import StudentSideBar from "../components/Sidebar/StudentSidebar";
+import styles from "../../styles/ViewTutors.module.css";
+import TutorCard from "../../components/Sidebar/TutorCard";
+import StudentSideBar from "../../components/Sidebar/StudentSidebar";
 
 function ViewTutors() {
   const [users, setUsers] = useState([]);

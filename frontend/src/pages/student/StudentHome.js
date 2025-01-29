@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "../styles/StudentHome.module.css";
+import styles from "../../styles/StudentHome.module.css";
 import StudentWeeklyCalendar from "./StudentWeeklyCalendar";
-import StudentSideBar from "../components/Sidebar/StudentSidebar";
+import StudentSideBar from "../../components/Sidebar/StudentSidebar";
 
 function StudentHome({ handleLogout }) {
   const navigate = useNavigate();

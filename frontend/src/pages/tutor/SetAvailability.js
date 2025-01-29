@@ -2,20 +2,15 @@ import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import styles from "../styles/SetAvailability.module.css";
-import TutorSidebar from '../components/Sidebar/TutorSidebar';
+import styles from "../../styles/SetAvailability.module.css";
+import TutorSidebar from '../../components/Sidebar/TutorSidebar';
+import { handleLogout } from "../../utils/authUtils";
 
 const localizer = momentLocalizer(moment);
 
 const SetAvailability = () => {
     const [events, setEvents] = useState([]);
-
-    const handleLogout = () => {
-        localStorage.removeItem('role');
-        localStorage.removeItem('userID');
-        window.location.href = '/login';
-    };
-
+    
     // Fetch availability from the backend when the component loads
     useEffect(() => {
         const fetchAvailability = async () => {
@@ -87,7 +82,7 @@ const SetAvailability = () => {
             });
 
             if (response.ok) {
-                alert("Availability submitted successfully!");
+                alert("Availability submitted for review.");
             } else {
                 alert("Failed to submit availability.");
                 alert(JSON.stringify(await response.json()));

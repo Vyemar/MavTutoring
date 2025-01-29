@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from '../styles/StudentWeeklyCalendar.module.css';
+import styles from '../../styles/StudentWeeklyCalendar.module.css';
 
 const StudentWeeklyCalendar = ({ schedule }) => {
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];

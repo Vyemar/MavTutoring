@@ -66,15 +66,39 @@ router.post("/:id/submit", async (req, res) => {
                 day: slot.day, // Save day as "Monday", "Tuesday", etc.
                 startTime: slot.startTime, // Save startTime as "HH:mm"
                 endTime: slot.endTime, // Save endTime as "HH:mm"
+                status: "pending", // Set status to pending
             }));
         }
 
         await tutor.save();
 
-        res.status(200).json({ message: "Availability successfully updated" });
+        res.status(200).json({ message: "Availability submitted for review." });
     } catch (err) {
         console.error("Error submitting availability:", err);
         res.status(500).json({ message: "Failed to submit availability" });
+    }
+});
+
+router.put("/:id/approve/:slotId", async (req, res) => {
+    try {
+        const tutor = await User.findById(req.params.id);
+        if (!tutor || tutor.role !== "Tutor") {
+            return res.status(404).json({ message: "Tutor not found" });
+        }
+
+        // Find and update the availability slot
+        const slot = tutor.availability.find(slot => slot._id.toString() === req.params.slotId);
+        if (!slot) {
+            return res.status(404).json({ message: "Availability slot not found" });
+        }
+
+        slot.status = "approved"; // Approve the availability
+        await tutor.save();
+
+        res.status(200).json({ message: "Availability approved." });
+    } catch (err) {
+        console.error("Error approving availability:", err);
+        res.status(500).json({ message: "Failed to approve availability" });
     }
 });
 

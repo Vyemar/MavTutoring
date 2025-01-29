@@ -1,8 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import TutorHome from "./TutorHome";
-import AdminHome from "./AdminHome";
-import StudentHome from "./StudentHome";
+import TutorHome from "./tutor/TutorHome";
+import AdminHome from "./admin/AdminHome";
+import StudentHome from "./student/StudentHome";
 import styles from '../styles/Home.module.css'; // Import CSS module
 
 function Home() {

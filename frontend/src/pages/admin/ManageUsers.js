@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import styles from '../styles/ManageUsers.module.css';
+import styles from '../../styles/ManageUsers.module.css';
 
 function ManageUsers() {
     const [users, setUsers] = useState([]);

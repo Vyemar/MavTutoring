@@ -2,10 +2,10 @@ import './styles/App.css';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Home from './pages/Home';
-import ManageUsers from './pages/ManageUsers';
-import ViewTutors from './pages/ViewTutors';
-import Feedback from './pages/Feedback';
-import SetAvailability from './pages/SetAvailability';
+import ManageUsers from './pages/admin/ManageUsers';
+import ViewTutors from './pages/student/ViewTutors';
+import Feedback from './pages/student/Feedback';
+import SetAvailability from './pages/tutor/SetAvailability';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 function ProtectedRoute({ children }) {

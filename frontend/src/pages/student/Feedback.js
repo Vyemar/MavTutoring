@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import styles from "../styles/Feedback.module.css";
-import StudentSideBar from "../components/Sidebar/StudentSidebar";
+import styles from "../../styles/Feedback.module.css";
+import StudentSideBar from "../../components/Sidebar/StudentSidebar";
 
 function Feedback() {
   const [tutors, setTutors] = useState([]);

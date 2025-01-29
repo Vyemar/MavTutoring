@@ -9,6 +9,7 @@ function TutorSidebar({ onLogout }) {
         <div className={styles.sidebar}>
             <h1>bugHouse</h1>
             <button onClick={() => navigate('/home')}>Dashboard</button>
+            <button onClick={() => navigate('/courses')}>Courses</button>
             <button onClick={() => navigate('/availability')}>Set Availability</button>
             <button onClick={() => navigate('/schedule')}>View Schedule</button>
             <button onClick={() => navigate('/sessions')}>Sessions</button>
