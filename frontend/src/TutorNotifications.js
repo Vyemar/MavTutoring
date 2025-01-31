@@ -1,7 +1,7 @@
 // import React, { useEffect, useState } from "react";
 // import axios from "axios";
 import styles from "./styles/MySessions.module.css";
-import TutorSideBar from "./component/TutorSideBar";
+import TutorSideBar from "./components/Sidebar/TutorSidebar";
 
 function TutorNotifications() {
   return (

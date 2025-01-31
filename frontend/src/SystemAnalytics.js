@@ -1,7 +1,7 @@
 // import React, { useEffect, useState } from "react";
 // import axios from "axios";
 import styles from "./styles/SystemAnalytics.module.css";
-import AdminSideBar from "./component/AdminSideBar";
+import AdminSideBar from "./components/Sidebar/AdminSidebar";
 
 function SystemAnalytics() {
   return (

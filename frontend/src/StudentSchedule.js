@@ -1,7 +1,7 @@
 // import React, { useEffect, useState } from "react";
 // import axios from "axios";
 import styles from "./styles/StudentSchedule.module.css";
-import StudentSideBar from "./component/StudentSideBar";
+import StudentSideBar from "./components/Sidebar/StudentSidebar";
 
 function Schedule() {
   return (

@@ -1,7 +1,7 @@
 // import React, { useEffect, useState } from "react";
 // import axios from "axios";
 import styles from "./styles/MyTutors.module.css";
-import StudentSideBar from "./component/StudentSideBar";
+import StudentSideBar from "./components/Sidebar/StudentSidebar";
 
 function MyTutors() {
   return (
