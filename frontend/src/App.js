@@ -6,16 +6,17 @@ import ManageUsers from "./pages/admin/ManageUsers";
 import ViewTutors from "./pages/student/ViewTutors";
 import Feedback from "./pages/student/Feedback";
 import SetAvailability from "./pages/tutor/SetAvailability";
-import Notifications from "./Notifications";
-import StudentSchedule from "./StudentSchedule";
-import MyTutors from "./MyTutors";
-import MySessions from "./MySessions";
-import FindSessions from "./FindSessions";
-import TutorSessions from "./TutorSessions";
-import TutorNotifications from "./TutorNotifications";
-import TutorSchedule from "./TutorSchedule";
-import SystemAnalytics from "./SystemAnalytics";
-import Settings from "./Settings";
+import Notifications from "./pages/student/Notifications";
+import StudentSchedule from "./pages/student/StudentSchedule";
+import MyTutors from "./pages/student/MyTutors";
+import MySessions from "./pages/student/MySessions";
+import FindSessions from "./pages/student/FindSessions";
+import TutorSessions from "./pages/tutor/TutorSessions";
+import TutorCourses from "./pages/tutor/TutorCourses";
+import TutorNotifications from "./pages/tutor/TutorNotifications";
+import TutorSchedule from "./pages/tutor/TutorSchedule";
+import SystemAnalytics from "./pages/admin/SystemAnalytics";
+import Settings from "./pages/admin/Settings";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 function ProtectedRoute({ children }) {
@@ -89,6 +90,7 @@ function App() {
         <Route path="/my-sessions" element={<MySessions />} />
         <Route path="/find-sessions" element={<FindSessions />} />
         <Route path="/sessions" element={<TutorSessions />} />
+        <Route path="/TutorCourses" element={<TutorCourses />} />
         <Route path="/TutorNotifications" element={<TutorNotifications />} />
         <Route path="/schedule" element={<TutorSchedule />} />
         <Route path="/analytics" element={<SystemAnalytics />} />

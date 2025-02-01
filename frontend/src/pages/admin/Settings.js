@@ -1,7 +1,7 @@
 // import React, { useEffect, useState } from "react";
 // import axios from "axios";
-import styles from "./styles/Settings.module.css";
-import AdminSideBar from "./components/Sidebar/AdminSidebar";
+import styles from "../../styles/Settings.module.css";
+import AdminSideBar from "../../components/Sidebar/AdminSidebar";
 
 function Settings() {
   return (
