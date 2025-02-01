@@ -103,7 +103,7 @@ const SetAvailability = () => {
     return (
         <div className={styles.container}>
             {/* Sidebar */}
-            <TutorSidebar/>
+            <TutorSidebar selected="availability"></TutorSidebar>
     
             <div className={styles.mainContent}>
                 <h1 className={styles.heading}>Set Availability</h1>

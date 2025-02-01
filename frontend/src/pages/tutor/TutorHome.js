@@ -19,7 +19,7 @@ function TutorHome() {
     return (
         <div className={styles.container}>
             {/* Use the TutorSidebar component */}
-            <TutorSidebar/>
+            <TutorSidebar selected="home"/>
 
             {/* Main Content */}
             <div className={styles.mainContent}>

@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../../styles/component/StudentSideBar.module.css";
 
-const StudentSidebar = (props) => {
+const StudentSidebar = ({ selected }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -13,14 +13,54 @@ const StudentSidebar = (props) => {
   return (
     <div className={styles.sidebar}>
       <h1>bugHouse</h1>
-      <button onClick={() => navigate("/home")}>Dashboard</button>
-      <button onClick={() => navigate("/find-sessions")}>Find Sessions</button>
-      <button onClick={() => navigate("/find-tutors")}>Find Tutors</button>
-      <button onClick={() => navigate("/my-sessions")}>My Sessions</button>
-      <button onClick={() => navigate("/my-tutors")}>My Tutors</button>
-      <button onClick={() => navigate("/schedule")}>Schedule</button>
-      <button onClick={() => navigate("/notifications")}>Notifications</button>
-      <button onClick={() => navigate("/feedback")}>Leave Feedback</button>
+      <button
+        className={selected === "home" ? `${styles.selected}` : ""}
+        onClick={() => navigate("/home")}
+      >
+        Dashboard
+      </button>
+      <button
+        className={selected === "find-sessions" ? `${styles.selected}` : ""}
+        onClick={() => navigate("/find-sessions")}
+      >
+        Find Sessions
+      </button>
+      <button
+        className={selected === "find-tutors" ? `${styles.selected}` : ""}
+        onClick={() => navigate("/find-tutors")}
+      >
+        Find Tutors
+      </button>
+      <button
+        className={selected === "my-sessions" ? `${styles.selected}` : ""}
+        onClick={() => navigate("/my-sessions")}
+      >
+        My Sessions
+      </button>
+      <button
+        className={selected === "my-tutors" ? `${styles.selected}` : ""}
+        onClick={() => navigate("/my-tutors")}
+      >
+        My Tutors
+      </button>
+      <button
+        className={selected === "student-schedule" ? `${styles.selected}` : ""}
+        onClick={() => navigate("/StudentSchedule")}
+      >
+        Schedule
+      </button>
+      <button
+        className={selected === "notifications" ? `${styles.selected}` : ""}
+        onClick={() => navigate("/notifications")}
+      >
+        Notifications
+      </button>
+      <button
+        className={selected === "feedback" ? `${styles.selected}` : ""}
+        onClick={() => navigate("/feedback")}
+      >
+        Leave Feedback
+      </button>
       <button className={styles.logoutButton} onClick={handleLogout}>
         Log Out
       </button>

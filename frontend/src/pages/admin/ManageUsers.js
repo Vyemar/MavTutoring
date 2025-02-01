@@ -29,7 +29,7 @@ function ManageUsers() {
     return (
         <div className={styles.container}>
             {/* Sidebar */}
-            <AdminSidebar />
+            <AdminSidebar selected="manage-users"/>
 
             {/* Main Content */}
             <div className={styles.mainContent}>

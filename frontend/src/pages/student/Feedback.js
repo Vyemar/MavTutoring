@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "../../styles/Feedback.module.css";
-import StudentSideBar from "../../components/Sidebar/StudentSidebar";
+import StudentSidebar from "../../components/Sidebar/StudentSidebar";
 
 function Feedback() {
   const [tutors, setTutors] = useState([]);
@@ -94,7 +94,7 @@ function Feedback() {
 
   return (
     <div className={styles.container}>
-      <StudentSideBar></StudentSideBar>
+      <StudentSidebar selected="feedback"></StudentSidebar>
       <div className={styles.mainContent}>
         <h1 className={styles.heading}>Give Feedback</h1>
         {successMessage && (

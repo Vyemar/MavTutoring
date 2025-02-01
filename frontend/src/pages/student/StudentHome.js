@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../../styles/StudentHome.module.css";
 import StudentWeeklyCalendar from "./StudentWeeklyCalendar";
-import StudentSideBar from "../../components/Sidebar/StudentSidebar";
+import StudentSidebar from "../../components/Sidebar/StudentSidebar";
 
 function StudentHome({ handleLogout }) {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ function StudentHome({ handleLogout }) {
   return (
     <div className={styles.container}>
       {/* Sidebar */}
-      <StudentSideBar></StudentSideBar>
+      <StudentSidebar selected="home"></StudentSidebar>
 
       {/* Main Content */}
       <div className={styles.mainContent}>

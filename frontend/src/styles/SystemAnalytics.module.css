@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  min-height: 100vh; /* Full viewport height */
+}
+
+.mainContent {
+  flex: 1;
+  padding: 20px;
+  color: black;
+}
+
+.heading {
+  font-size: 2rem;
+  color: #ffffff;
+  margin-bottom: 20px;
+}

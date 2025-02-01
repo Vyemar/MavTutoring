@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import styles from "../../styles/ViewTutors.module.css";
-import TutorCard from "../../components/Sidebar/TutorCard";
-import StudentSidebar from "../../components/Sidebar/StudentSidebar";
+import styles from "./styles/ManageUsers.module.css";
+import AdminSideBar from "./component/AdminSideBar";
 
-function ViewTutors() {
+function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,22 +32,37 @@ function ViewTutors() {
   return (
     <div className={styles.container}>
       {/* Sidebar */}
-      <StudentSidebar selected="find-tutors"></StudentSidebar>
+      <AdminSideBar selected="manage-users"></AdminSideBar>
       {/* Main Content */}
       <div className={styles.mainContent}>
-        <h1 className={styles.heading}>Our Tutors</h1>
-        <div className={styles.cardContainer}>
-          {users.length > 0 ? (
-            users.map((user) => (
-              <TutorCard user={user} key={user._id}></TutorCard>
-            ))
-          ) : (
-            <p>No tutors found in the system.</p>
-          )}
-        </div>
+        <h1 className={styles.heading}>Manage Tutors</h1>
+        {users.length > 0 ? (
+          <table className={styles.userTable}>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user._id}>
+                  <td>
+                    {user.firstName} {user.lastName}
+                  </td>
+                  <td>{user.email}</td>
+                  <td>{user.phone}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No tutors found in the system.</p>
+        )}
       </div>
     </div>
   );
 }
 
-export default ViewTutors;
+export default ManageUsers;
