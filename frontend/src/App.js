@@ -15,6 +15,7 @@ import TutorSessions from "./pages/tutor/TutorSessions";
 import TutorCourses from "./pages/tutor/TutorCourses";
 import TutorNotifications from "./pages/tutor/TutorNotifications";
 import TutorSchedule from "./pages/tutor/TutorSchedule";
+import TutorProfile from "./pages/tutor/TutorProfile";
 import SystemAnalytics from "./pages/admin/SystemAnalytics";
 import Settings from "./pages/admin/Settings";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -92,6 +93,7 @@ function App() {
         <Route path="/sessions" element={<TutorSessions />} />
         <Route path="/TutorCourses" element={<TutorCourses />} />
         <Route path="/TutorNotifications" element={<TutorNotifications />} />
+        <Route path="/Profile" element={<TutorProfile />} />
         <Route path="/schedule" element={<TutorSchedule />} />
         <Route path="/analytics" element={<SystemAnalytics />} />
         <Route path="/admin-settings" element={<Settings />} />

@@ -4,24 +4,46 @@ import styles from "../../styles/component/TutorCard.module.css";
 import { v4 as uuidv4 } from "uuid";
 
 const TutorCard = ({ user }) => {
+  // Get profile picture URL, fallback to default avatar if not available
+  const getProfilePicture = () => {
+    if (user.profile && user.profile.profilePicture) {
+      return user.profile.profilePicture;
+    }
+    return "https://gravatar.com/avatar/3cee6af8588784b73feeca82f894957a?s=400&d=mp&r=x";
+  };
+
+  // Get courses from profile if available
+  const getCourses = () => {
+    if (user.profile && user.profile.courses) {
+      return user.profile.courses.split(',').map(course => course.trim());
+    }
+    return ["Computer Graphics", "Computer Networks", "Calculus 2"]; // Default courses
+  };
+
   return (
     <div className={styles.card}>
       <div className={styles.tutor}>
         <div className={styles.imageCrop}>
           <img
             className={styles.avatar}
-            src="https://gravatar.com/avatar/3cee6af8588784b73feeca82f894957a?s=400&d=mp&r=x"
-            alt=" "
-          ></img>
+            src={getProfilePicture()}
+            alt={`${user.firstName} ${user.lastName}`}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "https://gravatar.com/avatar/3cee6af8588784b73feeca82f894957a?s=400&d=mp&r=x";
+            }}
+          />
         </div>
         <div className={styles.bio}>
           <div className={styles.name}>
             {user.firstName} {user.lastName}
           </div>
           <div className={styles.skills}>
-            <div className={styles.skill}>Computer Graphics</div>
-            <div className={styles.skill}>Computer Networks</div>
-            <div className={styles.skill}>Calculus 2</div>
+            {getCourses().map(course => (
+              <div className={styles.skill} key={uuidv4()}>
+                {course}
+              </div>
+            ))}
           </div>
           <div className={styles.ratings}>
             <i
@@ -64,23 +86,24 @@ const TutorCard = ({ user }) => {
         </div>
       </div>
       <hr className={styles.separater}></hr>
-      <div className={styles.tutorTimingButton}>
-        <div className={styles.timings}>
-          {user.availability.map((avail) => (
-            <div className={styles.timing} key={uuidv4()}>
-              {avail.day} - {avail.time}
-            </div>
-          ))}
-        </div>
-        <div className={styles.tutorButtons}>
-          <button className={styles.tutorButton}>Rate</button>
-          <button className={styles.tutorButton}>Profile</button>
-        </div>
+      <div className={styles.tutorButtons}>
+        <button className={styles.tutorButton}>Rate</button>
+        <button className={styles.tutorButton}>Profile</button>
       </div>
     </div>
   );
 };
 
-TutorCard.propTypes = { user: PropTypes.object.isRequired };
+TutorCard.propTypes = {
+  user: PropTypes.shape({
+    firstName: PropTypes.string.isRequired,
+    lastName: PropTypes.string.isRequired,
+    rating: PropTypes.number,
+    profile: PropTypes.shape({
+      profilePicture: PropTypes.string,
+      courses: PropTypes.string
+    })
+  }).isRequired
+};
 
 export default TutorCard;

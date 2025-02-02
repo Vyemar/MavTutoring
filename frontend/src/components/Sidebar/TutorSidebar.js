@@ -22,6 +22,13 @@ function TutorSidebar({ onLogout, selected }) {
         Courses
       </button>
       <button
+        className={selected === "profile" ? `${styles.selected}` : ""}
+        onClick={() => navigate("/Profile")}
+      >
+        Profile
+      </button>
+      
+      <button
         className={selected === "availability" ? `${styles.selected}` : ""}
         onClick={() => navigate("/availability")}
       >

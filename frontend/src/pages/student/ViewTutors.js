@@ -9,21 +9,40 @@ function ViewTutors() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch all users from the backend
-    axios
-      .get("http://localhost:4000/api/users")
-      .then((response) => {
-        // Filter users to only include those with the role "Tutor"
-        const tutors = response.data.filter((users) => users.role === "Tutor");
-        setUsers(tutors);
+    const fetchTutorsWithProfiles = async () => {
+      try {
+        // Fetch all users
+        const response = await axios.get("http://localhost:4000/api/users");
+        const tutors = response.data.filter((user) => user.role === "Tutor");
+
+        // Fetch profiles for each tutor
+        const tutorsWithProfiles = await Promise.all(
+          tutors.map(async (tutor) => {
+            try {
+              const profileResponse = await axios.get(
+                `http://localhost:4000/api/profile/${tutor._id}`
+              );
+              return {
+                ...tutor,
+                profile: profileResponse.data
+              };
+            } catch (error) {
+              // Return tutor without profile if profile doesn't exist
+              return tutor;
+            }
+          })
+        );
+
+        setUsers(tutorsWithProfiles);
         setLoading(false);
-        console.log("Fetching users with role Tutor"); //
-        console.log("Query result:", tutors); //Testing purpose
-      })
-      .catch((error) => {
+        console.log("Fetched tutors with profiles:", tutorsWithProfiles);
+      } catch (error) {
         console.error("Error fetching users:", error);
         setLoading(false);
-      });
+      }
+    };
+
+    fetchTutorsWithProfiles();
   }, []);
 
   if (loading) {
@@ -32,9 +51,7 @@ function ViewTutors() {
 
   return (
     <div className={styles.container}>
-      {/* Sidebar */}
       <StudentSidebar selected="find-tutors"></StudentSidebar>
-      {/* Main Content */}
       <div className={styles.mainContent}>
         <h1 className={styles.heading}>Our Tutors</h1>
         <div className={styles.cardContainer}>

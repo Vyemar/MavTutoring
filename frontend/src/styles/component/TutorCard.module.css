@@ -42,6 +42,7 @@
   width: 280px;
   height: auto;
 }
+
 .bio .name {
   font-size: 24px;
   color: #333;
@@ -70,28 +71,11 @@ hr.separater {
   border-top: 1px solid #070707;
 }
 
-.tutorTimingButton {
-  display: flex;
-  flex-direction: row;
-  height: auto;
-  justify-content: space-between;
-  align-items: left;
-  margin: 0 auto;
-  font-weight: 500;
-}
-
-.timings {
-  margin: auto;
-}
-
-.timings .timing {
-  margin-left: 30px;
-}
-
 .tutorButtons {
   display: flex;
-  margin: 0 auto;
-  justify-content: space-between;
+  margin: 20px auto;
+  justify-content: center;
+  gap: 20px;
   width: 280px;
 }
 
@@ -100,7 +84,6 @@ hr.separater {
   position: relative;
   padding: 10px 0;
   width: 130px;
-  margin: 30px 0;
   border-radius: 5px;
   border: none;
   font-size: 20px;
