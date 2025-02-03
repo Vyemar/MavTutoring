@@ -1,9 +1,15 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
+import Feedback from "../../pages/student/Feedback";
+import FindMyTutorProfile from "../../pages/student/FindmyTutorProfile";
 import styles from "../../styles/component/TutorCard.module.css";
 import { v4 as uuidv4 } from "uuid";
 
 const TutorCard = ({ user }) => {
+
+  const navigate = useNavigate(); //Define navigate
+
   // Get profile picture URL, fallback to default avatar if not available
   const getProfilePicture = () => {
     if (user.profile && user.profile.profilePicture) {
@@ -87,8 +93,12 @@ const TutorCard = ({ user }) => {
       </div>
       <hr className={styles.separater}></hr>
       <div className={styles.tutorButtons}>
-        <button className={styles.tutorButton}>Rate</button>
-        <button className={styles.tutorButton}>Profile</button>
+      <button className={styles.tutorButton} onClick={() => navigate("/feedback")}>
+        Rate
+      </button>
+      <button className={styles.tutorButton} onClick={() => navigate(`/FindMyTutorProfile/${user._id}`)}>
+          Profile
+      </button>
       </div>
     </div>
   );
@@ -96,6 +106,7 @@ const TutorCard = ({ user }) => {
 
 TutorCard.propTypes = {
   user: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
     firstName: PropTypes.string.isRequired,
     lastName: PropTypes.string.isRequired,
     rating: PropTypes.number,

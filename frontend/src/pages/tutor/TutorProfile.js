@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import styles from "../../styles/TutorProfile.module.css";
+import styles from "../../styles/FindMyTutorProfile.module.css"; // Updated style import
 import TutorSidebar from "../../components/Sidebar/TutorSidebar";
 
 function TutorProfile() {
@@ -30,9 +30,7 @@ function TutorProfile() {
       setProfile(response.data);
       setLoading(false);
     } catch (error) {
-      if (error.response?.status !== 404) {
-        setError("Error loading profile");
-      }
+      setError("Error loading profile");
       setLoading(false);
     }
   };
@@ -53,11 +51,13 @@ function TutorProfile() {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      [name]: value,
-    }));
+    setProfile((prevProfile) => {
+      const updatedProfile = { ...prevProfile, [name]: value };
+      console.log(updatedProfile); // Log the updated state to verify
+      return updatedProfile;
+    });
   };
+  
 
   const handleSubmit = async () => {
     try {
@@ -70,157 +70,162 @@ function TutorProfile() {
       formData.append('currentYear', profile.currentYear);
 
       if (profile.profilePicture && profile.profilePicture.startsWith('data:image')) {
-        // Convert base64 to file
         const response = await fetch(profile.profilePicture);
         const blob = await response.blob();
         formData.append('profilePicture', blob, 'profile.jpg');
       }
 
       await axios.post('http://localhost:4000/api/profile', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       setSuccessMessage("Profile updated successfully!");
       setIsEditing(false);
-      
       setTimeout(() => {
         setSuccessMessage("");
       }, 3000);
     } catch (error) {
       setError("Error updating profile. Please try again.");
-      console.error("Error updating profile:", error);
     }
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className={styles.spinnerContainer}>
+        <div className={styles.spinner}></div>
+      </div>
+    );
   }
 
   return (
     <div className={styles.container}>
       <TutorSidebar selected="Profile" />
       <div className={styles.mainContent}>
-        <h1 className={styles.heading}>Profile</h1>
+        <div className={styles.profileContainer}>
+          <h1 className={styles.heading}>Profile</h1>
+          <hr className={styles.profileDivider} />
 
-        {error && <div className={styles.error}>{error}</div>}
-        {successMessage && <div className={styles.success}>{successMessage}</div>}
+          {error && <div className={styles.error}>{error}</div>}
+          {successMessage && <div className={styles.success}>{successMessage}</div>}
 
-        <div className={styles.profileSection}>
-          {profile.profilePicture ? (
-            <img src={profile.profilePicture} alt="Profile" className={styles.profileImage} />
-          ) : (
-            <div className={styles.profilePlaceholder}>No Profile Picture</div>
-          )}
-
-          {isEditing && (
-            <input type="file" accept="image/*" onChange={handleImageUpload} />
-          )}
-
-          <p>
-            <strong>Name:</strong>{" "}
-            {isEditing ? (
-              <input 
-                type="text" 
-                name="name" 
-                value={profile.name} 
-                onChange={handleChange}
-                required 
+          <div className={styles.profileSection}>
+            {profile.profilePicture ? (
+              <img
+                src={profile.profilePicture}
+                alt="Profile"
+                className={styles.profileImage}
               />
             ) : (
-              profile.name || "Not provided"
+              <div className={styles.profilePlaceholder}>
+                <span>No Image</span>
+              </div>
             )}
-          </p>
 
-          <p>
-            <strong>Bio:</strong>{" "}
-            {isEditing ? (
-              <textarea 
-                name="bio" 
-                value={profile.bio} 
-                onChange={handleChange} 
-              />
-            ) : (
-              profile.bio || "Not provided"
+            {isEditing && (
+              <input type="file" accept="image/*" onChange={handleImageUpload} />
             )}
-          </p>
 
-          <p>
-            <strong>Courses:</strong>{" "}
-            {isEditing ? (
-              <input 
-                type="text" 
-                name="courses" 
-                value={profile.courses} 
-                onChange={handleChange} 
-              />
-            ) : (
-              profile.courses || "Not provided"
-            )}
-          </p>
+            <div className={styles.profileInfo}>
+              <p><strong>Name:</strong> 
+                {isEditing ? (
+                  <input 
+                    type="text" 
+                    name="name" 
+                    value={profile.name} 
+                    onChange={handleChange} 
+                    required 
+                  />
+                ) : (
+                  profile.name || "Not provided"
+                )}
+              </p>
 
-          <p>
-            <strong>Major:</strong>{" "}
-            {isEditing ? (
-              <input 
-                type="text" 
-                name="major" 
-                value={profile.major} 
-                onChange={handleChange}
-                required 
-              />
-            ) : (
-              profile.major || "Not provided"
-            )}
-          </p>
+              <p><strong>Bio:</strong> 
+                {isEditing ? (
+                  <textarea 
+                    name="bio" 
+                    value={profile.bio} 
+                    onChange={handleChange}
+                  />
+                ) : (
+                  profile.bio || "Not provided"
+                )}
+              </p>
 
-          <p>
-            <strong>Current Year:</strong>{" "}
-            {isEditing ? (
-              <select 
-                name="currentYear" 
-                value={profile.currentYear} 
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select Year</option>
-                <option value="Freshman">Freshman</option>
-                <option value="Sophomore">Sophomore</option>
-                <option value="Junior">Junior</option>
-                <option value="Senior">Senior</option>
-                <option value="Master's Student">Master's Student</option>
-                <option value="PhD Student">PhD Student</option>
-              </select>
-            ) : (
-              profile.currentYear || "Not provided"
-            )}
-          </p>
+              <p><strong>Courses:</strong> 
+                {isEditing ? (
+                  <input 
+                    type="text" 
+                    name="courses" 
+                    value={profile.courses} 
+                    onChange={handleChange} 
+                  />
+                ) : (
+                  profile.courses || "Not provided"
+                )}
+              </p>
 
-          <button 
-            className={styles.editButton} 
-            onClick={() => {
-              if (isEditing) {
-                handleSubmit();
-              } else {
-                setIsEditing(true);
-              }
-            }}
-          >
-            {isEditing ? "Save" : "Edit"}
-          </button>
-          
-          {isEditing && (
+              <p><strong>Major:</strong> 
+                {isEditing ? (
+                  <input 
+                    type="text" 
+                    name="major" 
+                    value={profile.major} 
+                    onChange={handleChange} 
+                    required 
+                  />
+                ) : (
+                  profile.major || "Not provided"
+                )}
+              </p>
+
+              <p><strong>Year:</strong> 
+                {isEditing ? (
+                  <select 
+                    name="currentYear" 
+                    value={profile.currentYear} 
+                    onChange={handleChange} 
+                    required
+                  >
+                    <option value="">Select Year</option>
+                    <option value="Freshman">Freshman</option>
+                    <option value="Sophomore">Sophomore</option>
+                    <option value="Junior">Junior</option>
+                    <option value="Senior">Senior</option>
+                    <option value="Master's Student">Master's Student</option>
+                    <option value="PhD Student">PhD Student</option>
+                  </select>
+                ) : (
+                  profile.currentYear || "Not provided"
+                )}
+              </p>
+            </div>
+
             <button 
-              className={styles.cancelButton} 
+              className={styles.editButton} 
               onClick={() => {
-                setIsEditing(false);
-                fetchProfile(); // Reset to last saved state
+                if (isEditing) {
+                  handleSubmit();
+                } else {
+                  setIsEditing(true);
+                }
               }}
             >
-              Cancel
+              {isEditing ? "Save" : "Edit"}
             </button>
-          )}
+
+            {isEditing && (
+              <button 
+                className={styles.cancelButton} 
+                onClick={() => {
+                  setIsEditing(false);
+                  fetchProfile(); // Reset to last saved state
+                }}
+              >
+                Cancel
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

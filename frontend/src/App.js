@@ -18,6 +18,7 @@ import TutorSchedule from "./pages/tutor/TutorSchedule";
 import TutorProfile from "./pages/tutor/TutorProfile";
 import SystemAnalytics from "./pages/admin/SystemAnalytics";
 import Settings from "./pages/admin/Settings";
+import FindMyTutorProfile from "./pages/student/FindmyTutorProfile";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 function ProtectedRoute({ children }) {
@@ -87,6 +88,7 @@ function App() {
         />
         <Route path="/Notifications" element={<Notifications />} />
         <Route path="/StudentSchedule" element={<StudentSchedule />} />
+        <Route path="/FindMyTutorProfile/:tutorId" element={<FindMyTutorProfile />} />
         <Route path="/my-tutors" element={<MyTutors />} />
         <Route path="/my-sessions" element={<MySessions />} />
         <Route path="/find-sessions" element={<FindSessions />} />
