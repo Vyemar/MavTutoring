@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 import AdminSidebar from '../../components/Sidebar/AdminSidebar';
+import ViewProfile from './ViewProfile';
 import styles from '../../styles/ManageUsers.module.css';
 
 function ManageUsers() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedRole, setSelectedRole] = useState("Tutor");
+
+    const navigate = useNavigate();  // Initialize navigate using useNavigate
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -72,7 +76,7 @@ function ManageUsers() {
                                         <td>
                                             <button 
                                                 className={styles.viewProfileButton} 
-                                                onClick={() => window.location.href = `/user/${user._id}`}
+                                                onClick={() => navigate(`/ViewProfile/${user._id}`)}
                                             >
                                                 View Profile
                                             </button>
