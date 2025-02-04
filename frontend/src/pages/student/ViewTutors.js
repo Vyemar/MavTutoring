@@ -3,6 +3,7 @@ import axios from "axios";
 import styles from "../../styles/ViewTutors.module.css";
 import TutorCard from "../../components/Sidebar/TutorCard";
 import StudentSidebar from "../../components/Sidebar/StudentSidebar";
+import { SearchBar } from "../../components/SearchBar";
 
 function ViewTutors() {
   const [users, setUsers] = useState([]);
@@ -54,6 +55,12 @@ function ViewTutors() {
       <StudentSidebar selected="find-tutors"></StudentSidebar>
       <div className={styles.mainContent}>
         <h1 className={styles.heading}>Our Tutors</h1>
+        <div className="App">
+          <div className="search-bar-container">
+            <SearchBar/>
+            <div>SearchResults</div>
+          </div>
+        </div>
         <div className={styles.cardContainer}>
           {users.length > 0 ? (
             users.map((user) => (
