@@ -9,6 +9,7 @@ function TutorProfile() {
     name: "",
     bio: "",
     courses: "",
+    skills: "", //SKILL ADDED
     major: "",
     currentYear: "",
   });
@@ -66,6 +67,7 @@ function TutorProfile() {
       formData.append('name', profile.name);
       formData.append('bio', profile.bio);
       formData.append('courses', profile.courses);
+      formData.append('skills', profile.skills);
       formData.append('major', profile.major);
       formData.append('currentYear', profile.currentYear);
 
@@ -162,6 +164,19 @@ function TutorProfile() {
                   />
                 ) : (
                   profile.courses || "Not provided"
+                )}
+              </p>
+
+              <p><strong>Skills:</strong> 
+                {isEditing ? (
+                  <input 
+                    type="text" 
+                    name="skills" 
+                    value={profile.skills} 
+                    onChange={handleChange} 
+                  />
+                ) : (
+                  profile.skills || "Not provided"
                 )}
               </p>
 

@@ -21,7 +21,7 @@ router.get('/:userId', async (req, res) => {
 // Create or update profile
 router.post('/', upload.single('profilePicture'), async (req, res) => {
     try {
-        const { userId, name, bio, courses, major, currentYear } = req.body;
+        const { userId, name, bio, courses, skills, major, currentYear } = req.body;
         
         if (!userId || !name || !major || !currentYear) {
             return res.status(400).json({ message: 'Missing required fields' });
@@ -38,6 +38,7 @@ router.post('/', upload.single('profilePicture'), async (req, res) => {
             name,
             bio,
             courses,
+            skills,
             major,
             currentYear,
             ...(profilePicture && { profilePicture })

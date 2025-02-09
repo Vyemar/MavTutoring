@@ -102,6 +102,7 @@ function ViewProfile() {
              <p><strong>Name:</strong> {profile.name}</p>
              <p><strong>Bio:</strong> {profile.bio}</p>
              <p><strong>Courses:</strong> {profile.courses}</p>
+             <p><strong>Skills:</strong> {profile.skills}</p>
               <p><strong>Major:</strong> {profile.major}</p>
               <p><strong>Year:</strong> {profile.currentYear}</p>
             </div>

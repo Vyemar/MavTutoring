@@ -23,6 +23,11 @@ const tutorProfileSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    skills: {
+        type: String,
+        trim: true
+
+    },
     major: {
         type: String,
         required: true,
