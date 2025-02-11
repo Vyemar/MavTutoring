@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "../../styles/ViewTutors.module.css";
-import TutorCard from "../../components/Sidebar/TutorCard";
+//import TutorCard from "../../components/Sidebar/TutorCard";
 import StudentSidebar from "../../components/Sidebar/StudentSidebar";
+import { SearchBar } from "../../components/SearchBar";
+import { SearchResultsList } from "../../components/SearchResultsList";
 
 function ViewTutors() {
-  const [users, setUsers] = useState([]);
+  /*const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -47,14 +49,22 @@ function ViewTutors() {
 
   if (loading) {
     return <p>Loading...</p>;
-  }
+  }*/
+
+  const[results,setResults] = useState([]);
 
   return (
     <div className={styles.container}>
       <StudentSidebar selected="find-tutors"></StudentSidebar>
       <div className={styles.mainContent}>
         <h1 className={styles.heading}>Our Tutors</h1>
-        <div className={styles.cardContainer}>
+        <div className="App">
+          <div className="search-bar-container">
+            <SearchBar setResults = {setResults}/>
+            <SearchResultsList results={results}/>
+          </div>
+        </div>
+        {/*<div className={styles.cardContainer}>
           {users.length > 0 ? (
             users.map((user) => (
               <TutorCard user={user} key={user._id}></TutorCard>
@@ -62,10 +72,12 @@ function ViewTutors() {
           ) : (
             <p>No tutors found in the system.</p>
           )}
-        </div>
+        </div>*/}
       </div>
     </div>
   );
 }
 
 export default ViewTutors;
+
+
