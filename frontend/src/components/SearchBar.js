@@ -3,8 +3,10 @@ import React, {useState} from "react";
 import {FaSearch} from "react-icons/fa";
 import "../styles/SearchBar.css";
 
+
 export const SearchBar = ({setResults}) => {
     const [input, setInput] = useState("");
+
 
     //Fetch relevant tutors from database
     const fetchTutors = (value) => {
@@ -12,22 +14,30 @@ export const SearchBar = ({setResults}) => {
       .then((response) => response.json())
       .then((json) => {
         const results = json.filter((user) => {
+          const name = user.firstName + user.lastName;
           return (
-            value && 
-            user && 
-            user.role === "Tutor" && 
-            (user.firstName.toLowerCase().includes(value) || user.lastName.toLowerCase().includes(value))
+            //Filters our results so that it's only tutors and those whose name match
+            value &&
+            user &&
+            user.role === "Tutor" &&
+            (name.replaceAll(" ","").toLowerCase().includes(value.replaceAll(" ","").toLowerCase()))
           );
         });
+        //Sets our results the filtered objects we just got
         setResults(results);
+        /*console.log(results);*/
       });
     };
+
+
+
 
     /*const fetchTutorsWithProfiles = async (value) => {
       try {
         // Fetch all users
         const response = await axios.get("http://localhost:4000/api/users");
         const tutors = response.data.filter((user) => user.role === "Tutor");*/
+
 
         // Fetch profiles for each tutor
         /*const tutorsWithProfiles = await Promise.all(
@@ -55,17 +65,21 @@ export const SearchBar = ({setResults}) => {
       }
     };*/
 
+
+    //What happens whenever the input changes
     const handleChange = (value) => {
       setInput(value);
       fetchTutors(value);
     };
 
+
     return (
         <div className = "input-wrapper">
             <FaSearch id="search-icon" />
-            <input 
-                placeholder="Type to search..." 
-                value={input} 
+            <input
+                placeholder="Type to search..."
+                value={input}
+                //Passes our value through our function that handles changes in input
                 onChange={(e) => handleChange(e.target.value)}
             />
         </div>

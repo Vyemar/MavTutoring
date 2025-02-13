@@ -1,13 +1,15 @@
 import React from "react";
 import "../styles/SearchResultsList.css";
-//import { SearchResult} from "../../components/SearchResult";
+import {SearchResult} from "./SearchResult";
+
 
 export const SearchResultsList = ({results}) => {
   return (
-    <div className = "results-list">
-        {results.map((result,id) => {
-            return <div key = {id}>{result.name}</div>;
-        })}
+    <div className="results-list">
+      {results.map((result,id) =>{
+        return <SearchResult result = {result} key = {id} /> ;
+      })}
     </div>
   );
 };
+
