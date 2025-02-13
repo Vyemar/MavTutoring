@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+//import axios from "axios";
 import styles from "../../styles/ViewTutors.module.css";
 //import TutorCard from "../../components/Sidebar/TutorCard";
 import StudentSidebar from "../../components/Sidebar/StudentSidebar";
 import { SearchBar } from "../../components/SearchBar";
 import { SearchResultsList } from "../../components/SearchResultsList";
+import { SearchResultsTutorProfiles } from "../../components/SearchResultsTutorProfiles";
+
 
 function ViewTutors() {
-  /*const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  /*ORIGINAL CODE: const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);*/
+  /*New Code*/const [results,setResults] = useState([]);
 
-  useEffect(() => {
+
+  /*ORIGINAL CODE: useEffect(() => {
     const fetchTutorsWithProfiles = async () => {
       try {
         // Fetch all users
         const response = await axios.get("http://localhost:4000/api/users");
         const tutors = response.data.filter((user) => user.role === "Tutor");
+
 
         // Fetch profiles for each tutor
         const tutorsWithProfiles = await Promise.all(
@@ -34,7 +39,7 @@ function ViewTutors() {
             }
           })
         );
-
+       
         setUsers(tutorsWithProfiles);
         setLoading(false);
         console.log("Fetched tutors with profiles:", tutorsWithProfiles);
@@ -44,15 +49,15 @@ function ViewTutors() {
       }
     };
 
+
     fetchTutorsWithProfiles();
   }, []);
+
 
   if (loading) {
     return <p>Loading...</p>;
   }*/
-
-  const[results,setResults] = useState([]);
-
+     
   return (
     <div className={styles.container}>
       <StudentSidebar selected="find-tutors"></StudentSidebar>
@@ -61,10 +66,11 @@ function ViewTutors() {
         <div className="App">
           <div className="search-bar-container">
             <SearchBar setResults = {setResults}/>
-            <SearchResultsList results={results}/>
+            <SearchResultsList results = {results}/>
           </div>
+            {/*Newcode*/} <SearchResultsTutorProfiles results = {results}/> {/*End of Newcode*/}
         </div>
-        {/*<div className={styles.cardContainer}>
+        {/*ORIGINAL CODE:<div className={styles.cardContainer}>
           {users.length > 0 ? (
             users.map((user) => (
               <TutorCard user={user} key={user._id}></TutorCard>
@@ -77,6 +83,7 @@ function ViewTutors() {
     </div>
   );
 }
+
 
 export default ViewTutors;
 
