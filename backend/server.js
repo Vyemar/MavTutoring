@@ -14,7 +14,7 @@ const attendanceRoutes = require('./routes/attendance'); // Attendance routesS
 const availabilityRoutes = require("./routes/availability"); // Availability routes
 const feedbackRoutes = require('./routes/feedback'); //feedback routes
 const profileRoutes = require('./routes/profile');
-
+const sessionRoutes = require('./routes/sessions')
 
 const app = express();
 
@@ -51,6 +51,7 @@ app.use('/api/attendance', attendanceRoutes); // Attendance routes
 app.use("/api/availability", availabilityRoutes); // Availability routes
 app.use('/api/feedback', feedbackRoutes); //Feedback routes
 app.use('/api/profile', profileRoutes);//profile routes
+app.use('/api/sessions', sessionRoutes);
 
 // Connect to MongoDB using mongoose without deprecated options
 const dbUri = process.env.DB;
