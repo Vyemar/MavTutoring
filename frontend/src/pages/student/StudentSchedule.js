@@ -1,150 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import moment from 'moment';
 import axios from 'axios';
 import styles from '../../styles/StudentSchedule.module.css';
 import StudentSidebar from '../../components/Sidebar/StudentSidebar';
 
-// BookingModal component
-const BookingModal = ({ tutor, onClose, onBookingComplete }) => {
-  const [selectedDate, setSelectedDate] = useState('');
-  const [selectedTime, setSelectedTime] = useState('');
-  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
-  const [duration] = useState(60);
-  const studentId = localStorage.getItem('userID');
-  const [bookingError, setBookingError] = useState('');
-
-  useEffect(() => {
-    if (selectedDate) {
-      fetchAvailableTimeSlots();
-    }
-  }, [selectedDate]);
-
-  const fetchAvailableTimeSlots = async () => {
-    try {
-      // Ensure we're passing the date in YYYY-MM-DD format
-      const formattedDate = selectedDate;
-      
-      const response = await axios.get(
-        `http://localhost:4000/api/sessions/availability/${tutor._id}/${formattedDate}`
-      );
-      
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        setAvailableTimeSlots(response.data);
-        setBookingError('');
-      } else {
-        setAvailableTimeSlots([]);
-        setBookingError('No availability for selected date');
-      }
-    } catch (error) {
-      console.error('Error fetching time slots:', error);
-      setBookingError('Failed to fetch available time slots');
-      setAvailableTimeSlots([]);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setBookingError('');
-    
-    try {
-      // Create date object with the correct timezone offset
-      const localDateTime = new Date(`${selectedDate}T${selectedTime}`);
-      const utcDateTime = new Date(localDateTime.getTime() + localDateTime.getTimezoneOffset() * 60000);
-      
-      console.log('Booking time (local):', localDateTime.toLocaleString());
-      console.log('Booking time (UTC):', utcDateTime.toISOString());
-      
-      const response = await axios.post('http://localhost:4000/api/sessions', {
-        tutorId: tutor._id,
-        studentId,
-        sessionTime: utcDateTime.toISOString(),
-        duration
-      });
-
-      if (response.data.success) {
-        onBookingComplete();
-        onClose();
-      }
-    } catch (error) {
-      console.error('Error booking session:', error);
-      const errorMessage = error.response?.data?.message || 'Error booking session';
-      setBookingError(errorMessage);
-    }
-  };
-
-  return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modalContent}>
-        <h2>Book a Session with {tutor.firstName} {tutor.lastName}</h2>
-        {bookingError && <div className={styles.error}>{bookingError}</div>}
-        <form onSubmit={handleSubmit}>
-          <div className={styles.formGroup}>
-            <label>Select Date:</label>
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              min={new Date().toISOString().split('T')[0]}
-              required
-              className={styles.formInput}
-            />
-          </div>
-
-          {selectedDate && (
-            <div className={styles.formGroup}>
-              <label>Available Time Slots:</label>
-              <select
-                value={selectedTime}
-                onChange={(e) => setSelectedTime(e.target.value)}
-                required
-                className={styles.formInput}
-              >
-                <option value="">Select a time</option>
-                {availableTimeSlots.map((slot, index) => (
-                  <option key={index} value={slot}>
-                    {slot}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          <div className={styles.formGroup}>
-            <label>Duration:</label>
-            <input
-              type="text"
-              value={`${duration} minutes`}
-              disabled
-              className={styles.formInput}
-            />
-          </div>
-
-          <div className={styles.modalButtons}>
-            <button type="submit" className={styles.submitButton}>
-              Book Session
-            </button>
-            <button 
-              type="button" 
-              onClick={onClose}
-              className={styles.cancelButton}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
-
 function StudentSchedule() {
   const [tutors, setTutors] = useState([]);
-  const [selectedTutor, setSelectedTutor] = useState(null);
-  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTutor, setSelectedTutor] = useState('');
+  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
+  const [selectedTime, setSelectedTime] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [upcomingSessions, setUpcomingSessions] = useState([]);
+  const [specialRequest, setSpecialRequest] = useState('');
 
   const studentId = localStorage.getItem('userID');
 
@@ -164,6 +33,62 @@ function StudentSchedule() {
     }
   };
 
+  const fetchAvailableTimeSlots = async () => {
+    if (!selectedDate || !selectedTutor) return;
+    
+    try {
+      const response = await axios.get(
+        `http://localhost:4000/api/sessions/availability/${selectedTutor}/${selectedDate}`
+      );
+      
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        setAvailableTimeSlots(response.data);
+        setError('');
+      } else {
+        setAvailableTimeSlots([]);
+        setError('No availability for selected date');
+      }
+    } catch (error) {
+      console.error('Error fetching time slots:', error);
+      setError('Failed to fetch available time slots');
+      setAvailableTimeSlots([]);
+    }
+  };
+
+  const handleBooking = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    try {
+      const localDateTime = new Date(`${selectedDate}T${selectedTime}`);
+      
+      const response = await axios.post('http://localhost:4000/api/sessions', {
+        tutorId: selectedTutor,
+        studentId,
+        sessionTime: localDateTime.toISOString(),
+        duration: 60,
+        specialRequest
+      });
+
+      if (response.data.success) {
+        setSuccessMessage('Session booked successfully!');
+        fetchUpcomingSessions();
+        // Reset form
+        setSelectedDate('');
+        setSelectedTutor('');
+        setSelectedTime('');
+        setSpecialRequest('');
+        
+        setTimeout(() => {
+          setSuccessMessage('');
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('Error booking session:', error);
+      setError(error.response?.data?.message || 'Error booking session');
+    }
+  };
+
   const fetchUpcomingSessions = async () => {
     try {
       const response = await axios.get(`http://localhost:4000/api/sessions/student/${studentId}`);
@@ -173,23 +98,12 @@ function StudentSchedule() {
     }
   };
 
-  const handleBookingComplete = () => {
-    setSuccessMessage('Session booked successfully!');
-    fetchUpcomingSessions(); // Refresh the sessions list
-    setTimeout(() => {
-      setSuccessMessage('');
-    }, 3000);
-  };
-
   const formatDateTime = (dateTime) => {
-    // Create a date object and adjust for timezone
     const date = new Date(dateTime);
-    return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-      .toLocaleString('en-US', {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-        timeZone: 'UTC'
-      });
+    return date.toLocaleString('en-US', {
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    });
   };
 
   if (loading) {
@@ -206,63 +120,128 @@ function StudentSchedule() {
       <div className={styles.mainContent}>
         <div className={styles.scheduleContainer}>
           <h1 className={styles.heading}>Schedule a Session</h1>
-          <hr className={styles.divider} />
-
+          
           {error && <div className={styles.error}>{error}</div>}
           {successMessage && <div className={styles.success}>{successMessage}</div>}
 
-          <div className={styles.upcomingSessions}>
-            <h2>Upcoming Sessions</h2>
-            {upcomingSessions.length > 0 ? (
-              <div className={styles.sessionsList}>
-                {upcomingSessions.map((session) => (
-                  <div key={session._id} className={styles.sessionCard}>
-                    <p><strong>Tutor:</strong> {session.tutorID.firstName} {session.tutorID.lastName}</p>
-                    <p><strong>Date & Time:</strong> {formatDateTime(session.sessionTime)}</p>
-                    <p><strong>Duration:</strong> {session.duration} minutes</p>
-                    <p><strong>Status:</strong> {session.status}</p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p>No upcoming sessions</p>
-            )}
-          </div>
-
-          <div className={styles.tutorsList}>
-            <h2>Available Tutors</h2>
-            <div className={styles.tutorsGrid}>
-              {tutors.map((tutor) => (
-                <div key={tutor._id} className={styles.tutorCard}>
-                  <div className={styles.tutorInfo}>
-                    <h3>{tutor.firstName} {tutor.lastName}</h3>
-                    <p><strong>Rating:</strong> {tutor.rating || 'Not rated'}</p>
-                    <p><strong>Courses:</strong> {tutor.courses || 'Not specified'}</p>
-                    <button
-                      className={styles.bookButton}
-                      onClick={() => {
-                        setSelectedTutor(tutor);
-                        setShowBookingModal(true);
+          <div className={styles.bookingGrid}>
+            {/* Booking Form */}
+            <div className={styles.bookingForm}>
+              <div className={styles.card}>
+                <h2 className={styles.cardTitle}>New Booking</h2>
+                <form onSubmit={handleBooking} className={styles.form}>
+                  {/* Tutor Selection */}
+                  <div className={styles.formGroup}>
+                    <label htmlFor="tutor">Select Tutor</label>
+                    <select
+                      id="tutor"
+                      value={selectedTutor}
+                      onChange={(e) => {
+                        setSelectedTutor(e.target.value);
+                        if (selectedDate) fetchAvailableTimeSlots();
                       }}
+                      required
+                      className={styles.formSelect}
                     >
-                      Book Session
-                    </button>
+                      <option value="">Select a tutor</option>
+                      {tutors.map((tutor) => (
+                        <option key={tutor._id} value={tutor._id}>
+                          {tutor.firstName} {tutor.lastName} 
+                        </option>
+                      ))}
+                    </select>
                   </div>
+
+                  {/* Date Selection */}
+                  <div className={styles.formGroup}>
+                    <label htmlFor="date">Select Date</label>
+                    <input
+                      type="date"
+                      id="date"
+                      value={selectedDate}
+                      onChange={(e) => {
+                        setSelectedDate(e.target.value);
+                        if (selectedTutor) fetchAvailableTimeSlots();
+                      }}
+                      min={new Date().toISOString().split('T')[0]}
+                      required
+                      className={styles.formInput}
+                    />
+                  </div>
+
+                  {/* Time Slots */}
+                  {selectedDate && selectedTutor && (
+                    <div className={styles.formGroup}>
+                      <label htmlFor="time">Select Time</label>
+                      <select
+                        id="time"
+                        value={selectedTime}
+                        onChange={(e) => setSelectedTime(e.target.value)}
+                        required
+                        className={styles.formSelect}
+                      >
+                        <option value="">Select time</option>
+                        {availableTimeSlots.map((slot, index) => (
+                          <option key={index} value={slot}>
+                            {slot}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Special Request */}
+                  <div className={styles.formGroup}>
+                    <label htmlFor="specialRequest">Special Requests</label>
+                    <textarea
+                      id="specialRequest"
+                      placeholder="Any special requests or notes for the tutor?"
+                      value={specialRequest}
+                      onChange={(e) => setSpecialRequest(e.target.value)}
+                      className={styles.formTextarea}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={!selectedDate || !selectedTutor || !selectedTime}
+                    className={styles.submitButton}
+                  >
+                    Book Session
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            {/* Upcoming Sessions */}
+            <div className={styles.upcomingSessions}>
+              <div className={styles.card}>
+                <h2 className={styles.cardTitle}>Upcoming Sessions</h2>
+                <div className={styles.sessionsGrid}>
+                  {upcomingSessions.length > 0 ? (
+                    upcomingSessions.map((session) => (
+                      <div key={session._id} className={styles.sessionCard}>
+                        <p className={styles.tutorName}>
+                          {session.tutorID.firstName} {session.tutorID.lastName}
+                        </p>
+                        <p className={styles.sessionTime}>
+                          {formatDateTime(session.sessionTime)}
+                        </p>
+                        <p className={styles.sessionDuration}>
+                          Duration: {session.duration} minutes
+                        </p>
+                        <p className={styles.sessionStatus}>
+                          Status: {session.status}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className={styles.noSessions}>No upcoming sessions</p>
+                  )}
                 </div>
-              ))}
+              </div>
             </div>
           </div>
-
-          {showBookingModal && (
-            <BookingModal
-              tutor={selectedTutor}
-              onClose={() => {
-                setShowBookingModal(false);
-                setSelectedTutor(null);
-              }}
-              onBookingComplete={handleBookingComplete}
-            />
-          )}
         </div>
       </div>
     </div>

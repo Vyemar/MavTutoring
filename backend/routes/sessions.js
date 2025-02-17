@@ -55,9 +55,10 @@ router.get('/availability/:tutorId/:date', async (req, res) => {
 });
 
 // Book a session
+// Book a session
 router.post('/', async (req, res) => {
   try {
-    const { tutorId, studentId, sessionTime, duration } = req.body;
+    const { tutorId, studentId, sessionTime, duration, specialRequest } = req.body;
 
     // Validate required fields
     if (!tutorId || !studentId || !sessionTime || !duration) {
@@ -83,13 +84,14 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'Time slot no longer available' });
     }
 
-    // Create new session
+    // Create new session with notes field containing special request
     const session = new Session({
       tutorID: tutorId,
       studentID: studentId,
       sessionTime: sessionDate,
       duration,
-      status: 'Scheduled'
+      status: 'Scheduled',
+      notes: specialRequest || '' // Save special request in notes field
     });
 
     await session.save();
