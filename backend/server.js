@@ -14,7 +14,7 @@ const attendanceRoutes = require('./routes/attendance'); // Attendance routesS
 const availabilityRoutes = require("./routes/availability"); // Availability routes
 const feedbackRoutes = require('./routes/feedback'); //feedback routes
 const profileRoutes = require('./routes/profile');
-const notificationRoutes = require("./routes/notifications/created"); // Notification routes
+const notificationRoutes = require("./routes/notifications/confirmation"); // Notification routes
 const app = express();
 
 
