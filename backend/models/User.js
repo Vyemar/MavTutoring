@@ -8,6 +8,11 @@ const availabilitySchema = new Schema({
   endTime: { type: String, required: true }, // Store as "HH:mm"
 });
 
+const bookedSessionSchema = new Schema({
+  sessionTime: { type: Date, required: true }, // Exact session time
+  duration: { type: Number, required: true }, // Duration in minutes
+});
+
 const userSchema = new Schema({
   firstName: {
     type: String,
@@ -39,6 +44,7 @@ const userSchema = new Schema({
     type: Number,
   },
   availability: [availabilitySchema],
+  bookedSessions: [bookedSessionSchema], // Track booked slots
 });
 
 // Pre-save hook to hash password before saving
