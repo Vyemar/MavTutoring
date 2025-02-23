@@ -17,10 +17,20 @@ function StudentSchedule() {
 
   const studentId = localStorage.getItem('userID');
 
+  // Initial data fetch on component mount
   useEffect(() => {
     fetchTutors();
     fetchUpcomingSessions();
   }, []);
+
+  // Fetch time slots whenever date or tutor changes
+  useEffect(() => {
+    if (selectedDate && selectedTutor) {
+      fetchAvailableTimeSlots();
+    } else {
+      setAvailableTimeSlots([]);
+    }
+  }, [selectedDate, selectedTutor]);
 
   const fetchTutors = async () => {
     try {
@@ -37,22 +47,38 @@ function StudentSchedule() {
     if (!selectedDate || !selectedTutor) return;
     
     try {
+      setError('');
       const response = await axios.get(
         `http://localhost:4000/api/sessions/availability/${selectedTutor}/${selectedDate}`
       );
       
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        setAvailableTimeSlots(response.data);
-        setError('');
-      } else {
-        setAvailableTimeSlots([]);
-        setError('No availability for selected date');
+      if (Array.isArray(response.data)) {
+        if (response.data.length > 0) {
+          setAvailableTimeSlots(response.data);
+        } else {
+          setAvailableTimeSlots([]);
+          setError('No availability for selected date');
+        }
+        setSelectedTime('');
       }
     } catch (error) {
       console.error('Error fetching time slots:', error);
       setError('Failed to fetch available time slots');
       setAvailableTimeSlots([]);
+      setSelectedTime('');
     }
+  };
+
+  const handleDateChange = (e) => {
+    const newDate = e.target.value;
+    setSelectedDate(newDate);
+    setSelectedTime('');
+  };
+
+  const handleTutorChange = (e) => {
+    const newTutor = e.target.value;
+    setSelectedTutor(newTutor);
+    setSelectedTime('');
   };
 
   const handleBooking = async (e) => {
@@ -78,6 +104,7 @@ function StudentSchedule() {
         setSelectedTutor('');
         setSelectedTime('');
         setSpecialRequest('');
+        setAvailableTimeSlots([]);
         
         setTimeout(() => {
           setSuccessMessage('');
@@ -125,21 +152,16 @@ function StudentSchedule() {
           {successMessage && <div className={styles.success}>{successMessage}</div>}
 
           <div className={styles.bookingGrid}>
-            {/* Booking Form */}
             <div className={styles.bookingForm}>
               <div className={styles.card}>
                 <h2 className={styles.cardTitle}>New Booking</h2>
                 <form onSubmit={handleBooking} className={styles.form}>
-                  {/* Tutor Selection */}
                   <div className={styles.formGroup}>
                     <label htmlFor="tutor">Select Tutor</label>
                     <select
                       id="tutor"
                       value={selectedTutor}
-                      onChange={(e) => {
-                        setSelectedTutor(e.target.value);
-                        if (selectedDate) fetchAvailableTimeSlots();
-                      }}
+                      onChange={handleTutorChange}
                       required
                       className={styles.formSelect}
                     >
@@ -152,24 +174,19 @@ function StudentSchedule() {
                     </select>
                   </div>
 
-                  {/* Date Selection */}
                   <div className={styles.formGroup}>
                     <label htmlFor="date">Select Date</label>
                     <input
                       type="date"
                       id="date"
                       value={selectedDate}
-                      onChange={(e) => {
-                        setSelectedDate(e.target.value);
-                        if (selectedTutor) fetchAvailableTimeSlots();
-                      }}
+                      onChange={handleDateChange}
                       min={new Date().toISOString().split('T')[0]}
                       required
                       className={styles.formInput}
                     />
                   </div>
 
-                  {/* Time Slots */}
                   {selectedDate && selectedTutor && (
                     <div className={styles.formGroup}>
                       <label htmlFor="time">Select Time</label>
@@ -190,7 +207,6 @@ function StudentSchedule() {
                     </div>
                   )}
 
-                  {/* Special Request */}
                   <div className={styles.formGroup}>
                     <label htmlFor="specialRequest">Special Requests</label>
                     <textarea

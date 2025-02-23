@@ -34,12 +34,50 @@ function FindMyTutorProfile() {
           `http://localhost:4000/api/availability/${tutorId}`
         );
 
-        const formattedEvents = availabilityResponse.data.map((slot) => ({
-          id: slot.id,
-          start: new Date(slot.start),
-          end: new Date(slot.end),
-          title: "Available",
-        }));
+        // Convert availability data to calendar events
+        const formattedEvents = [];
+        // Start from Monday of current week
+        const currentDate = moment().startOf('week').add(1, 'days');
+
+        availabilityResponse.data.forEach((slot) => {
+          // Skip slots with empty times
+          if (slot.startTime === "00:00" && slot.endTime === "00:00") {
+            return;
+          }
+
+          // Skip weekend days
+          if (['Saturday', 'Sunday'].includes(slot.day)) {
+            return;
+          }
+          
+          // Get the day index (1-5 for Monday-Friday)
+          const dayMapping = {
+            'Monday': 0,
+            'Tuesday': 1,
+            'Wednesday': 2,
+            'Thursday': 3,
+            'Friday': 4
+          };
+          
+          // Create date for this week's occurrence of the day
+          const eventDate = currentDate.clone().add(dayMapping[slot.day], 'days');
+          
+          // Create start and end times
+          const startDateTime = eventDate.clone()
+            .set('hour', parseInt(slot.startTime.split(':')[0]))
+            .set('minute', parseInt(slot.startTime.split(':')[1]));
+          
+          const endDateTime = eventDate.clone()
+            .set('hour', parseInt(slot.endTime.split(':')[0]))
+            .set('minute', parseInt(slot.endTime.split(':')[1]));
+
+          formattedEvents.push({
+            id: `${slot.day}-${slot.startTime}-${slot.endTime}`,
+            start: startDateTime.toDate(),
+            end: endDateTime.toDate(),
+            title: 'Available'
+          });
+        });
 
         setEvents(formattedEvents);
       } catch (error) {
@@ -59,12 +97,34 @@ function FindMyTutorProfile() {
     };
 
     const fetchData = async () => {
-      await Promise.all([fetchTutorProfile(), fetchTutorAvailability(), fetchUserData()]);
+      await Promise.all([
+        fetchTutorProfile(),
+        fetchTutorAvailability(),
+        fetchUserData()
+      ]);
       setLoading(false);
     };
 
     fetchData();
   }, [tutorId]);
+
+  // Custom day header component
+  const customDayHeader = ({ label }) => {
+    const dayName = label.split(" ")[0]; // Extract only the day name
+    return <div style={{ textAlign: "center", fontWeight: "bold" }}>{dayName}</div>;
+  };
+
+  // Event style getter
+  const eventStyleGetter = () => ({
+    style: {
+      backgroundColor: '#4CAF50',
+      borderRadius: '3px',
+      opacity: 0.8,
+      color: 'white',
+      border: '0',
+      display: 'block'
+    }
+  });
 
   if (loading) {
     return (
@@ -99,10 +159,10 @@ function FindMyTutorProfile() {
               </div>
             )}
             <div className={styles.profileInfo}>
-             <p><strong>Name:</strong> {profile.name}</p>
-             <p><strong>Bio:</strong> {profile.bio}</p>
-             <p><strong>Courses:</strong> {profile.courses}</p>
-             <p><strong>Skills:</strong> {profile.skills}</p>
+              <p><strong>Name:</strong> {profile.name}</p>
+              <p><strong>Bio:</strong> {profile.bio}</p>
+              <p><strong>Courses:</strong> {profile.courses}</p>
+              <p><strong>Skills:</strong> {profile.skills}</p>
               <p><strong>Major:</strong> {profile.major}</p>
               <p><strong>Year:</strong> {profile.currentYear}</p>
             </div>
@@ -119,12 +179,18 @@ function FindMyTutorProfile() {
             style={{ height: 500, width: "100%" }}
             views={["work_week"]}
             defaultView="work_week"
-            date={new Date()}
+            date={moment().toDate()}
             toolbar={false}
-            min={new Date(new Date().setHours(10, 0, 0))} // 10:00 AM today
-            max={new Date(new Date().setHours(18, 0, 0))} // 6:00 PM today
+            min={moment().hours(10).minutes(0).toDate()}
+            max={moment().hours(18).minutes(0).toDate()}
             step={30}
             timeslots={2}
+            eventPropGetter={eventStyleGetter}
+            components={{
+              work_week: {
+                header: customDayHeader,
+              },
+            }}
           />
         </div>
       </div>
