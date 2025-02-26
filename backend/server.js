@@ -18,7 +18,7 @@ const SESSION_SECRET = process.env.SESSION_SECRET || 'default_secret';
 // === SAML Configuration ===
 const SAML_ENTRY_POINT = "https://login.microsoftonline.com/3d3ccb0e-386a-4644-a386-8c6e0f969126/saml2";
 const SAML_ISSUER = "CSESDTutorTechApp";
-const SAML_CALLBACK_URL = "https://localhost:3000/home";
+const SAML_CALLBACK_URL = "https://localhost:4000/api/auth/saml/callback";
 const SAML_LOGOUT_URL = "https://login.microsoftonline.com/3d3ccb0e-386a-4644-a386-8c6e0f969126/saml2";
 const SAML_METADATA_URL = "https://login.microsoftonline.com/3d3ccb0e-386a-4644-a386-8c6e0f969126/federationmetadata/2007-06/federationmetadata.xml?appid=128f9b1c-b087-41ee-9fb0-58a20c1c30ce";
 const SAML_CERT = `-----BEGIN CERTIFICATE-----
@@ -27,10 +27,13 @@ MIIC8DCCAdigAwIBAgIQX5Xik+PqsIVE5xiJqcWsADANBgkqhkiG9w0BAQsFADA0MTIwMAYDVQQDEylN
 
 // === Middleware ===
 // Log incoming requests
-app.use((req, res, next) => {
-    console.log(`${req.method} ${req.url}`);
-    next();
-});
+app.use(cors({
+    origin: "https://localhost:3000", // Allow frontend requests
+    credentials: true,
+    methods: ["GET", "POST"], // Ensure POST is allowed
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 
 // CORS configuration
 app.use(cors({ origin: '*', credentials: true, optionSuccessStatus: 200 }));
@@ -135,6 +138,16 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/sessions', sessionRoutes);
 
 // === Start the Server ===
-app.listen(PORT, () => {
-    console.log(`Server is running on port: ${PORT}`);
+const https = require('https');
+const fs = require('fs');
+
+// Load SSL Certificate & Key
+const sslOptions = {
+    key: fs.readFileSync("./ssl/server.key"), // Ensure these files exist
+    cert: fs.readFileSync("./ssl/server.cert")
+};
+
+// Start HTTPS Server
+https.createServer(sslOptions, app).listen(PORT, () => {
+    console.log(`🚀 HTTPS Server running on https://localhost:${PORT}`);
 });

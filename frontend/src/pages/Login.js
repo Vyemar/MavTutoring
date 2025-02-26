@@ -12,7 +12,7 @@ function Login() {
     useEffect(() => {
         async function checkSession() {
             try {
-                const response = await axiosGetData('http://localhost:4000/api/auth/session'); // Fetch user session
+                const response = await axiosGetData('https://localhost:4000/api/auth/session'); // Fetch user session
                 if (response.user) {
                     setUser(response.user);
                     navigate('/home'); // Redirect if already logged in
@@ -26,7 +26,7 @@ function Login() {
     }, [navigate]);
 
     const handleSSOLogin = () => {
-        window.location.href = "http://localhost:4000/api/auth/saml"; // Redirect to SAML login
+        window.location.href = "https://localhost:4000/api/auth/saml"; // Redirect to SAML login
     };
 
     return (
