@@ -1,49 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import styles from '../styles/Login.module.css'; // Import CSS module
-import { validateLogin } from '../utils/LoginValidation'; // Import validation function
-import { axiosPostData } from '../utils/api'; // Import axios post function
+import { axiosGetData } from '../utils/api'; // Import axios GET function
 
 function Login() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [errors, setErrors] = useState({});
+    const [user, setUser] = useState(null);
     const navigate = useNavigate();
-    const location = useLocation(); // Hook to access passed state
+    const location = useLocation();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        const validationError = await validateLogin({ email, password });
-        setErrors(validationError);
-
-        if (!validationError.email && !validationError.password) {
+    // Check if the user is already authenticated
+    useEffect(() => {
+        async function checkSession() {
             try {
-                const response = await axiosPostData('http://localhost:4000/api/auth/login', {
-                    email,
-                    password
-                });
-
-                if (response.success) {
-                    // Store role in localStorage or state
-                    localStorage.setItem('role', response.role); // Storing role
-                    localStorage.setItem('userID', response.ID); // Storing ID
-
-                    // Navigate to home
-                    navigate('/home');
+                const response = await axiosGetData('http://localhost:4000/api/auth/session'); // Fetch user session
+                if (response.user) {
+                    setUser(response.user);
+                    navigate('/home'); // Redirect if already logged in
                 }
             } catch (error) {
-                // If error response is 400, display the server-side error message under password
-                if (error.response && error.response.status === 400) {
-                    setErrors((prevErrors) => ({
-                        ...prevErrors,
-                        password: error.response.data.error, // Display "Invalid email or password" under password field
-                    }));
-                } else {
-                    console.error("Login error", error);
-                }
+                console.error("Session check failed", error);
             }
         }
+
+        checkSession();
+    }, [navigate]);
+
+    const handleSSOLogin = () => {
+        window.location.href = "http://localhost:4000/api/auth/saml"; // Redirect to SAML login
     };
 
     return (
@@ -61,36 +44,13 @@ function Login() {
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit}>
-                        <div className="mb-3">
-                            <label htmlFor="email" className={styles.label}>Email address</label>
-                            <input
-                                type="email"
-                                placeholder="Enter email"
-                                className="form-control input"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                            {errors.email && <div className={styles.textDanger}>{errors.email}</div>}
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="password" className={styles.label}>Password</label>
-                            <input
-                                type="password"
-                                placeholder="Enter password"
-                                className="form-control input"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                            {errors.password && <div className={styles.textDanger}>{errors.password}</div>}
-                        </div>
-                        <button type="submit" className={`btn ${styles.loginButton}`}>
-                            Login
-                        </button>
-                        <p className="mt-3 text-center">
-                            Don't have an account? <Link to="/signup" className={styles.link}>Register</Link>
-                        </p>
-                    </form>
+                    <button onClick={handleSSOLogin} className={`btn ${styles.loginButton}`}>
+                        Login with SSO
+                    </button>
+
+                    <p className="mt-3 text-center">
+                        Don't have an account? <Link to="/signup" className={styles.link}>Register</Link>
+                    </p>
                 </div>
             </div>
         </div>
