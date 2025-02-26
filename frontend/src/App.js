@@ -22,9 +22,35 @@ import FindMyTutorProfile from "./pages/student/FindmyTutorProfile";
 import ViewProfile from "./pages/admin/ViewProfile";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
+import { useEffect, useState } from "react";
+import { axiosGetData } from "./utils/api";
+
 function ProtectedRoute({ children }) {
-  const userID = localStorage.getItem("userID"); // Check if user is logged in
-  return userID ? children : <Navigate to="/login" replace />; // Redirect to login if not authenticated
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
+
+  useEffect(() => {
+    async function checkSession() {
+      try {
+        const response = await axiosGetData("https://localhost:3000/api/auth/session"); // Fetch session from backend
+        if (response.user) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error("Session check failed:", error);
+        setIsAuthenticated(false);
+      }
+    }
+
+    checkSession();
+  }, []);
+
+  if (isAuthenticated === null) {
+    return <div>Loading...</div>; // Show a loading state while checking auth
+  }
+
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
 }
 
 function App() {
@@ -42,9 +68,9 @@ function App() {
         <Route
           path="/home"
           element={
-            
+            <ProtectedRoute>
               <Home />
-      
+            </ProtectedRoute>
           }
         />
         <Route
