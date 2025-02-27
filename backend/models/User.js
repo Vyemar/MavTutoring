@@ -24,7 +24,9 @@ const userSchema = new Schema({
   },
   phone: {
     type: String,
-    required: true,
+    required: function () {
+      return !this.isSSO; // Require phone nunmber only if NOT an SSO user
+    },
   },
   email: {
     type: String,
@@ -33,7 +35,13 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: function () {
+      return !this.isSSO; // Require password only if NOT an SSO user
+    },
+  },
+  isSSO: {
+    type: Boolean,
+    default: false, // Default is false; set to true for SSO users
   },
   role: {
     type: String,
@@ -49,7 +57,7 @@ const userSchema = new Schema({
 
 // Pre-save hook to hash password before saving
 userSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
+  if (this.isModified("password") && this.password) {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
   }

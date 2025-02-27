@@ -15,6 +15,30 @@ const MONGO_URI = process.env.DB;
 const PORT = process.env.PORT || 4000;
 const SESSION_SECRET = process.env.SESSION_SECRET || 'default_secret';
 
+// === Load Models ===
+const User = require('./models/User');
+
+// === Mount Other API Routes ===
+const authRoutes = require('./routes/auth');
+const usersRoutes = require('./routes/users');
+const studentScheduleRoutes = require('./routes/schedules/student');
+const tutorScheduleRoutes = require('./routes/schedules/tutor');
+const attendanceRoutes = require('./routes/attendance');
+const availabilityRoutes = require("./routes/availability");
+const feedbackRoutes = require('./routes/feedback');
+const profileRoutes = require('./routes/profile');
+const sessionRoutes = require('./routes/sessions');
+
+app.use('/api/auth', authRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/api/schedules/student', studentScheduleRoutes);
+app.use('/api/schedules/tutor', tutorScheduleRoutes);
+app.use('/api/attendance', attendanceRoutes);
+app.use("/api/availability", availabilityRoutes);
+app.use('/api/feedback', feedbackRoutes);
+app.use('/api/profile', profileRoutes);
+app.use('/api/sessions', sessionRoutes);
+
 // === SAML Configuration ===
 const SAML_ENTRY_POINT = "https://login.microsoftonline.com/3d3ccb0e-386a-4644-a386-8c6e0f969126/saml2";
 const SAML_ISSUER = "CSESDTutorTechApp";
@@ -26,17 +50,14 @@ MIIC8DCCAdigAwIBAgIQX5Xik+PqsIVE5xiJqcWsADANBgkqhkiG9w0BAQsFADA0MTIwMAYDVQQDEylN
 -----END CERTIFICATE-----`;
 
 // === Middleware ===
-// Log incoming requests
+
+// CORS configuration
 app.use(cors({
     origin: "https://localhost:3000", // Allow frontend requests
     credentials: true,
     methods: ["GET", "POST"], // Ensure POST is allowed
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
-
-
-// CORS configuration
-app.use(cors({ origin: '*', credentials: true, optionSuccessStatus: 200 }));
 
 // Middleware for parsing JSON, URL-encoded data, and cookies
 app.use(bodyParser.json());
@@ -47,7 +68,11 @@ app.use(cookieParser());
 app.use(session({
     secret: SESSION_SECRET,
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: false,
+    cookie: { 
+        secure: false, // Set to true in production
+        sameSite: "lax"
+    }
 }));
 
 // === Passport.js Setup ===
@@ -75,36 +100,95 @@ passport.deserializeUser((user, done) => done(null, user));
 // === Authentication Routes ===
 app.get('/api/auth/saml', passport.authenticate('saml', { failureRedirect: '/' }));
 
+// app.post('/api/auth/saml/callback',
+//     passport.authenticate('saml', { failureRedirect: '/' }), 
+//     (req, res) => {
+//         console.log("SAML authentication successful, redirecting to /home...");
+//         res.redirect(`https://localhost:3000/home`);
+//     }
+// );
+
 app.post('/api/auth/saml/callback',
     passport.authenticate('saml', { failureRedirect: '/' }), 
-    (req, res) => {
-        console.log("SAML authentication successful, redirecting to /home...");
-        res.redirect(`https://localhost:3000/home`);
+    async (req, res) => {
+        console.log("SAML authentication successful:", req.user);
+
+        try {
+            // Extract first name, last name, and email from SAML response
+            const firstName = req.user['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] || "Unknown";
+            const lastName = req.user['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'] || "Unknown";
+            const phone = req.user['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone/PhoneNumber'] || "Unknown";
+            const email = req.user.nameID; // Use email as unique identifier
+
+            // Check if user exists in MongoDB
+            let user = await User.findOne({ email });
+
+            if (!user) {
+                // Create new user in MongoDB if they don't exist
+                user = new User({
+                    firstName,
+                    lastName,
+                    email,
+                    phone,
+                    password: null, // No password for SSO users
+                    role: "Student", // Default role
+                    isSSO: true // Set SSO flag
+                });
+                await user.save();
+            }
+
+            // Store user in session
+            req.session.user = {
+                id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                phone: user.phone,
+                role: user.role
+            };
+
+            console.log("User session stored:", req.session.user);
+
+            req.session.save((err) => {  // Ensure session is saved before redirecting
+                if (err) {
+                    console.error("Session save error:", err);
+                    return res.status(500).json({ error: "Failed to save session" });
+                }
+                res.redirect("https://localhost:3000/home"); 
+            });
+
+        } catch (error) {
+            console.error("SAML Login Error:", error);
+            res.status(500).json({ message: "Error logging in with SSO", error: error.message });
+        }
     }
 );
 
-
 app.get('/api/auth/session', (req, res) => {
-    if (req.isAuthenticated()) {
-        res.json({ user: req.user }); // Send user session data
+    if (req.session && req.session.user) {
+        return res.json({ user: req.session.user });
     } else {
-        res.status(401).json({ error: "Not authenticated" });
+        return res.status(401).json({ error: "Not authenticated" });
     }
 });
 
 app.get('/api/auth/logout', (req, res) => {
     req.logout(() => {
-        res.redirect(SAML_LOGOUT_URL);
+        req.session.destroy((err) => {
+            if (err) {
+                console.error("Session destruction error:", err);
+                return res.status(500).json({ error: "Logout failed" });
+            }
+
+            // Clear session cookie
+            res.clearCookie("connect.sid", { path: "/" });
+
+            // Send response immediately instead of redirecting
+            res.json({ message: "Logged out successfully" });
+        });
     });
 });
 
-// Dashboard Route
-app.get('/dashboard', (req, res) => {
-    if (!req.isAuthenticated()) {
-        return res.redirect('/');
-    }
-    res.send(`Welcome ${req.user.nameID}!`);
-});
 
 // === Connect to MongoDB ===
 if (!MONGO_URI) {
@@ -115,27 +199,6 @@ if (!MONGO_URI) {
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB'))
     .catch((err) => console.error('Error connecting to MongoDB:', err.message));
-
-// === Mount Other API Routes ===
-const authRoutes = require('./routes/auth');
-const usersRoutes = require('./routes/users');
-const studentScheduleRoutes = require('./routes/schedules/student');
-const tutorScheduleRoutes = require('./routes/schedules/tutor');
-const attendanceRoutes = require('./routes/attendance');
-const availabilityRoutes = require("./routes/availability");
-const feedbackRoutes = require('./routes/feedback');
-const profileRoutes = require('./routes/profile');
-const sessionRoutes = require('./routes/sessions');
-
-app.use('/api/auth', authRoutes);
-app.use('/api/users', usersRoutes);
-app.use('/api/schedules/student', studentScheduleRoutes);
-app.use('/api/schedules/tutor', tutorScheduleRoutes);
-app.use('/api/attendance', attendanceRoutes);
-app.use("/api/availability", availabilityRoutes);
-app.use('/api/feedback', feedbackRoutes);
-app.use('/api/profile', profileRoutes);
-app.use('/api/sessions', sessionRoutes);
 
 // === Start the Server ===
 const https = require('https');
