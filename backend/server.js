@@ -204,6 +204,23 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 const https = require('https');
 const fs = require('fs');
 
+const sslFolderPath = "./ssl";
+const keyPath = `${sslFolderPath}/server.key`;
+const certPath = `${sslFolderPath}/server.cert`;
+
+// Function to generate SSL certificates if missing
+function generateSelfSignedSSL() {
+    const execSync = require("child_process").execSync;
+    console.log("Generating self-signed SSL certificate...");
+    execSync(`mkdir -p ${sslFolderPath} && openssl req -x509 -newkey rsa:4096 -keyout ${keyPath} -out ${certPath} -days 365 -nodes -subj "/CN=localhost"`);
+    console.log("SSL certificates generated successfully.");
+}
+
+// Check if SSL files exist, otherwise generate them
+if (!fs.existsSync(keyPath) || !fs.existsSync(certPath)) {
+    generateSelfSignedSSL();
+}
+
 // Load SSL Certificate & Key
 const sslOptions = {
     key: fs.readFileSync("./ssl/server.key"), // Ensure these files exist
