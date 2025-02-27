@@ -204,6 +204,7 @@ const SetAvailability = () => {
             </div>
         </div>
     );
+    );
 };
 
 export default SetAvailability;

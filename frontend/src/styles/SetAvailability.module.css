@@ -6,9 +6,15 @@ body {
   height: 100%;
   overflow-x: hidden;
 }
+
+.pageWrapper {
+  height: 100vh;
+  overflow: hidden;
+}
+
 .container {
   display: flex;
-  min-height: 100vh; /* Full viewport height */
+  min-height: 100vh;
 }
 
 .mainContent {
