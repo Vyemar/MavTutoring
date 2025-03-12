@@ -15,6 +15,7 @@ const availabilityRoutes = require("./routes/availability"); // Availability rou
 const feedbackRoutes = require('./routes/feedback'); //feedback routes
 const profileRoutes = require('./routes/profile');
 const sessionRoutes = require('./routes/sessions')
+const analyticsRoutes = require('./routes/analytics');
 
 const app = express();
 
@@ -52,6 +53,7 @@ app.use("/api/availability", availabilityRoutes); // Availability routes
 app.use('/api/feedback', feedbackRoutes); //Feedback routes
 app.use('/api/profile', profileRoutes);//profile routes
 app.use('/api/sessions', sessionRoutes);
+app.use('/api/analytics', analyticsRoutes); //analytics routes
 
 // Connect to MongoDB using mongoose without deprecated options
 const dbUri = process.env.DB;

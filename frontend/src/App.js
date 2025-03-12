@@ -20,6 +20,7 @@ import SystemAnalytics from "./pages/admin/SystemAnalytics";
 import Settings from "./pages/admin/Settings";
 import FindMyTutorProfile from "./pages/student/FindmyTutorProfile";
 import ViewProfile from "./pages/admin/ViewProfile";
+import TutorDetails from "./pages/admin/TutorDetails";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 function ProtectedRoute({ children }) {
@@ -99,6 +100,7 @@ function App() {
         <Route path="/Profile" element={<TutorProfile />} />
         <Route path="/schedule" element={<TutorSchedule />} />
         <Route path="/analytics" element={<SystemAnalytics />} />
+        <Route path="/tutor/:tutorId" element={<TutorDetails />} />
         <Route path="/ViewProfile/:tutorId" element={<ViewProfile />} />
         <Route path="/admin-settings" element={<Settings />} />
       </Routes>
