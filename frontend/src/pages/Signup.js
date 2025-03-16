@@ -30,7 +30,7 @@ function Signup() {
 
         // Use the axiosPostData function to send the form data
         try {
-            const response = await axiosPostData('http://localhost:4000/api/auth/signup', {
+            const response = await axiosPostData('https://localhost:4000/api/auth/signup', {
                 firstName,
                 lastName,
                 phone,

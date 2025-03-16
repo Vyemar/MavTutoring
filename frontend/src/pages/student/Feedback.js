@@ -10,25 +10,59 @@ function Feedback() {
   const [feedback, setFeedback] = useState("");
   const [rating, setRating] = useState(0);
   const [successMessage, setSuccessMessage] = useState("");
+  const [userData, setUserData] = useState(null);
+  const [sessionLoading, setSessionLoading] = useState(true);
+  
+  // Fetch the user session data
+  useEffect(() => {
+    const fetchUserSession = async () => {
+      try {
+        const response = await axios.get("https://localhost:4000/api/auth/session", {
+          withCredentials: true
+        });
+        
+        if (response.data && response.data.user) {
+          setUserData(response.data.user);
+        } else {
+          console.error("No user session found");
+        }
+      } catch (error) {
+        console.error("Error fetching user session:", error);
+      } finally {
+        setSessionLoading(false);
+      }
+    };
+    
+    fetchUserSession();
+  }, []);
 
+  // Fetch tutors data
   useEffect(() => {
     // Fetch tutors from the backend
     axios
-      .get("http://localhost:4000/api/users")
+      .get("https://localhost:4000/api/users", {
+        withCredentials: true
+      })
       .then((response) => {
         const tutorList = response.data.filter((user) => user.role === "Tutor");
         setTutors(tutorList);
-        setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching tutors:", error);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const StudentID = localStorage.getItem("userID"); // Safely access currentUser's ID
+    if (!userData || !userData.id) {
+      alert("User session not found. Please log in again.");
+      return;
+    }
+    
+    const studentId = userData.id;
 
     // Validate inputs
     if (!selectedTutor) {
@@ -46,23 +80,14 @@ function Feedback() {
       return;
     }
 
-    if (!StudentID) {
-      alert("Unable to submit feedback. Please try again later.");
-      return;
-    }
-
-    // Extensive validation
-    if (!selectedTutor || !feedback || rating === 0 || !StudentID) {
-      alert("Please fill in all fields before submitting.");
-      return;
-    }
-
     axios
-      .post("http://localhost:4000/api/feedback", {
-        studentUniqueId: StudentID, // Using MongoDB's _id
+      .post("https://localhost:4000/api/feedback", {
+        studentUniqueId: studentId,
         tutorUniqueId: selectedTutor,
         feedbackText: feedback,
         rating,
+      }, {
+        withCredentials: true // Include cookies for session authentication
       })
       .then((response) => {
         setSuccessMessage("Thank you, your feedback was received!");
@@ -88,8 +113,34 @@ function Feedback() {
       });
   };
 
-  if (loading) {
-    return <p>Loading...</p>;
+  // Show loading state if either session or tutors are still loading
+  if (sessionLoading || loading) {
+    return (
+      <div className={styles.container}>
+        <StudentSidebar selected="feedback"></StudentSidebar>
+        <div className={styles.mainContent}>
+          <h1 className={styles.heading}>Give Feedback</h1>
+          <div className={styles.loadingContainer}>
+            <p>Loading...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error if no user session is found
+  if (!userData) {
+    return (
+      <div className={styles.container}>
+        <StudentSidebar selected="feedback"></StudentSidebar>
+        <div className={styles.mainContent}>
+          <h1 className={styles.heading}>Give Feedback</h1>
+          <div className={styles.errorContainer}>
+            <p>Session expired or not found. Please log in again.</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -8,7 +8,7 @@ function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
-    const [user, setUser] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -18,9 +18,6 @@ function Login() {
             try {
                 const response = await axiosGetData('https://localhost:4000/api/auth/session'); // Fetch user session
                 if (response.user) {
-                    localStorage.setItem('role', response.user.role);
-                    localStorage.setItem('userID', response.user.id);
-                    setUser(response.user);
                     navigate('/home'); // Redirect if already logged in
                 }
             } catch (error) {
@@ -33,32 +30,63 @@ function Login() {
 
     // Handle traditional email/password login
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Prevent form submission from refreshing the page
+        console.log("Login form submitted", { email, password });
 
-        const validationError = await validateLogin({ email, password });
+        const validationError = validateLogin({ email, password });
         setErrors(validationError);
 
-        if (!validationError.email && !validationError.password) {
+        if (Object.keys(validationError).length === 0) {
+            setIsLoading(true);
             try {
-                const response = await axiosPostData('http://localhost:4000/api/auth/login', { email, password });
+                console.log("Sending login request to server");
+                const response = await axiosPostData('https://localhost:4000/api/auth/login', { email, password });
+                console.log("Login response received:", response);
 
-                if (response.success) {
-                    // Store user data in localStorage
-                    localStorage.setItem('role', response.role);
-                    localStorage.setItem('userID', response.ID);
+                // Check if response or response.data is undefined
+                if (!response || !response.data) {
+                    throw new Error("Invalid response format");
+                }
 
-                    // Navigate to home
+                // Set user state and navigate to home
+                if (response.data.success) {
                     navigate('/home');
+                } else {
+                    console.log("Login failed - response was not successful");
+                    setErrors({ password: response.data.message || "Invalid email or password" });
                 }
             } catch (error) {
-                if (error.response && error.response.status === 400) {
-                    setErrors((prevErrors) => ({
-                        ...prevErrors,
-                        password: error.response.data.error,
-                    }));
+                console.error("Login request failed", error);
+                
+                // Check what type of error we're dealing with
+                console.log("Error type:", typeof error);
+                console.log("Error properties:", Object.keys(error));
+                
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    console.log("Error response data:", error.response.data);
+                    console.log("Error response status:", error.response.status);
+                    
+                    if (error.response.status === 400) {
+                        setErrors((prevErrors) => ({
+                            ...prevErrors,
+                            password: error.response.data.error || "Invalid credentials",
+                        }));
+                    } else {
+                        setErrors({ password: `Server error: ${error.response.status}` });
+                    }
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    console.log("No response received from server");
+                    setErrors({ password: "No response from server. Please check if the server is running." });
                 } else {
-                    console.error("Login error", error);
+                    // Something happened in setting up the request that triggered an Error
+                    console.log("Error message:", error.message);
+                    setErrors({ password: `Request setup error: ${error.message}` });
                 }
+            } finally {
+                setIsLoading(false);
             }
         }
     };
@@ -89,10 +117,12 @@ function Login() {
                             <label htmlFor="email" className={styles.label}>Email address</label>
                             <input
                                 type="email"
+                                id="email"
                                 placeholder="Enter email"
                                 className="form-control input"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
+                                required
                             />
                             {errors.email && <div className={styles.textDanger}>{errors.email}</div>}
                         </div>
@@ -100,20 +130,30 @@ function Login() {
                             <label htmlFor="password" className={styles.label}>Password</label>
                             <input
                                 type="password"
+                                id="password"
                                 placeholder="Enter password"
                                 className="form-control input"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                required
                             />
                             {errors.password && <div className={styles.textDanger}>{errors.password}</div>}
                         </div>
-                        <button type="submit" className={`btn ${styles.loginButton}`}>
-                            Login
+                        <button 
+                            type="submit" 
+                            className={`btn ${styles.loginButton}`}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? 'Logging in...' : 'Login'}
                         </button>
                     </form>
 
                     {/* SSO Login Button */}
-                    <button onClick={handleSSOLogin} className={`btn ${styles.ssologinButton}`}>
+                    <button 
+                        onClick={handleSSOLogin} 
+                        className={`btn ${styles.ssologinButton}`}
+                        disabled={isLoading}
+                    >
                         Login with SSO
                     </button>
 

@@ -18,27 +18,6 @@ const SESSION_SECRET = process.env.SESSION_SECRET || 'default_secret';
 // === Load Models ===
 const User = require('./models/User');
 
-// === Mount Other API Routes ===
-const authRoutes = require('./routes/auth');
-const usersRoutes = require('./routes/users');
-const studentScheduleRoutes = require('./routes/schedules/student');
-const tutorScheduleRoutes = require('./routes/schedules/tutor');
-const attendanceRoutes = require('./routes/attendance');
-const availabilityRoutes = require("./routes/availability");
-const feedbackRoutes = require('./routes/feedback');
-const profileRoutes = require('./routes/profile');
-const sessionRoutes = require('./routes/sessions');
-
-app.use('/api/auth', authRoutes);
-app.use('/api/users', usersRoutes);
-app.use('/api/schedules/student', studentScheduleRoutes);
-app.use('/api/schedules/tutor', tutorScheduleRoutes);
-app.use('/api/attendance', attendanceRoutes);
-app.use("/api/availability", availabilityRoutes);
-app.use('/api/feedback', feedbackRoutes);
-app.use('/api/profile', profileRoutes);
-app.use('/api/sessions', sessionRoutes);
-
 // === SAML Configuration ===
 const SAML_ENTRY_POINT = "https://login.microsoftonline.com/3d3ccb0e-386a-4644-a386-8c6e0f969126/saml2";
 const SAML_ISSUER = "CSESDTutorTechApp";
@@ -99,14 +78,6 @@ passport.deserializeUser((user, done) => done(null, user));
 
 // === Authentication Routes ===
 app.get('/api/auth/saml', passport.authenticate('saml', { failureRedirect: '/' }));
-
-// app.post('/api/auth/saml/callback',
-//     passport.authenticate('saml', { failureRedirect: '/' }), 
-//     (req, res) => {
-//         console.log("SAML authentication successful, redirecting to /home...");
-//         res.redirect(`https://localhost:3000/home`);
-//     }
-// );
 
 app.post('/api/auth/saml/callback',
     passport.authenticate('saml', { failureRedirect: '/' }), 
@@ -189,6 +160,26 @@ app.get('/api/auth/logout', (req, res) => {
     });
 });
 
+// === Mount Other API Routes ===
+const authRoutes = require('./routes/auth');
+const usersRoutes = require('./routes/users');
+const studentScheduleRoutes = require('./routes/schedules/student');
+const tutorScheduleRoutes = require('./routes/schedules/tutor');
+const attendanceRoutes = require('./routes/attendance');
+const availabilityRoutes = require("./routes/availability");
+const feedbackRoutes = require('./routes/feedback');
+const profileRoutes = require('./routes/profile');
+const sessionRoutes = require('./routes/sessions');
+
+app.use('/api/auth', authRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/api/schedules/student', studentScheduleRoutes);
+app.use('/api/schedules/tutor', tutorScheduleRoutes);
+app.use('/api/attendance', attendanceRoutes);
+app.use("/api/availability", availabilityRoutes);
+app.use('/api/feedback', feedbackRoutes);
+app.use('/api/profile', profileRoutes);
+app.use('/api/sessions', sessionRoutes);
 
 // === Connect to MongoDB ===
 if (!MONGO_URI) {
