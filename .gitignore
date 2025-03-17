@@ -1,10 +1,6 @@
 # SSL certificates
-backend/ssl/
-**/ssl/
-*.key
-*.cert
-*.pem
-*.crt
+backend/ssl/server.key
+backend/ssl/server.crt
 
 # Environment variables
 backend/.env
