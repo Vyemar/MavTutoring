@@ -1,2 +1,10 @@
+# SSL certificates
+backend/ssl/
+**/ssl/
+*.key
+*.cert
+*.pem
+*.crt
+
+# Environment variables
 backend/.env
-.gitignore
