@@ -15,7 +15,7 @@ function ManageUsers() {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('http://localhost:4000/api/users');
+                const response = await axios.get('https://localhost:4000/api/users');
                 const filteredUsers = response.data
                     .filter(user => selectedRole === "All" ? true : user.role === selectedRole)
                     .sort((a, b) => a.lastName.localeCompare(b.lastName));

@@ -20,7 +20,7 @@ function ViewProfile() {
     const fetchTutorProfile = async () => {
       try {
         const profileResponse = await axios.get(
-          `http://localhost:4000/api/profile/${tutorId}`
+          `https://localhost:4000/api/profile/${tutorId}`
         );
         setProfile(profileResponse.data);
       } catch (error) {
@@ -31,7 +31,7 @@ function ViewProfile() {
     const fetchTutorAvailability = async () => {
       try {
         const availabilityResponse = await axios.get(
-          `http://localhost:4000/api/availability/${tutorId}`
+          `https://localhost:4000/api/availability/${tutorId}`
         );
 
         // Convert availability data to calendar events
@@ -88,7 +88,7 @@ function ViewProfile() {
     const fetchUserData = async () => {
       try {
         const userResponse = await axios.get(
-          `http://localhost:4000/api/users/${tutorId}`
+          `https://localhost:4000/api/users/${tutorId}`
         );
         setUser(userResponse.data);
       } catch (error) {

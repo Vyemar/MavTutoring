@@ -21,8 +21,7 @@ function Home() {
                     navigate("/login", { replace: true }); // Redirect to login if not authenticated
                 }
             } catch (error) {
-                console.error("Session fetch failed:", error);
-                navigate("/login"); // Redirect to login on error
+                navigate("/login"); // Redirect to login
             }
         }
 

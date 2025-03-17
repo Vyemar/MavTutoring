@@ -8,6 +8,33 @@ import { axiosGetData } from '../../utils/api'; // Import the API utility
 
 const localizer = momentLocalizer(moment);
 
+// Define custom formats for the calendar
+const formats = {
+  dayFormat: 'dddd', // Use full day name (Monday, Tuesday, etc.)
+};
+
+// Custom components for the calendar
+const customComponents = {
+  week: {
+    header: ({ date }) => {
+      return (
+        <div style={{ textAlign: "center", fontWeight: "bold" }}>
+          {moment(date).format('dddd')}
+        </div>
+      );
+    },
+  },
+  work_week: {
+    header: ({ date }) => {
+      return (
+        <div style={{ textAlign: "center", fontWeight: "bold" }}>
+          {moment(date).format('dddd')}
+        </div>
+      );
+    },
+  }
+};
+
 const SetAvailability = () => {
     const [events, setEvents] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -43,7 +70,9 @@ const SetAvailability = () => {
             
             try {
                 setIsLoading(true);
-                const response = await fetch(`https://localhost:4000/api/availability/${userData.id}`);
+                const response = await fetch(`https://localhost:4000/api/availability/${userData.id}`, {
+                    credentials: 'include' // Include cookies for session authentication
+                });
                 
                 if (!response.ok) {
                     throw new Error(`Error fetching availability: ${response.status}`);
@@ -149,12 +178,6 @@ const SetAvailability = () => {
         }
     };
 
-    // Custom header component
-    const customDayHeader = ({ label }) => {
-        const dayName = label.split(" ")[0]; // Extract only the day name
-        return <div style={{ textAlign: "center", fontWeight: "bold" }}>{dayName}</div>;
-    };
-
     const handleSubmitAvailability = async () => {
         if (!userData || !userData.id) {
             alert("User session not found. Please log in again.");
@@ -226,11 +249,8 @@ const SetAvailability = () => {
                                 max={moment().hours(18).minutes(0).toDate()}
                                 step={30}
                                 timeslots={2}
-                                components={{
-                                    work_week: {
-                                        header: customDayHeader,
-                                    },
-                                }}
+                                formats={formats}
+                                components={customComponents}
                             />
                         </div>
                         <button 

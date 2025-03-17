@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import styles from '../styles/Signup.module.css'; // Import CSS module
-import { validateSignup } from '../utils/SignupValidation'; // Import validation function
-import { axiosPostData } from '../utils/api'; // Import the axios post function
+import styles from '../styles/Signup.module.css';
+import { validateSignup } from '../utils/SignupValidation';
+import { axiosPostData } from '../utils/api';
 
 function Signup() {
     const [firstName, setFirstName] = useState('');
@@ -11,22 +11,24 @@ function Signup() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('Student');
-    const [errors, setErrors] = useState({}); // State for storing validation errors
-    const [successMessage, setSuccessMessage] = useState(''); // State for success message
-    const navigate = useNavigate(); // Hook for navigation
+    const [errors, setErrors] = useState({});
+    const [successMessage, setSuccessMessage] = useState('');
+    const [serverError, setServerError] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // Clear any previous errors
+        setErrors({});
+        setServerError('');
+
         // Validate form inputs
         const validationError = validateSignup({ firstName, lastName, phone, email, password });
         if (validationError.firstName || validationError.lastName || validationError.phone || validationError.email || validationError.password) {
-            setErrors(validationError); // Set errors if validation fails
+            setErrors(validationError);
             return;
         }
-
-        // Clear any previous errors
-        setErrors({});
 
         // Use the axiosPostData function to send the form data
         try {
@@ -38,6 +40,7 @@ function Signup() {
                 password, 
                 role
             });
+            
             console.log(response);
             setSuccessMessage("Signup successful!");
 
@@ -46,13 +49,30 @@ function Signup() {
 
         } catch (error) {
             console.error('There was an error submitting the form!', error);
+            
+            // Check if it's a duplicate email error
+            if (error.response && error.response.data) {
+                if (error.response.data.error === "Email already in use" || 
+                    error.response.data.message?.includes("duplicate") || 
+                    error.response.data.error?.includes("duplicate") ||
+                    error.response.message?.includes("E11000")) {
+                    setErrors({...errors, email: "This email is already registered"});
+                } else {
+                    // Handle other server errors
+                    setServerError(error.response.data.message || 
+                                  error.response.data.error || 
+                                  "An error occurred during signup. Please try again.");
+                }
+            } else {
+                // Network or other errors
+                setServerError("Unable to connect to the server. Please try again later.");
+            }
         }
     };
 
     return (
         <div className={`d-flex justify-content-center align-items-center vh-100 ${styles.background}`}>
             <div className={styles.container}>
-                {/* The product name outside and above the form */}
                 <div className={styles.productName}>
                     bugHouse
                 </div>
@@ -60,6 +80,8 @@ function Signup() {
                 <div className={`shadow-lg ${styles.formContainer}`}>
                     <h2 className={styles.title}>Sign Up</h2>
                     {successMessage && <div className="text-success">{successMessage}</div>}
+                    {serverError && <div className={styles.textDanger}>{serverError}</div>}
+                    
                     <form onSubmit={handleSubmit}>
                         <div className={styles.row}>
                             <div className={styles.column}>
@@ -130,7 +152,6 @@ function Signup() {
                                         <option value="Student">Student</option>
                                         <option value="Tutor">Tutor</option>
                                 </select>
-                                {errors.email && <div className={styles.textDanger}>{errors.email}</div>}
                             </div>
                         </div>
                         <button type="submit" className={`btn ${styles.signupButton}`}>

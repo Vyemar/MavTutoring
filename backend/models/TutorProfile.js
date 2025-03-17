@@ -35,7 +35,8 @@ const tutorProfileSchema = new mongoose.Schema({
     },
     currentYear: {
         type: String,
-        enum: ['Freshman', 'Sophomore', 'Junior', 'Senior', "Master's Student", 'PhD Student'],
+        enum: ['Freshman', 'Sophomore', 'Junior', 'Senior', "Master's Student", 'PhD Student', 'Not Specified'],
+        default: 'Not Specified',
         required: true
     },
     createdAt: {
