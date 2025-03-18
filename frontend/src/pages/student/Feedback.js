@@ -3,6 +3,14 @@ import axios from "axios";
 import styles from "../../styles/Feedback.module.css";
 import StudentSidebar from "../../components/Sidebar/StudentSidebar";
 
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
+
 function Feedback() {
   const [tutors, setTutors] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +25,7 @@ function Feedback() {
   useEffect(() => {
     const fetchUserSession = async () => {
       try {
-        const response = await axios.get("https://localhost:4000/api/auth/session", {
+        const response = await axios.get(`${BACKEND_URL}/api/auth/session`, {
           withCredentials: true
         });
         
@@ -40,7 +48,7 @@ function Feedback() {
   useEffect(() => {
     // Fetch tutors from the backend
     axios
-      .get("https://localhost:4000/api/users", {
+      .get(`${BACKEND_URL}/api/users`, {
         withCredentials: true
       })
       .then((response) => {
@@ -81,7 +89,7 @@ function Feedback() {
     }
 
     axios
-      .post("https://localhost:4000/api/feedback", {
+      .post(`${BACKEND_URL}/api/feedback`, {
         studentUniqueId: studentId,
         tutorUniqueId: selectedTutor,
         feedbackText: feedback,

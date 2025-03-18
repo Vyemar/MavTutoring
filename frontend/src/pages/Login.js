@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import styles from '../styles/Login.module.css'; // Import CSS module
-import { validateLogin } from '../utils/LoginValidation'; // Import validation function
-import { axiosPostData, axiosGetData } from '../utils/api'; // Import API functions
+import styles from '../styles/Login.module.css';
+import { validateLogin } from '../utils/LoginValidation';
+import { axiosPostData, axiosGetData } from '../utils/api';
+
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -16,7 +24,7 @@ function Login() {
     useEffect(() => {
         async function checkSession() {
             try {
-                const response = await axiosGetData('https://localhost:4000/api/auth/session'); // Fetch user session
+                const response = await axiosGetData(`${BACKEND_URL}/api/auth/session`);
                 if (response.user) {
                     navigate('/home'); // Redirect if already logged in
                 }
@@ -30,7 +38,7 @@ function Login() {
 
     // Handle traditional email/password login
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Prevent form submission from refreshing the page
+        e.preventDefault();
         console.log("Login form submitted", { email, password });
 
         const validationError = validateLogin({ email, password });
@@ -40,7 +48,7 @@ function Login() {
             setIsLoading(true);
             try {
                 console.log("Sending login request to server");
-                const response = await axiosPostData('https://localhost:4000/api/auth/login', { email, password });
+                const response = await axiosPostData(`${BACKEND_URL}/api/auth/login`, { email, password });
                 console.log("Login response received:", response);
 
                 // Check if response or response.data is undefined
@@ -57,10 +65,6 @@ function Login() {
                 }
             } catch (error) {
                 console.error("Login request failed", error);
-                
-                // Check what type of error we're dealing with
-                console.log("Error type:", typeof error);
-                console.log("Error properties:", Object.keys(error));
                 
                 if (error.response) {
                     // The request was made and the server responded with a status code
@@ -93,7 +97,8 @@ function Login() {
 
     // Handle SSO login
     const handleSSOLogin = () => {
-        window.location.href = "https://localhost:4000/api/auth/saml"; // Redirect to SAML login
+        const ssoUrl = `${BACKEND_URL}/api/auth/saml`;
+        window.location.href = ssoUrl;
     };
 
     return (

@@ -7,6 +7,14 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import styles from "../../styles/FindMyTutorProfile.module.css";
 import StudentSidebar from "../../components/Sidebar/AdminSidebar";
 
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
+
 const localizer = momentLocalizer(moment);
 
 function ViewProfile() {
@@ -20,7 +28,7 @@ function ViewProfile() {
     const fetchTutorProfile = async () => {
       try {
         const profileResponse = await axios.get(
-          `https://localhost:4000/api/profile/${tutorId}`
+          `${BACKEND_URL}/api/profile/${tutorId}`
         );
         setProfile(profileResponse.data);
       } catch (error) {
@@ -31,7 +39,7 @@ function ViewProfile() {
     const fetchTutorAvailability = async () => {
       try {
         const availabilityResponse = await axios.get(
-          `https://localhost:4000/api/availability/${tutorId}`
+          `${BACKEND_URL}/api/availability/${tutorId}`
         );
 
         // Convert availability data to calendar events
@@ -88,7 +96,7 @@ function ViewProfile() {
     const fetchUserData = async () => {
       try {
         const userResponse = await axios.get(
-          `https://localhost:4000/api/users/${tutorId}`
+          `${BACKEND_URL}/api/users/${tutorId}`
         );
         setUser(userResponse.data);
       } catch (error) {

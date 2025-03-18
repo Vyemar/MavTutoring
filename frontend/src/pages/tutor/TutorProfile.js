@@ -3,6 +3,14 @@ import axios from "axios";
 import styles from "../../styles/FindMyTutorProfile.module.css"; // Updated style import
 import TutorSidebar from "../../components/Sidebar/TutorSidebar";
 
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
+
 function TutorProfile() {
   const [profile, setProfile] = useState({
     profilePicture: null,
@@ -25,7 +33,7 @@ function TutorProfile() {
   useEffect(() => {
     const fetchUserSession = async () => {
       try {
-        const response = await axios.get("https://localhost:4000/api/auth/session", {
+        const response = await axios.get(`${BACKEND_URL}/api/auth/session`, {
           withCredentials: true
         });
         
@@ -54,7 +62,7 @@ function TutorProfile() {
       
       // Try to get the profile
       try {
-        const response = await axios.get(`https://localhost:4000/api/profile/${userData.id}`, {
+        const response = await axios.get(`${BACKEND_URL}/api/profile/${userData.id}`, {
           withCredentials: true
         });
         console.log("Profile data received:", response.data);
@@ -142,7 +150,7 @@ function TutorProfile() {
       }
   
       // Make the request - this will create a new profile if one doesn't exist
-      await axios.post('https://localhost:4000/api/profile', formData, {
+      await axios.post(`${BACKEND_URL}/api/profile`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true
       });

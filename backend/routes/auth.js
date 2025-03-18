@@ -3,11 +3,21 @@ const router = express.Router();
 const passport = require('passport');
 const User = require('../models/User');
 
+// Get configuration from environment variables
+const PROTOCOL = process.env.PROTOCOL || 'https';
+const BACKEND_HOST = process.env.BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.BACKEND_PORT || 4000;
+const FRONTEND_HOST = process.env.FRONTEND_HOST || 'localhost';
+const FRONTEND_PORT = process.env.FRONTEND_PORT || 3000;
+
+// Construct URLs dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
+const FRONTEND_URL = `${PROTOCOL}://${FRONTEND_HOST}:${FRONTEND_PORT}`;
+
 // === SAML Configuration ===
-// These could also be moved to a config file and imported
 const SAML_ENTRY_POINT = "https://login.microsoftonline.com/3d3ccb0e-386a-4644-a386-8c6e0f969126/saml2";
 const SAML_ISSUER = "CSESDTutorTechApp";
-const SAML_CALLBACK_URL = "https://localhost:4000/api/auth/saml/callback";
+const SAML_CALLBACK_URL = `${BACKEND_URL}/api/auth/saml/callback`;
 const SAML_LOGOUT_URL = "https://login.microsoftonline.com/3d3ccb0e-386a-4644-a386-8c6e0f969126/saml2";
 const SAML_CERT = `-----BEGIN CERTIFICATE-----
 MIIC8DCCAdigAwIBAgIQX5Xik+PqsIVE5xiJqcWsADANBgkqhkiG9w0BAQsFADA0MTIwMAYDVQQDEylNaWNyb3NvZnQgQXp1cmUgRmVkZXJhdGVkIFNTTyBDZXJ0aWZpY2F0ZTAeFw0yNDExMTUwMzEwMDRaFw0yNzExMTUwMzEwMDNaMDQxMjAwBgNVBAMTKU1pY3Jvc29mdCBBenVyZSBGZWRlcmF0ZWQgU1NPIENlcnRpZmljYXRlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzgZggY01vs1Oo3x+qZi0MGgkHHxQNgeyzJX7OWJ/FLa1BcFwX8Q67E8YDlPd5d0muhLo5TYGmGpZWVS7YQmLAf2/Lkacr5ZbjSq9b4ub5FvPK026uHv+Abx4TKwXs/dfB78fLvK68o1nn43281sTjmTbkGCFfAXAPSdVKK6N9bsRsCbXbikVtBpMd+Ko7Ug1DW1PDCDEX/GcMEpaGoUuiz+B9GWf1e+IfRC/vyxpiylRRL7Akt8bQmBwq4RcsXEpQbkRInmABLKdeixk/MOCLrwVlwRjFF+yXyGcO5PgyYt5MjhWGvDR/G6yTk98KPEWyhjgVxEvyOrR5uE9qigopQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQBK6YHBscAckggeZjRjZwymfz2t75YT5/wJJqUMTOBWeykv1BJPE+/A5WuIXLbDnHM0Zod1guVzHj65hJRo9cjGO9zCLmaJMU2gooFWei9IclVJ4xSjhHTXxXTBUSDONdicdqku6RfDgqPEZ1MR2XXevlafudR1pdtR+8ta0IfB/s/HaqwN2I/O2ZPhwhmA+it6rVsXpugeYTQbl/1D149Iw2MNB3P+vBw9lZRFSpUCDdcIB/OtSpt70nGk7fnyviTuaevACU9Q2fz31VoK3HpaGsrp3R3QnGAeF7g8E/6zXwButdasHrd3aS7bnRK1ODmKLoD3yuCHYWaECLNRJezz
@@ -261,8 +271,8 @@ router.post('/saml/callback',
                     return res.status(500).json({ error: "Failed to save session" });
                 }
                 
-                // Simply redirect to home page - we're using session data now
-                res.redirect("https://localhost:3000/home");
+                // Redirect to the frontend home page using environment variables
+                res.redirect(`${FRONTEND_URL}/home`);
             });
 
         } catch (error) {

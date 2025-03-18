@@ -4,6 +4,14 @@ import styles from '../styles/Signup.module.css';
 import { validateSignup } from '../utils/SignupValidation';
 import { axiosPostData } from '../utils/api';
 
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
+
 function Signup() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -32,7 +40,7 @@ function Signup() {
 
         // Use the axiosPostData function to send the form data
         try {
-            const response = await axiosPostData('https://localhost:4000/api/auth/signup', {
+            const response = await axiosPostData(`${BACKEND_URL}/api/auth/signup`, {
                 firstName,
                 lastName,
                 phone,

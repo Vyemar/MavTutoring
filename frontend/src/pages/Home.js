@@ -7,49 +7,48 @@ import styles from '../styles/Home.module.css';
 import { axiosGetData } from "../utils/api";
 import { useEffect, useState } from "react";
 
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
+
 function Home() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
-
+    
     useEffect(() => {
         async function fetchUserSession() {
             try {
-                const response = await axiosGetData("https://localhost:4000/api/auth/session");
+                const response = await axiosGetData(`${BACKEND_URL}/api/auth/session`);
                 if (response.user) {
                     setUser(response.user);
                 } else {
                     navigate("/login", { replace: true }); // Redirect to login if not authenticated
                 }
             } catch (error) {
+                console.error("Session check failed:", error);
                 navigate("/login"); // Redirect to login
             }
         }
-
         fetchUserSession();
     }, [navigate]);
 
-    // // Get the role from localStorage (or context if you're using React Context API)
-    // const role = localStorage.getItem('role');
-
-    // // Logout function to clear localStorage and navigate back to login page
-    // const handleLogout = () => {
-    //     localStorage.removeItem('role');
-    //     navigate('/login'); // Redirect back to the login page
-    // };
-
     const handleLogout = async () => {
         try {
-            await axiosGetData("https://localhost:4000/api/auth/logout");
+            await axiosGetData(`${BACKEND_URL}/api/auth/logout`);
             navigate("/login"); // Redirect after logout
         } catch (error) {
             console.error("Logout failed:", error);
         }
     };
-
+    
     if (!user) {
         return null; // Return null if user is not authenticated
     }
-
+    
     // Conditional rendering based on the user's role
     switch (user.role) {
         case 'Admin':
@@ -66,7 +65,7 @@ function Home() {
                     <button className={styles.logoutButton} onClick={handleLogout}>Logout</button>
                 </div>
             );
-        }
     }
+}
 
 export default Home;

@@ -3,6 +3,14 @@ import axios from 'axios';
 import styles from '../../styles/StudentSchedule.module.css';
 import StudentSidebar from '../../components/Sidebar/StudentSidebar';
 
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
+
 function StudentSchedule() {
   const [tutors, setTutors] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
@@ -21,7 +29,7 @@ function StudentSchedule() {
   useEffect(() => {
     const fetchUserSession = async () => {
       try {
-        const response = await axios.get('https://localhost:4000/api/auth/session', {
+        const response = await axios.get(`${BACKEND_URL}/api/auth/session`, {
           withCredentials: true
         });
         
@@ -46,7 +54,7 @@ function StudentSchedule() {
     if (!userData || !userData.id) return;
     
     try {
-      const response = await axios.get(`https://localhost:4000/api/sessions/student/${userData.id}`, {
+      const response = await axios.get(`${BACKEND_URL}/api/sessions/student/${userData.id}`, {
         withCredentials: true
       });
       setUpcomingSessions(response.data);
@@ -62,7 +70,7 @@ function StudentSchedule() {
     try {
       setError('');
       const response = await axios.get(
-        `https://localhost:4000/api/sessions/availability/${selectedTutor}/${selectedDate}`,
+        `${BACKEND_URL}/api/sessions/availability/${selectedTutor}/${selectedDate}`,
         { withCredentials: true }
       );
       
@@ -88,7 +96,7 @@ function StudentSchedule() {
     if (userData && userData.id) {
       const fetchTutors = async () => {
         try {
-          const response = await axios.get('https://localhost:4000/api/users/tutors', {
+          const response = await axios.get(`${BACKEND_URL}/api/users/tutors`, {
             withCredentials: true
           });
           setTutors(response.data);
@@ -133,7 +141,7 @@ function StudentSchedule() {
     try {
       const localDateTime = new Date(`${selectedDate}T${selectedTime}`);
       
-      const response = await axios.post('https://localhost:4000/api/sessions', {
+      const response = await axios.post(`${BACKEND_URL}/api/sessions`, {
         tutorId: selectedTutor,
         studentId: userData.id, // Use session data instead of localStorage
         sessionTime: localDateTime.toISOString(),

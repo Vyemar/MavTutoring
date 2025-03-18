@@ -25,13 +25,21 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { axiosGetData } from "./utils/api";
 
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
+
 function ProtectedRoute({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
 
   useEffect(() => {
     async function checkSession() {
       try {
-        const response = await axiosGetData("https://localhost:3000/api/auth/session"); // Fetch session from backend
+        const response = await axiosGetData(`${BACKEND_URL}/api/auth/session`); // Fetch session from backend
         if (response.user) {
           setIsAuthenticated(true);
         } else {

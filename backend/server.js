@@ -6,25 +6,41 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
+const https = require('https');
+const http = require('http');
+const fs = require('fs');
 require('dotenv').config(); // Load environment variables
 
 const app = express();
 
 // === Load Environment Variables ===
 const MONGO_URI = process.env.DB;
-const PORT = process.env.PORT || 4000;
+const PROTOCOL = process.env.PROTOCOL || 'https';
+const USE_HTTPS = PROTOCOL === 'https';
+
+const BACKEND_HOST = process.env.BACKEND_HOST || 'localhost';
+const FRONTEND_HOST = process.env.FRONTEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.BACKEND_PORT || 4000;
+const FRONTEND_PORT = process.env.FRONTEND_PORT || 3000;
+
+const FRONTEND_URL = `${PROTOCOL}://${FRONTEND_HOST}:${FRONTEND_PORT}`;
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 const SESSION_SECRET = process.env.SESSION_SECRET || 'default_secret';
+
+// Log the configuration
+console.log(`Protocol: ${PROTOCOL}`);
+console.log(`Frontend URL: ${FRONTEND_URL}`);
+console.log(`Backend URL: ${BACKEND_URL}`);
 
 // === Load Models ===
 const User = require('./models/User');
 
 // === Middleware ===
-
-// CORS configuration
+// CORS configuration with dynamic origin
 app.use(cors({
-    origin: "https://localhost:3000", // Allow frontend requests
+    origin: FRONTEND_URL,
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"], // Allow common HTTP methods
+    methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
@@ -38,8 +54,8 @@ app.use(session({
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { 
-        secure: false, // Set to true in production
+    cookie: {
+        secure: USE_HTTPS, // Set secure based on protocol
         sameSite: "lax"
     }
 }));
@@ -94,20 +110,70 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .catch((err) => console.error('Error connecting to MongoDB:', err.message));
 
 // === Start the Server ===
-const https = require('https');
-const fs = require('fs');
-
 const sslFolderPath = "./ssl";
 const keyPath = `${sslFolderPath}/server.key`;
 const certPath = `${sslFolderPath}/server.cert`;
 
-// Load SSL Certificate & Key
-const sslOptions = {
-    key: fs.readFileSync("./ssl/server.key"), 
-    cert: fs.readFileSync("./ssl/server.cert")
-};
-
-// Start HTTPS Server
-https.createServer(sslOptions, app).listen(PORT, () => {
-    console.log(`HTTPS Server running on https://localhost:${PORT}`);
-});
+// Start either HTTP or HTTPS server based on protocol setting
+if (USE_HTTPS) {
+    // Check if SSL certificates exist
+    if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
+        try {
+            // Load SSL Certificate & Key
+            const sslOptions = {
+                key: fs.readFileSync(keyPath),
+                cert: fs.readFileSync(certPath)
+            };
+            
+            // Start HTTPS Server
+            https.createServer(sslOptions, app).listen(BACKEND_PORT, () => {
+                console.log(`HTTPS Server running on ${BACKEND_URL}`);
+                console.log(`CORS enabled for origin: ${FRONTEND_URL}`);
+            });
+        } catch (error) {
+            console.error("Failed to start HTTPS server:", error.message);
+            console.log("Falling back to HTTP server...");
+            
+            // Update CORS for HTTP
+            const httpFrontendUrl = FRONTEND_URL.replace('https://', 'http://');
+            app.use(cors({
+                origin: httpFrontendUrl,
+                credentials: true,
+                methods: ["GET", "POST", "PUT", "DELETE"],
+                allowedHeaders: ["Content-Type", "Authorization"]
+            }));
+            
+            // Fallback to HTTP server if certificate loading fails
+            http.createServer(app).listen(BACKEND_PORT, () => {
+                const httpBackendUrl = BACKEND_URL.replace('https://', 'http://');
+                console.log(`HTTP Server (fallback) running on ${httpBackendUrl}`);
+                console.log(`CORS updated for origin: ${httpFrontendUrl}`);
+            });
+        }
+    } else {
+        console.error(`SSL certificates not found at ${sslFolderPath}. Cannot start HTTPS server.`);
+        console.log("Falling back to HTTP server...");
+        
+        // Update CORS for HTTP
+        const httpFrontendUrl = FRONTEND_URL.replace('https://', 'http://');
+        app.use(cors({
+            origin: httpFrontendUrl,
+            credentials: true,
+            methods: ["GET", "POST", "PUT", "DELETE"],
+            allowedHeaders: ["Content-Type", "Authorization"]
+        }));
+        
+        // Start HTTP Server if certificates don't exist
+        http.createServer(app).listen(BACKEND_PORT, () => {
+            const httpBackendUrl = BACKEND_URL.replace('https://', 'http://');
+            console.log(`HTTP Server (fallback) running on ${httpBackendUrl}`);
+            console.log(`CORS updated for origin: ${httpFrontendUrl}`);
+        });
+    }
+} else {
+    // Explicitly start HTTP server if protocol is not HTTPS
+    http.createServer(app).listen(BACKEND_PORT, () => {
+        console.log(`HTTP Server running on ${BACKEND_URL}`);
+        console.log(`CORS enabled for origin: ${FRONTEND_URL}`);
+    });
+}

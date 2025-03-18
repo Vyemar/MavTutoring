@@ -6,6 +6,14 @@ import styles from "../../styles/SetAvailability.module.css";
 import TutorSidebar from '../../components/Sidebar/TutorSidebar';
 import { axiosGetData } from '../../utils/api'; // Import the API utility
 
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
+
 const localizer = momentLocalizer(moment);
 
 // Define custom formats for the calendar
@@ -44,7 +52,7 @@ const SetAvailability = () => {
     useEffect(() => {
         const fetchUserSession = async () => {
             try {
-                const sessionResponse = await axiosGetData('https://localhost:4000/api/auth/session');
+                const sessionResponse = await axiosGetData(`${BACKEND_URL}/api/auth/session`);
                 
                 if (sessionResponse && sessionResponse.user) {
                     setUserData(sessionResponse.user);
@@ -70,7 +78,7 @@ const SetAvailability = () => {
             
             try {
                 setIsLoading(true);
-                const response = await fetch(`https://localhost:4000/api/availability/${userData.id}`, {
+                const response = await fetch(`${BACKEND_URL}/api/availability/${userData.id}`, {
                     credentials: 'include' // Include cookies for session authentication
                 });
                 
@@ -198,7 +206,7 @@ const SetAvailability = () => {
             });
 
         try {
-            const response = await fetch(`https://localhost:4000/api/availability/${userData.id}/submit`, {
+            const response = await fetch(`${BACKEND_URL}/api/availability/${userData.id}/submit`, {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json"
