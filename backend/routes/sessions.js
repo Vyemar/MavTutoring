@@ -220,4 +220,26 @@ function generateTimeSlots(startTime, endTime, bookedSessions, date) {
   return slots;
 }
 
+
+// GET sessions by tutorID
+router.get('/', async (req, res) => {
+  try {
+      // Check if tutorID query parameter is provided
+      if (req.query.tutorID) {
+          const sessions = await Session.find({ 
+              tutorID: req.query.tutorID,
+              status: { $in: ['Scheduled', 'Completed'] }
+          });
+          return res.json(sessions);
+      }
+      
+      // If no query parameter, return all sessions
+      const sessions = await Session.find();
+      res.json(sessions);
+  } catch (error) {
+      console.error('Error fetching sessions:', error);
+      res.status(500).json({ message: 'Error fetching sessions', error: error.message });
+  }
+});
+
 module.exports = router;

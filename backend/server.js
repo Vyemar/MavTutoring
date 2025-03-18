@@ -77,19 +77,19 @@ passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
 // === Mount API Routes ===
-app.use('/api/auth', auth.router); // Use the router exported from auth.js
-
-// Load other routes
-const usersRoutes = require('./routes/users');
-const studentScheduleRoutes = require('./routes/schedules/student');
-const tutorScheduleRoutes = require('./routes/schedules/tutor');
-const attendanceRoutes = require('./routes/attendance');
-const availabilityRoutes = require("./routes/availability");
-const feedbackRoutes = require('./routes/feedback');
+const authRoutes = require('./routes/auth'); // Authentication routes
+const usersRoutes = require('./routes/users'); // User management routes
+const studentScheduleRoutes = require('./routes/schedules/student'); // Student schedules
+const tutorScheduleRoutes = require('./routes/schedules/tutor'); // Tutor schedules
+const attendanceRoutes = require('./routes/attendance'); // Attendance routesS
+const availabilityRoutes = require("./routes/availability"); // Availability routes
+const feedbackRoutes = require('./routes/feedback'); //feedback routes
 const profileRoutes = require('./routes/profile');
-const sessionRoutes = require('./routes/sessions');
+const sessionRoutes = require('./routes/sessions')
+const analyticsRoutes = require('./routes/analytics');
 
 // Mount other routes
+app.use('/api/auth', auth.router); // Use the router exported from auth.js
 app.use('/api/users', usersRoutes);
 app.use('/api/schedules/student', studentScheduleRoutes);
 app.use('/api/schedules/tutor', tutorScheduleRoutes);
@@ -98,6 +98,7 @@ app.use("/api/availability", availabilityRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/sessions', sessionRoutes);
+app.use('/api/analytics', analyticsRoutes); //analytics routes
 
 // === Connect to MongoDB ===
 if (!MONGO_URI) {
