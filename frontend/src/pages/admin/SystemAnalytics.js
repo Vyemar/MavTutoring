@@ -4,6 +4,14 @@ import { useNavigate } from "react-router-dom";
 import styles from "../../styles/SystemAnalytics.module.css";
 import AdminSideBar from "../../components/Sidebar/AdminSidebar";
 
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
+
 // Inline default avatar as base64 to avoid HTTP requests
 const DEFAULT_AVATAR = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48cmVjdCBmaWxsPSIjZTllOWU5IiB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIvPjxjaXJjbGUgY3g9IjEyOCIgY3k9Ijk2IiByPSI0MCIgZmlsbD0iIzU5NjI3NCIvPjxwYXRoIGZpbGw9IiM1OTYyNzQiIGQ9Ik0yMTYsMTk2Yy0wLjQtMzcuOC0zMi43LTY4LTcyLTY4aC0zMmMtMzkuMywwLTcxLjYsMzAuMi03Miw2OEgyMTZ6Ii8+PC9zdmc+";
 
@@ -46,7 +54,7 @@ function SystemAnalytics() {
       console.log("Fetching fresh tutor analytics data...");
       
       // Step 1: Fetch all tutors from users API
-      const tutorsResponse = await axios.get('http://localhost:4000/api/users/tutors');
+      const tutorsResponse = await axios.get(`${BACKEND_URL}/api/users/tutors`);
       const tutorsList = tutorsResponse.data;
       console.log(`Fetched ${tutorsList.length} tutors from users API`);
       
@@ -55,11 +63,11 @@ function SystemAnalytics() {
         tutorsList.map(async (tutor) => {
           try {
             // Get profile picture if available
-            const profileResponse = await axios.get(`http://localhost:4000/api/profile/${tutor._id}`);
+            const profileResponse = await axios.get(`${BACKEND_URL}/api/profile/${tutor._id}`);
             const profile = profileResponse.data;
             
             // Get session count (completed or scheduled sessions)
-            const sessionsResponse = await axios.get(`http://localhost:4000/api/sessions?tutorID=${tutor._id}`);
+            const sessionsResponse = await axios.get(`${BACKEND_URL}/api/sessions?tutorID=${tutor._id}`);
             const sessions = sessionsResponse.data || [];
             const totalSessions = sessions.length;
             
