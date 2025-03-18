@@ -4,6 +4,14 @@ import axios from "axios";
 import styles from "../../styles/TutorDetails.module.css";
 import AdminSideBar from "../../components/Sidebar/AdminSidebar";
 
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
+
 // Inline default avatar as base64 to avoid HTTP requests
 const DEFAULT_AVATAR = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48cmVjdCBmaWxsPSIjZTllOWU5IiB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIvPjxjaXJjbGUgY3g9IjEyOCIgY3k9Ijk2IiByPSI0MCIgZmlsbD0iIzU5NjI3NCIvPjxwYXRoIGZpbGw9IiM1OTYyNzQiIGQ9Ik0yMTYsMTk2Yy0wLjQtMzcuOC0zMi43LTY4LTcyLTY4aC0zMmMtMzkuMywwLTcxLjYsMzAuMi03Miw2OEgyMTZ6Ii8+PC9zdmc+";
 
@@ -29,7 +37,7 @@ function TutorDetails() {
         
         // 1. Fetch tutor basic information
         console.log("Fetching user data...");
-        const tutorResponse = await axios.get(`http://localhost:4000/api/users/${tutorId}`);
+        const tutorResponse = await axios.get(`${BACKEND_URL}/api/users/${tutorId}`);
         console.log("User data received:", tutorResponse.data);
         setTutor(tutorResponse.data);
         
@@ -39,11 +47,11 @@ function TutorDetails() {
           // Try both formats to see which one works
           let profileData = null;
           try {
-            const profileResponse = await axios.get(`http://localhost:4000/api/profile/${tutorId}`);
+            const profileResponse = await axios.get(`${BACKEND_URL}/api/profile/${tutorId}`);
             profileData = profileResponse.data;
           } catch (pathError) {
             console.log("Path parameter approach failed, trying query parameter");
-            const profileResponse = await axios.get(`http://localhost:4000/api/profile?userId=${tutorId}`);
+            const profileResponse = await axios.get(`${BACKEND_URL}/api/profile?userId=${tutorId}`);
             profileData = profileResponse.data;
           }
           
@@ -56,7 +64,7 @@ function TutorDetails() {
         
         // 3. Fetch all sessions for this tutor
         console.log("Fetching sessions data...");
-        const sessionsResponse = await axios.get(`http://localhost:4000/api/sessions?tutorID=${tutorId}`);
+        const sessionsResponse = await axios.get(`${BACKEND_URL}/api/sessions?tutorID=${tutorId}`);
         console.log("Sessions data received:", sessionsResponse.data);
         const tutorSessions = sessionsResponse.data || [];
         
@@ -75,7 +83,7 @@ function TutorDetails() {
         for (const studentId of studentIds) {
           try {
             console.log("Fetching student with ID:", studentId);
-            const studentResponse = await axios.get(`http://localhost:4000/api/users/${studentId}`);
+            const studentResponse = await axios.get(`${BACKEND_URL}/api/users/${studentId}`);
             const student = studentResponse.data;
             studentData.push(student);
             studentMap[studentId] = student;
