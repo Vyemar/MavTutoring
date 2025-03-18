@@ -1,4 +1,0 @@
-NODE_OPTIONS=--openssl-legacy-provider
-HTTPS=true
-SSL_CRT_FILE=../backend/ssl/server.cert
-SSL_KEY_FILE=../backend/ssl/server.key
