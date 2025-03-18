@@ -305,6 +305,7 @@ router.get('/logout', (req, res) => {
 
             // Send response immediately instead of redirecting
             res.json({ message: "Logged out successfully" });
+            console.log("User logged out successfully");
         });
     });
 });

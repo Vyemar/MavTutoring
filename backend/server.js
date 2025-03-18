@@ -68,7 +68,12 @@ app.use(passport.session());
 const auth = require('./routes/auth');
 
 // === SAML Strategy ===
-passport.use(new SamlStrategy(auth.samlConfig, (profile, done) => {
+passport.use(new SamlStrategy({
+    ...auth.samlConfig,
+    passReqToCallback: true,  // Pass request to callback
+    forceAuthn: true  // Force re-authentication
+}, (req, profile, done) => {
+    // If passReqToCallback is true, first parameter is req
     return done(null, profile);
 }));
 
