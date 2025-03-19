@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import styles from "../../styles/FindMyTutorProfile.module.css";
-import TutorSidebar from "../../components/Sidebar/TutorSidebar";
+import styles from "../../styles/FindMyTutorProfile.module.css"; // Using same styles
+import StudentSidebar from "../../components/Sidebar/StudentSidebar";
 
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
@@ -11,15 +11,17 @@ const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
 // Construct the backend URL dynamically
 const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 
-function TutorProfile() {
+function StudentProfile() {
   const [profile, setProfile] = useState({
     profilePicture: null,
     name: "",
     bio: "",
-    courses: "",
-    skills: "", //SKILL ADDED
     major: "",
     currentYear: "",
+    coursesEnrolled: [],
+    areasOfInterest: [],
+    preferredLearningStyle: "",
+    academicGoals: ""
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -77,10 +79,12 @@ function TutorProfile() {
             profilePicture: null,
             name: userData.firstName && userData.lastName ? `${userData.firstName} ${userData.lastName}` : "",
             bio: "",
-            courses: "",
-            skills: "",
             major: "",
-            currentYear: ""
+            currentYear: "",
+            coursesEnrolled: [],
+            areasOfInterest: [],
+            preferredLearningStyle: "",
+            academicGoals: ""
           };
           
           setProfile(defaultProfile);
@@ -126,6 +130,15 @@ function TutorProfile() {
       return updatedProfile;
     });
   };
+
+  const handleArrayChange = (event, field) => {
+    const value = event.target.value;
+    setProfile((prevProfile) => {
+      // Convert comma-separated string to array
+      const arrayValue = value.split(',').map(item => item.trim()).filter(item => item);
+      return { ...prevProfile, [field]: arrayValue };
+    });
+  };
   
   const handleSubmit = async () => {
     if (!userData || !userData.id) {
@@ -138,10 +151,12 @@ function TutorProfile() {
       formData.append('userId', userData.id);
       formData.append('name', profile.name);
       formData.append('bio', profile.bio);
-      formData.append('courses', profile.courses);
-      formData.append('skills', profile.skills);
       formData.append('major', profile.major);
       formData.append('currentYear', profile.currentYear);
+      formData.append('coursesEnrolled', JSON.stringify(profile.coursesEnrolled));
+      formData.append('areasOfInterest', JSON.stringify(profile.areasOfInterest));
+      formData.append('preferredLearningStyle', profile.preferredLearningStyle);
+      formData.append('academicGoals', profile.academicGoals);
   
       if (profile.profilePicture && profile.profilePicture.startsWith('data:image')) {
         const response = await fetch(profile.profilePicture);
@@ -150,7 +165,7 @@ function TutorProfile() {
       }
   
       // Make the request - this will create a new profile if one doesn't exist
-      await axios.post(`${BACKEND_URL}/api/profile/tutor`, formData, {
+      await axios.post(`${BACKEND_URL}/api/profile/student`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true
       });
@@ -173,7 +188,7 @@ function TutorProfile() {
   if (sessionLoading || loading) {
     return (
       <div className={styles.container}>
-        <TutorSidebar selected="Profile" />
+        <StudentSidebar selected="Profile" />
         <div className={styles.mainContent}>
           <div className={styles.spinnerContainer} style={{
             display: 'flex',
@@ -194,7 +209,7 @@ function TutorProfile() {
   if (!userData) {
     return (
       <div className={styles.container}>
-        <TutorSidebar selected="profile" />
+        <StudentSidebar selected="profile" />
         <div className={styles.mainContent}>
           <div className={styles.error}>
             Session expired or not found. Please log in again.
@@ -204,9 +219,16 @@ function TutorProfile() {
     );
   }
 
+  // Helper to display arrays as comma-separated strings
+  const displayArray = (arr) => {
+    return Array.isArray(arr) && arr.length > 0 
+      ? arr.join(', ') 
+      : "Not provided";
+  };
+
   return (
     <div className={styles.container}>
-      <TutorSidebar selected="profile" />
+      <StudentSidebar selected="profile" />
       <div className={styles.mainContent}>
         <div className={styles.profileContainer}>
           <h1 className={styles.heading}>Profile</h1>
@@ -259,32 +281,6 @@ function TutorProfile() {
                 )}
               </p>
 
-              <p><strong>Courses:</strong> 
-                {isEditing ? (
-                  <input 
-                    type="text" 
-                    name="courses" 
-                    value={profile.courses} 
-                    onChange={handleChange} 
-                  />
-                ) : (
-                  profile.courses || "Not provided"
-                )}
-              </p>
-
-              <p><strong>Skills:</strong> 
-                {isEditing ? (
-                  <input 
-                    type="text" 
-                    name="skills" 
-                    value={profile.skills} 
-                    onChange={handleChange} 
-                  />
-                ) : (
-                  profile.skills || "Not provided"
-                )}
-              </p>
-
               <p><strong>Major:</strong> 
                 {isEditing ? (
                   <input 
@@ -292,7 +288,6 @@ function TutorProfile() {
                     name="major" 
                     value={profile.major} 
                     onChange={handleChange} 
-                    required 
                   />
                 ) : (
                   profile.major || "Not provided"
@@ -319,6 +314,64 @@ function TutorProfile() {
                   profile.currentYear || "Not provided"
                 )}
               </p>
+
+              <p><strong>Courses Enrolled:</strong> 
+                {isEditing ? (
+                  <input 
+                    type="text" 
+                    value={Array.isArray(profile.coursesEnrolled) ? profile.coursesEnrolled.join(', ') : ''}
+                    onChange={(e) => handleArrayChange(e, 'coursesEnrolled')}
+                    placeholder="Enter courses separated by commas" 
+                  />
+                ) : (
+                  displayArray(profile.coursesEnrolled)
+                )}
+              </p>
+
+              <p><strong>Areas of Interest:</strong> 
+                {isEditing ? (
+                  <input 
+                    type="text" 
+                    value={Array.isArray(profile.areasOfInterest) ? profile.areasOfInterest.join(', ') : ''}
+                    onChange={(e) => handleArrayChange(e, 'areasOfInterest')}
+                    placeholder="Enter interests separated by commas" 
+                  />
+                ) : (
+                  displayArray(profile.areasOfInterest)
+                )}
+              </p>
+
+              <p><strong>Preferred Learning Style:</strong> 
+                {isEditing ? (
+                  <select 
+                    name="preferredLearningStyle" 
+                    value={profile.preferredLearningStyle} 
+                    onChange={handleChange}
+                  >
+                    <option value="">Select Learning Style</option>
+                    <option value="Visual">Visual</option>
+                    <option value="Auditory">Auditory</option>
+                    <option value="Kinesthetic">Kinesthetic</option>
+                    <option value="Reading/Writing">Reading/Writing</option>
+                    <option value="Multimodal">Multimodal</option>
+                  </select>
+                ) : (
+                  profile.preferredLearningStyle || "Not provided"
+                )}
+              </p>
+
+              <p><strong>Academic Goals:</strong> 
+                {isEditing ? (
+                  <textarea 
+                    name="academicGoals" 
+                    value={profile.academicGoals} 
+                    onChange={handleChange}
+                    placeholder="Describe your academic goals"
+                  />
+                ) : (
+                  profile.academicGoals || "Not provided"
+                )}
+              </p>
             </div>
 
             <button 
@@ -339,7 +392,7 @@ function TutorProfile() {
                 className={styles.cancelButton} 
                 onClick={() => {
                   setIsEditing(false);
-                  fetchProfile(); // Reset to last saved state
+                  fetchProfile();
                 }}
               >
                 Cancel
@@ -352,4 +405,4 @@ function TutorProfile() {
   );
 }
 
-export default TutorProfile;
+export default StudentProfile;

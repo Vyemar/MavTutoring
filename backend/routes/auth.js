@@ -54,8 +54,8 @@ router.post('/signup', async (req, res) => {
                         bio: "",
                         courses: "",
                         skills: "",
-                        major: "Not specified",
-                        currentYear: "Not specified",
+                        major: "Not Specified",
+                        currentYear: "Not Specified",
                         profilePicture: null
                     });
                     
@@ -71,7 +71,7 @@ router.post('/signup', async (req, res) => {
                         name: fullName,
                         bio: "",
                         major: "",
-                        currentYear: "Not specified",
+                        currentYear: "Not Specified",
                         coursesEnrolled: [],
                         areasOfInterest: [],
                         preferredLearningStyle: "Not Specified",
@@ -227,8 +227,8 @@ router.post('/saml/callback',
                                 bio: "",
                                 courses: "",
                                 skills: "",
-                                major: "Not specified",
-                                currentYear: "Freshman",
+                                major: "Not Specified",
+                                currentYear: "Not Specified",
                                 profilePicture: null
                             });
                             
@@ -247,7 +247,7 @@ router.post('/saml/callback',
                                 name: fullName,
                                 bio: "",
                                 major: "",
-                                currentYear: "Freshman",
+                                currentYear: "Not Specified",
                                 coursesEnrolled: [],
                                 areasOfInterest: [],
                                 preferredLearningStyle: "Not Specified",

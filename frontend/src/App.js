@@ -16,6 +16,7 @@ import TutorCourses from "./pages/tutor/TutorCourses";
 import TutorNotifications from "./pages/tutor/TutorNotifications";
 import TutorSchedule from "./pages/tutor/TutorSchedule";
 import TutorProfile from "./pages/tutor/TutorProfile";
+import StudentProfile from "./pages/student/StudentProfile";
 import SystemAnalytics from "./pages/admin/SystemAnalytics";
 import Settings from "./pages/admin/Settings";
 import FindMyTutorProfile from "./pages/student/FindmyTutorProfile";
@@ -131,11 +132,27 @@ function App() {
         <Route path="/sessions" element={<TutorSessions />} />
         <Route path="/TutorCourses" element={<TutorCourses />} />
         <Route path="/TutorNotifications" element={<TutorNotifications />} />
-        <Route path="/Profile" element={<TutorProfile />} />
+        <Route 
+          path="/student-profile" 
+          element={
+            <ProtectedRoute>
+              <StudentProfile />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/tutor-profile" 
+          element={
+            <ProtectedRoute>
+              <TutorProfile />
+            </ProtectedRoute>
+          } 
+        />
         <Route path="/schedule" element={<TutorSchedule />} />
         <Route path="/analytics" element={<SystemAnalytics />} />
         <Route path="/tutor/:tutorId" element={<TutorDetails />} />
-        <Route path="/ViewProfile/:tutorId" element={<ViewProfile />} />
+        <Route path="/ViewProfile/:userId" element={<ViewProfile />} />
+        
         <Route path="/admin-settings" element={<Settings />} />
       </Routes>
     </BrowserRouter>
