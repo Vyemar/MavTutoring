@@ -46,6 +46,7 @@ export const SearchBar = ({allTutors,setResults}) => {
                 placeholder="Type to search..."
                 onChange={handleChange}
             />
+            <button className = "searchButton"> Search </button>
         </div>
     );
 };
