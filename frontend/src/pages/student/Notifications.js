@@ -5,11 +5,6 @@ import StudentSidebar from "../../components/Sidebar/StudentSidebar";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-// useState and useEffect
-
-// useState () 
-
-
 function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
