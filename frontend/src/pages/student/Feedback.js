@@ -60,6 +60,9 @@ function Feedback() {
       })
       .finally(() => {
         setLoading(false);
+      })
+      .finally(()=>{
+        setLoading(false);
       });
   }, []);
 
