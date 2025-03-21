@@ -52,7 +52,7 @@
   }
   
   .analyticsCard:last-child {
-    border-top: 4px solid #34A853;
+    border-top: 4px solid  #9b59b6;
   }
   
   .cardIcon {
@@ -71,7 +71,7 @@
   }
   
   .analyticsCard:last-child .cardIcon {
-    color: #34A853;
+    color:  #9b59b6;
     background-color: rgba(52, 168, 83, 0.1);
   }
   
@@ -107,7 +107,7 @@
   }
   
   .analyticsCard:last-child .cardAction {
-    color: #34A853;
+    color:  #9b59b6;
   }
   
   .cardAction svg {
