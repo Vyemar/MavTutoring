@@ -27,10 +27,12 @@ router.post("/send-notification", async (req, res) => {
                 pass: process.env.SMTP_PASSWORD,
             },
         });
+
+        const subject = type === "appointment_confirmation" ? "Your Appointment is Confirmed" : "New Booking Alert";
         const templateData = {
             name,
             message,
-            subject: type === "appointment_confirmation" ? "Your Appointment is Confirmed" : "New Booking Alert",
+            subject: subject,
         };
         const htmlContent = await ejs.renderFile(path.join(__dirname, 'views', 'email-template.ejs'), templateData);
 
@@ -38,7 +40,7 @@ router.post("/send-notification", async (req, res) => {
             from: process.env.SMTP_USERNAME,
             replyTo: process.env.SMTP_PROXY_EMAIL,
             to: email,
-            subject: type === "appointment_confirmation" ? "Your Appointment is Confirmed" : "New Booking Alert",
+            subject: subject,
             //   text: message
             html: htmlContent
         };
@@ -62,7 +64,7 @@ router.post("/send-notification", async (req, res) => {
 router.get("/:userId", async (req, res) => {
     try {
         const userId = req.params.userId;
-        const notifications = await Notification.find({ recipientId: userId }).sort({ createdAt: -1 });
+        const notifications = await Notification.find({ userId: userId }).sort({ createdAt: -1 });
 
         res.status(200).json(notifications);
     } catch (error) {
