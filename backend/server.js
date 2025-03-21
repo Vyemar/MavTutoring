@@ -189,3 +189,4 @@ if (USE_HTTPS) {
         console.log(`CORS enabled for origin: ${FRONTEND_URL}`);
     });
 }
+}
