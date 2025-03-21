@@ -20,6 +20,23 @@ const notificationschema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Appointment' 
     }, // Related appointment
+
+    appointmentDate: { 
+        type: Date 
+    },
+
+    appointmentTime: { 
+        type: String 
+    },
+    duration: { 
+        type: String 
+    },
+
+    status: { 
+        type: String, 
+        enum: ['Scheduled', 'Completed', 'Canceled'], 
+        default: 'Scheduled'
+    },
     
     isRead: { 
         type: Boolean, 
