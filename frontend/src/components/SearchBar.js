@@ -15,7 +15,7 @@ export const SearchBar = ({allTutors,setResults}) => {
     const [input, setInput] = useState("");
 
     const handleSubmit = (e) => e.preventDefault()
-    
+
     //Fetch relevant tutors from database
     const fetchFilteredTutors = (value) => {
       fetch(`${BACKEND_URL}/api/users`)
@@ -45,6 +45,13 @@ export const SearchBar = ({allTutors,setResults}) => {
       fetchFilteredTutors(e.target.value);
     };
 
+    /*const handleClick = (input) => {
+      //If nothing has been entered so far, ALL TUTORS are returned
+      if (!input) return setResults(allTutors)
+
+      fetchFilteredTutors(input);
+    }*/
+
     return (
         <div className = "input-wrapper" onSubmit={handleSubmit} >
             <FaSearch id="search-icon" />
@@ -53,8 +60,10 @@ export const SearchBar = ({allTutors,setResults}) => {
             <input
                 placeholder="Type to search..."
                 onChange={handleChange}
+                /*onChange = {(e)=> setInput(e.target.value)}*/
             />
-            <button className = "searchButton"> Search </button>
+
+            <button /*onClick = {handleClick(input)}*/ className = "searchButton"> Search </button>
         </div>
     );
 };
