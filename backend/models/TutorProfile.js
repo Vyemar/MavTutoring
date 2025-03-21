@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 const tutorProfileSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Assuming there's a User model
+        ref: 'User',
         required: true
     },
     profilePicture: {
-        type: String, // Storing the image URL (base64 or cloud storage)
+        type: String,
         default: null
     },
     name: {
@@ -30,12 +30,12 @@ const tutorProfileSchema = new mongoose.Schema({
     },
     major: {
         type: String,
-        required: true,
         trim: true
     },
     currentYear: {
         type: String,
-        enum: ['Freshman', 'Sophomore', 'Junior', 'Senior', "Master's Student", 'PhD Student'],
+        enum: ['Freshman', 'Sophomore', 'Junior', 'Senior', "Master's Student", 'PhD Student', 'Not Specified'],
+        default: 'Not Specified',
         required: true
     },
     createdAt: {

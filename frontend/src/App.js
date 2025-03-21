@@ -16,15 +16,52 @@ import TutorCourses from "./pages/tutor/TutorCourses";
 import TutorNotifications from "./pages/tutor/TutorNotifications";
 import TutorSchedule from "./pages/tutor/TutorSchedule";
 import TutorProfile from "./pages/tutor/TutorProfile";
+import StudentProfile from "./pages/student/StudentProfile";
 import SystemAnalytics from "./pages/admin/SystemAnalytics";
 import Settings from "./pages/admin/Settings";
 import FindMyTutorProfile from "./pages/student/FindmyTutorProfile";
 import ViewProfile from "./pages/admin/ViewProfile";
+import TutorDetails from "./pages/admin/TutorDetails";
+import AnalyticsOptions from "./pages/admin/AnalyticsOptions";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
+import { useEffect, useState } from "react";
+import { axiosGetData } from "./utils/api";
+
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
+
 function ProtectedRoute({ children }) {
-  const userID = localStorage.getItem("userID"); // Check if user is logged in
-  return userID ? children : <Navigate to="/login" replace />; // Redirect to login if not authenticated
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
+
+  useEffect(() => {
+    async function checkSession() {
+      try {
+        const response = await axiosGetData(`${BACKEND_URL}/api/auth/session`); // Fetch session from backend
+        if (response.user) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error("Session check failed:", error);
+        setIsAuthenticated(false);
+      }
+    }
+
+    checkSession();
+  }, []);
+
+  if (isAuthenticated === null) {
+    return <div>Loading...</div>; // Show a loading state while checking auth
+  }
+
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
 }
 
 function App() {
@@ -96,10 +133,28 @@ function App() {
         <Route path="/sessions" element={<TutorSessions />} />
         <Route path="/TutorCourses" element={<TutorCourses />} />
         <Route path="/TutorNotifications" element={<TutorNotifications />} />
-        <Route path="/Profile" element={<TutorProfile />} />
+        <Route 
+          path="/student-profile" 
+          element={
+            <ProtectedRoute>
+              <StudentProfile />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/tutor-profile" 
+          element={
+            <ProtectedRoute>
+              <TutorProfile />
+            </ProtectedRoute>
+          } 
+        />
         <Route path="/schedule" element={<TutorSchedule />} />
-        <Route path="/analytics" element={<SystemAnalytics />} />
-        <Route path="/ViewProfile/:tutorId" element={<ViewProfile />} />
+        <Route path="/analytics" element={<AnalyticsOptions/>} />
+        <Route path="/analytics/tutor-performance" element={<SystemAnalytics/>} />
+        <Route path="/tutor/:tutorId" element={<TutorDetails />} />
+        <Route path="/ViewProfile/:userId" element={<ViewProfile />} />
+        
         <Route path="/admin-settings" element={<Settings />} />
       </Routes>
     </BrowserRouter>

@@ -2,15 +2,23 @@ import React, {useState} from "react";
 import {FaSearch} from "react-icons/fa";
 import "../styles/SearchBar.css";
 
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
+
 export const SearchBar = ({allTutors,setResults}) => {
-    //Will store user input
+  //Will store user input
     const [input, setInput] = useState("");
 
     const handleSubmit = (e) => e.preventDefault()
-
-    //Fetch tutors from database based on what was searched through the searchbar
+    
+    //Fetch relevant tutors from database
     const fetchFilteredTutors = (value) => {
-      fetch("http://localhost:4000/api/users")
+      fetch(`${BACKEND_URL}/api/users`)
       .then((response) => response.json())
       .then((json) => {
         const results = json.filter((user) => {

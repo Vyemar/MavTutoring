@@ -1,2 +1,6 @@
+# SSL certificates
+backend/ssl/server.key
+backend/ssl/server.cert
+
+# Environment variables
 backend/.env
-.gitignore

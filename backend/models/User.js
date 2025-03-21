@@ -8,6 +8,11 @@ const availabilitySchema = new Schema({
   endTime: { type: String, required: true }, // Store as "HH:mm"
 });
 
+const bookedSessionSchema = new Schema({
+  sessionTime: { type: Date, required: true }, // Exact session time
+  duration: { type: Number, required: true }, // Duration in minutes
+});
+
 const userSchema = new Schema({
   firstName: {
     type: String,
@@ -19,7 +24,9 @@ const userSchema = new Schema({
   },
   phone: {
     type: String,
-    required: true,
+    required: function () {
+      return !this.isSSO; // Require phone nunmber only if NOT an SSO user
+    },
   },
   email: {
     type: String,
@@ -28,7 +35,13 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: function () {
+      return !this.isSSO; // Require password only if NOT an SSO user
+    },
+  },
+  isSSO: {
+    type: Boolean,
+    default: false, // Default is false; set to true for SSO users
   },
   role: {
     type: String,
@@ -39,11 +52,12 @@ const userSchema = new Schema({
     type: Number,
   },
   availability: [availabilitySchema],
+  bookedSessions: [bookedSessionSchema], // Track booked slots
 });
 
 // Pre-save hook to hash password before saving
 userSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
+  if (this.isModified("password") && this.password) {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
   }
