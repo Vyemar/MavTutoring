@@ -1,0 +1,116 @@
+.pageHeader {
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+  
+  .pageHeader h1 {
+    font-size: 2.2rem;
+    color: #fffdfd;
+    margin-bottom: 0.5rem;
+  }
+  
+  .pageHeader p {
+    color: #fafbfc;
+    font-size: 1.1rem;
+  }
+  
+  .optionsContainer {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  @media (min-width: 768px) {
+    .optionsContainer {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  .analyticsCard {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
+    padding: 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  
+  .analyticsCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.09);
+  }
+  
+  .analyticsCard:first-child {
+    border-top: 4px solid #34A853;
+  }
+  
+  .analyticsCard:last-child {
+    border-top: 4px solid  #9b59b6;
+  }
+  
+  .cardIcon {
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+  }
+  
+  .analyticsCard:first-child .cardIcon {
+    color: #34A853;
+    background-color: rgba(66, 133, 244, 0.1);
+  }
+  
+  .analyticsCard:last-child .cardIcon {
+    color:  #9b59b6;
+    background-color: rgba(52, 168, 83, 0.1);
+  }
+  
+  .cardIcon svg {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+  
+  .analyticsCard h2 {
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+    color: #212529;
+  }
+  
+  .analyticsCard p {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+    flex-grow: 1;
+  }
+  
+  .cardAction {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    font-weight: 500;
+  }
+  
+  .analyticsCard:first-child .cardAction {
+    color: #34A853;
+  }
+  
+  .analyticsCard:last-child .cardAction {
+    color:  #9b59b6;
+  }
+  
+  .cardAction svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
