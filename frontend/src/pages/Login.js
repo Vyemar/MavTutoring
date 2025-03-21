@@ -1,49 +1,104 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import styles from '../styles/Login.module.css'; // Import CSS module
-import { validateLogin } from '../utils/LoginValidation'; // Import validation function
-import { axiosPostData } from '../utils/api'; // Import axios post function
+import styles from '../styles/Login.module.css';
+import { validateLogin } from '../utils/LoginValidation';
+import { axiosPostData, axiosGetData } from '../utils/api';
+
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const location = useLocation(); // Hook to access passed state
+    const location = useLocation();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        const validationError = await validateLogin({ email, password });
-        setErrors(validationError);
-
-        if (!validationError.email && !validationError.password) {
+    // Check if the user is already authenticated via SSO or session
+    useEffect(() => {
+        async function checkSession() {
             try {
-                const response = await axiosPostData('http://localhost:4000/api/auth/login', {
-                    email,
-                    password
-                });
-
-                if (response.success) {
-                    // Store role in localStorage or state
-                    localStorage.setItem('role', response.role); // Storing role
-                    localStorage.setItem('userID', response.ID); // Storing ID
-
-                    // Navigate to home
-                    navigate('/home');
+                const response = await axiosGetData(`${BACKEND_URL}/api/auth/session`);
+                if (response.user) {
+                    navigate('/home'); // Redirect if already logged in
                 }
             } catch (error) {
-                // If error response is 400, display the server-side error message under password
-                if (error.response && error.response.status === 400) {
-                    setErrors((prevErrors) => ({
-                        ...prevErrors,
-                        password: error.response.data.error, // Display "Invalid email or password" under password field
-                    }));
-                } else {
-                    console.error("Login error", error);
-                }
+                console.error("Session check failed", error);
             }
         }
+
+        checkSession();
+    }, [navigate]);
+
+    // Handle traditional email/password login
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        console.log("Login form submitted", { email, password });
+
+        const validationError = validateLogin({ email, password });
+        setErrors(validationError);
+
+        if (Object.keys(validationError).length === 0) {
+            setIsLoading(true);
+            try {
+                console.log("Sending login request to server");
+                const response = await axiosPostData(`${BACKEND_URL}/api/auth/login`, { email, password });
+                console.log("Login response received:", response);
+
+                // Check if response or response.data is undefined
+                if (!response || !response.data) {
+                    throw new Error("Invalid response format");
+                }
+
+                // Set user state and navigate to home
+                if (response.data.success) {
+                    navigate('/home');
+                } else {
+                    console.log("Login failed - response was not successful");
+                    setErrors({ password: response.data.message || "Invalid email or password" });
+                }
+            } catch (error) {
+                console.error("Login request failed", error);
+                
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    console.log("Error response data:", error.response.data);
+                    console.log("Error response status:", error.response.status);
+                    
+                    if (error.response.status === 400) {
+                        setErrors((prevErrors) => ({
+                            ...prevErrors,
+                            password: error.response.data.error || "Invalid credentials",
+                        }));
+                    } else {
+                        setErrors({ password: `Server error: ${error.response.status}` });
+                    }
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    console.log("No response received from server");
+                    setErrors({ password: "No response from server. Please check if the server is running." });
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log("Error message:", error.message);
+                    setErrors({ password: `Request setup error: ${error.message}` });
+                }
+            } finally {
+                setIsLoading(false);
+            }
+        }
+    };
+
+    // Handle SSO login
+    const handleSSOLogin = () => {
+        const ssoUrl = `${BACKEND_URL}/api/auth/saml`;
+        window.location.href = ssoUrl;
     };
 
     return (
@@ -54,22 +109,25 @@ function Login() {
                 <div className={`shadow-lg ${styles.formContainer}`}>
                     <h2 className={styles.title}>Login</h2>
 
-                    {/* Display the success message if passed from signup */}
+                    {/* Display success message if redirected from signup */}
                     {location.state?.message && (
                         <div className="alert alert-success" role="alert">
                             {location.state.message}
                         </div>
                     )}
 
+                    {/* Email/Password Login Form */}
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3">
                             <label htmlFor="email" className={styles.label}>Email address</label>
                             <input
                                 type="email"
+                                id="email"
                                 placeholder="Enter email"
                                 className="form-control input"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
+                                required
                             />
                             {errors.email && <div className={styles.textDanger}>{errors.email}</div>}
                         </div>
@@ -77,20 +135,36 @@ function Login() {
                             <label htmlFor="password" className={styles.label}>Password</label>
                             <input
                                 type="password"
+                                id="password"
                                 placeholder="Enter password"
                                 className="form-control input"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                required
                             />
                             {errors.password && <div className={styles.textDanger}>{errors.password}</div>}
                         </div>
-                        <button type="submit" className={`btn ${styles.loginButton}`}>
-                            Login
+                        <button 
+                            type="submit" 
+                            className={`btn ${styles.loginButton}`}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? 'Logging in...' : 'Login'}
                         </button>
-                        <p className="mt-3 text-center">
-                            Don't have an account? <Link to="/signup" className={styles.link}>Register</Link>
-                        </p>
                     </form>
+
+                    {/* SSO Login Button */}
+                    <button 
+                        onClick={handleSSOLogin} 
+                        className={`btn ${styles.ssologinButton}`}
+                        disabled={isLoading}
+                    >
+                        Login with SSO
+                    </button>
+
+                    <p className="mt-3 text-center">
+                        Don't have an account? <Link to="/signup" className={styles.link}>Register</Link>
+                    </p>
                 </div>
             </div>
         </div>

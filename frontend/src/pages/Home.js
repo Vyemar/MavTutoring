@@ -3,46 +3,69 @@ import { useNavigate } from "react-router-dom";
 import TutorHome from "./tutor/TutorHome";
 import AdminHome from "./admin/AdminHome";
 import StudentHome from "./student/StudentHome";
-import styles from '../styles/Home.module.css'; // Import CSS module
+import styles from '../styles/Home.module.css';
+import { axiosGetData } from "../utils/api";
+import { useEffect, useState } from "react";
+
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 
 function Home() {
     const navigate = useNavigate();
+    const [user, setUser] = useState(null);
+    
+    useEffect(() => {
+        async function fetchUserSession() {
+            try {
+                const response = await axiosGetData(`${BACKEND_URL}/api/auth/session`);
+                if (response.user) {
+                    setUser(response.user);
+                } else {
+                    navigate("/login", { replace: true }); // Redirect to login if not authenticated
+                }
+            } catch (error) {
+                console.error("Session check failed:", error);
+                navigate("/login"); // Redirect to login
+            }
+        }
+        fetchUserSession();
+    }, [navigate]);
 
-    // Get the role from localStorage (or context if you're using React Context API)
-    const role = localStorage.getItem('role');
-
-    // Logout function to clear localStorage and navigate back to login page
-    const handleLogout = () => {
-        localStorage.removeItem('role');
-        navigate('/login'); // Redirect back to the login page
+    const handleLogout = async () => {
+        try {
+            await axiosGetData(`${BACKEND_URL}/api/auth/logout`);
+            navigate("/login"); // Redirect after logout
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
     };
-
+    
+    if (!user) {
+        return null; // Return null if user is not authenticated
+    }
+    
     // Conditional rendering based on the user's role
-    let heading;
-    switch (role) {
+    switch (user.role) {
         case 'Admin':
             return <AdminHome handleLogout={handleLogout}/>;
-            break;
         case 'Tutor':
             return <TutorHome handleLogout={handleLogout}/>;
-            break;
         case 'Student':
             return <StudentHome handleLogout={handleLogout}/>;
-            break;
         default:
-            heading = 'Home Page';
-            break;
+            return (
+                <div className={styles.container}>
+                    <h1 className={styles.heading}>Home Page</h1>
+                    <p className={styles.welcome}>Welcome to the home page, guest!</p>
+                    <button className={styles.logoutButton} onClick={handleLogout}>Logout</button>
+                </div>
+            );
     }
-
-    
-
-    return (
-        <div className={styles.container}>
-            <h1 className={styles.heading}>{heading}</h1>
-            <p className={styles.welcome}>Welcome to the home page, {role ? role : 'guest'}!</p>
-            <button className={styles.logoutButton} onClick={handleLogout}>Logout</button>
-        </div>
-    );
 }
 
 export default Home;

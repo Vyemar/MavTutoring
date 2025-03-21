@@ -24,4 +24,26 @@ router.get('/tutors', async (req, res) => {
     }
 });
 
+
+// NEW ROUTE: Fetch a single user by ID
+router.get('/:id', async (req, res) => {
+    try {
+        const userId = req.params.id;
+        console.log('Fetching user with ID:', userId);
+        
+        const user = await User.findById(userId);
+        
+        if (!user) {
+            console.log('User not found with ID:', userId);
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        console.log('User found:', user.firstName, user.lastName);
+        res.status(200).json(user);
+    } catch (err) {
+        console.error('Error fetching user by ID:', err);
+        res.status(500).json({ message: 'Failed to fetch user', error: err.message });
+    }
+});
+
 module.exports = router;

@@ -7,6 +7,14 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import styles from "../../styles/FindMyTutorProfile.module.css";
 import StudentSidebar from "../../components/Sidebar/StudentSidebar";
 
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
+
 const localizer = momentLocalizer(moment);
 
 function FindMyTutorProfile() {
@@ -15,24 +23,47 @@ function FindMyTutorProfile() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchTutorProfile = async () => {
       try {
+        console.log("Fetching profile for tutor ID:", tutorId);
         const profileResponse = await axios.get(
-          `http://localhost:4000/api/profile/${tutorId}`
+          `${BACKEND_URL}/api/profile/${tutorId}`,
+          { withCredentials: true }
         );
+        console.log("Profile data received:", profileResponse.data);
         setProfile(profileResponse.data);
       } catch (error) {
         console.error("Error fetching profile:", error);
+        // Handle 404 for tutor profile
+        if (error.response && error.response.status === 404) {
+          console.log("Tutor profile not found, this is expected for new tutors");
+          // Set an empty profile to prevent errors
+          setProfile({
+            name: "",
+            bio: "",
+            courses: "",
+            skills: "",
+            major: "",
+            currentYear: ""
+          });
+        } else {
+          setError("Error loading tutor profile");
+        }
       }
     };
 
     const fetchTutorAvailability = async () => {
       try {
+        console.log("Fetching availability for tutor ID:", tutorId);
         const availabilityResponse = await axios.get(
-          `http://localhost:4000/api/availability/${tutorId}`
+          `${BACKEND_URL}/api/availability/${tutorId}`,
+          { withCredentials: true }
         );
+
+        console.log("Availability data received:", availabilityResponse.data);
 
         // Convert availability data to calendar events
         const formattedEvents = [];
@@ -50,7 +81,7 @@ function FindMyTutorProfile() {
             return;
           }
           
-          // Get the day index (1-5 for Monday-Friday)
+          // Get the day index (0-4 for Monday-Friday)
           const dayMapping = {
             'Monday': 0,
             'Tuesday': 1,
@@ -87,22 +118,38 @@ function FindMyTutorProfile() {
 
     const fetchUserData = async () => {
       try {
+        console.log("Fetching user data for tutor ID:", tutorId);
         const userResponse = await axios.get(
-          `http://localhost:4000/api/users/${tutorId}`
+          `${BACKEND_URL}/api/users/${tutorId}`,
+          { withCredentials: true }
         );
+        console.log("User data received:", userResponse.data);
         setUser(userResponse.data);
       } catch (error) {
         console.error("Error fetching user data:", error);
+        setError("Error loading tutor information");
       }
     };
 
     const fetchData = async () => {
-      await Promise.all([
-        fetchTutorProfile(),
-        fetchTutorAvailability(),
-        fetchUserData()
-      ]);
-      setLoading(false);
+      try {
+        const results = await Promise.allSettled([
+          fetchTutorProfile(),
+          fetchTutorAvailability(),
+          fetchUserData()
+        ]);
+        
+        // Check if all promises were rejected
+        const allFailed = results.every(result => result.status === 'rejected');
+        if (allFailed) {
+          setError("Failed to load tutor information. Please try again later.");
+        }
+      } catch (error) {
+        console.error("Error in fetching data:", error);
+        setError("An error occurred while loading tutor information");
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchData();
@@ -128,14 +175,38 @@ function FindMyTutorProfile() {
 
   if (loading) {
     return (
-      <div className={styles.spinnerContainer}>
-        <div className={styles.spinner}></div>
+      <div className={styles.container}>
+        <StudentSidebar />
+        <div className={styles.mainContent}>
+          <div className={styles.spinnerContainer}>
+            <div className={styles.spinner}></div>
+            <p>Loading tutor profile...</p>
+          </div>
+        </div>
       </div>
     );
   }
 
-  if (!profile) {
-    return <p>Profile not found.</p>;
+  if (error) {
+    return (
+      <div className={styles.container}>
+        <StudentSidebar />
+        <div className={styles.mainContent}>
+          <div className={styles.error}>{error}</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className={styles.container}>
+        <StudentSidebar />
+        <div className={styles.mainContent}>
+          <div className={styles.error}>Tutor not found.</div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -145,12 +216,12 @@ function FindMyTutorProfile() {
         <div className={styles.profileContainer}>
           <div className={styles.profileSection}>
             <h1 className={styles.heading}>
-              {profile.name || `${user?.firstName} ${user?.lastName}`}'s Profile
+              {profile?.name || `${user?.firstName} ${user?.lastName}`}'s Profile
             </h1>
-            {profile.profilePicture ? (
+            {profile?.profilePicture ? (
               <img
                 src={profile.profilePicture}
-                alt={profile.name}
+                alt={profile.name || `${user?.firstName} ${user?.lastName}`}
                 className={styles.profileImage}
               />
             ) : (
@@ -159,39 +230,45 @@ function FindMyTutorProfile() {
               </div>
             )}
             <div className={styles.profileInfo}>
-              <p><strong>Name:</strong> {profile.name}</p>
-              <p><strong>Bio:</strong> {profile.bio}</p>
-              <p><strong>Courses:</strong> {profile.courses}</p>
-              <p><strong>Skills:</strong> {profile.skills}</p>
-              <p><strong>Major:</strong> {profile.major}</p>
-              <p><strong>Year:</strong> {profile.currentYear}</p>
+              <p><strong>Name:</strong> {profile?.name || `${user?.firstName} ${user?.lastName}`}</p>
+              <p><strong>Bio:</strong> {profile?.bio || "Not provided"}</p>
+              <p><strong>Courses:</strong> {profile?.courses || "Not provided"}</p>
+              <p><strong>Skills:</strong> {profile?.skills || "Not provided"}</p>
+              <p><strong>Major:</strong> {profile?.major || "Not provided"}</p>
+              <p><strong>Year:</strong> {profile?.currentYear || "Not provided"}</p>
             </div>
           </div>
         </div>
 
         <div className={styles.calendarContainer}>
           <h2 className={styles.heading}>Availability</h2>
-          <Calendar
-            localizer={localizer}
-            events={events}
-            startAccessor="start"
-            endAccessor="end"
-            style={{ height: 500, width: "100%" }}
-            views={["work_week"]}
-            defaultView="work_week"
-            date={moment().toDate()}
-            toolbar={false}
-            min={moment().hours(10).minutes(0).toDate()}
-            max={moment().hours(18).minutes(0).toDate()}
-            step={30}
-            timeslots={2}
-            eventPropGetter={eventStyleGetter}
-            components={{
-              work_week: {
-                header: customDayHeader,
-              },
-            }}
-          />
+          {events.length > 0 ? (
+            <Calendar
+              localizer={localizer}
+              events={events}
+              startAccessor="start"
+              endAccessor="end"
+              style={{ height: 500, width: "100%" }}
+              views={["work_week"]}
+              defaultView="work_week"
+              date={moment().toDate()}
+              toolbar={false}
+              min={moment().hours(10).minutes(0).toDate()}
+              max={moment().hours(18).minutes(0).toDate()}
+              step={30}
+              timeslots={2}
+              eventPropGetter={eventStyleGetter}
+              components={{
+                work_week: {
+                  header: customDayHeader,
+                },
+              }}
+            />
+          ) : (
+            <div className={styles.noAvailability}>
+              This tutor has not set their availability yet.
+            </div>
+          )}
         </div>
       </div>
     </div>

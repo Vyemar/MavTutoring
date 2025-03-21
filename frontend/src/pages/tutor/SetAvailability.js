@@ -4,17 +4,88 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import styles from "../../styles/SetAvailability.module.css";
 import TutorSidebar from '../../components/Sidebar/TutorSidebar';
+import { axiosGetData } from '../../utils/api'; // Import the API utility
+
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 
 const localizer = momentLocalizer(moment);
+
+// Define custom formats for the calendar
+const formats = {
+  dayFormat: 'dddd', // Use full day name (Monday, Tuesday, etc.)
+};
+
+// Custom components for the calendar
+const customComponents = {
+  week: {
+    header: ({ date }) => {
+      return (
+        <div style={{ textAlign: "center", fontWeight: "bold" }}>
+          {moment(date).format('dddd')}
+        </div>
+      );
+    },
+  },
+  work_week: {
+    header: ({ date }) => {
+      return (
+        <div style={{ textAlign: "center", fontWeight: "bold" }}>
+          {moment(date).format('dddd')}
+        </div>
+      );
+    },
+  }
+};
 
 const SetAvailability = () => {
     const [events, setEvents] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [userData, setUserData] = useState(null);
     
+    // Fetch the user session data
+    useEffect(() => {
+        const fetchUserSession = async () => {
+            try {
+                const sessionResponse = await axiosGetData(`${BACKEND_URL}/api/auth/session`);
+                
+                if (sessionResponse && sessionResponse.user) {
+                    setUserData(sessionResponse.user);
+                } else {
+                    console.error("No user session found");
+                    throw new Error("No active session found. Please log in again.");
+                }
+            } catch (error) {
+                console.error("Error fetching user session:", error);
+                alert("Failed to authenticate. Please log in again.");
+            }
+        };
+        
+        fetchUserSession();
+    }, []);
+    
+    // Fetch availability using the session data
     useEffect(() => {
         const fetchAvailability = async () => {
+            if (!userData || !userData.id) {
+                return; // Don't proceed if we don't have user data yet
+            }
+            
             try {
-                const response = await fetch(`/api/availability/${localStorage.getItem("userID")}`);
+                setIsLoading(true);
+                const response = await fetch(`${BACKEND_URL}/api/availability/${userData.id}`, {
+                    credentials: 'include' // Include cookies for session authentication
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error fetching availability: ${response.status}`);
+                }
+                
                 const data = await response.json();
     
                 // Convert availability data to calendar events
@@ -33,7 +104,7 @@ const SetAvailability = () => {
                         return;
                     }
                     
-                    // Get the day index (1-5 for Monday-Friday)
+                    // Get the day index (0-4 for Monday-Friday)
                     const dayMapping = {
                         'Monday': 0,
                         'Tuesday': 1,
@@ -71,7 +142,7 @@ const SetAvailability = () => {
         };
     
         fetchAvailability();
-    }, []);
+    }, [userData]); // This will run when userData changes
 
     // Prevent overlapping events
     const hasOverlap = (newStart, newEnd) => {
@@ -115,13 +186,12 @@ const SetAvailability = () => {
         }
     };
 
-    // Custom header component
-    const customDayHeader = ({ label }) => {
-        const dayName = label.split(" ")[0]; // Extract only the day name
-        return <div style={{ textAlign: "center", fontWeight: "bold" }}>{dayName}</div>;
-    };
-
     const handleSubmitAvailability = async () => {
+        if (!userData || !userData.id) {
+            alert("User session not found. Please log in again.");
+            return;
+        }
+        
         // Convert events to availability slots
         const formattedEvents = events
             .map((event) => ({
@@ -136,9 +206,12 @@ const SetAvailability = () => {
             });
 
         try {
-            const response = await fetch(`/api/availability/${localStorage.getItem("userID")}/submit`, {
+            const response = await fetch(`${BACKEND_URL}/api/availability/${userData.id}/submit`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json"
+                },
+                credentials: 'include', // Include cookies for session authentication
                 body: JSON.stringify({ availability: formattedEvents }),
             });
 
@@ -146,7 +219,7 @@ const SetAvailability = () => {
                 alert("Availability successfully submitted!");
             } else {
                 const errorData = await response.json();
-                alert(`Failed to submit availability: ${errorData.message}`);
+                alert(`Failed to submit availability: ${errorData.message || 'Unknown error'}`);
             }
         } catch (error) {
             console.error("Error submitting availability:", error);
@@ -184,19 +257,15 @@ const SetAvailability = () => {
                                 max={moment().hours(18).minutes(0).toDate()}
                                 step={30}
                                 timeslots={2}
-                                components={{
-                                    work_week: {
-                                        header: customDayHeader,
-                                    },
-                                }}
+                                formats={formats}
+                                components={customComponents}
                             />
                         </div>
-                        <div className={styles.instructionsContainer}>
-                            <p>Click and drag to add availability (10 AM - 6 PM only)</p>
-                            <p>Click on an existing slot to remove it</p>
-                            <p>Availability can only be set for weekdays (Monday-Friday)</p>
-                        </div>
-                        <button className={styles.submitButton} onClick={handleSubmitAvailability}>
+                        <button 
+                            className={styles.submitButton} 
+                            onClick={handleSubmitAvailability}
+                            disabled={!userData}
+                        >
                             Submit Availability
                         </button>
                     </>

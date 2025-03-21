@@ -28,7 +28,8 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.formContainer .loginButton {
+.formContainer .loginButton,
+.formContainer .ssologinButton {
     background-color: #007bff;
     color: #fff;
     padding: 10px 15px;
@@ -40,7 +41,8 @@
     margin-top: 10px;
 }
 
-.formContainer .loginButton:hover {
+.formContainer .loginButton:hover,
+.formContainer .ssologinButton:hover {
     background-color: #3399ff;
 }
 

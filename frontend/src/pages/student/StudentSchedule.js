@@ -1,7 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import styles from '../../styles/StudentSchedule.module.css';
 import StudentSidebar from '../../components/Sidebar/StudentSidebar';
+
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 
 function StudentSchedule() {
   const [tutors, setTutors] = useState([]);
@@ -10,46 +18,60 @@ function StudentSchedule() {
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
   const [selectedTime, setSelectedTime] = useState('');
   const [loading, setLoading] = useState(true);
+  const [sessionLoading, setSessionLoading] = useState(true);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [upcomingSessions, setUpcomingSessions] = useState([]);
   const [specialRequest, setSpecialRequest] = useState('');
+  const [userData, setUserData] = useState(null);
 
-  const studentId = localStorage.getItem('userID');
-
-  // Initial data fetch on component mount
+  // Initial fetch of user session data
   useEffect(() => {
-    fetchTutors();
-    fetchUpcomingSessions();
+    const fetchUserSession = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/api/auth/session`, {
+          withCredentials: true
+        });
+        
+        if (response.data && response.data.user) {
+          setUserData(response.data.user);
+        } else {
+          setError('No user session found. Please log in again.');
+        }
+      } catch (error) {
+        console.error('Error fetching user session:', error);
+        setError('Failed to authenticate user. Please log in again.');
+      } finally {
+        setSessionLoading(false);
+      }
+    };
+    
+    fetchUserSession();
   }, []);
 
-  // Fetch time slots whenever date or tutor changes
-  useEffect(() => {
-    if (selectedDate && selectedTutor) {
-      fetchAvailableTimeSlots();
-    } else {
-      setAvailableTimeSlots([]);
-    }
-  }, [selectedDate, selectedTutor]);
-
-  const fetchTutors = async () => {
+  // Define fetchUpcomingSessions as a useCallback function
+  const fetchUpcomingSessions = useCallback(async () => {
+    if (!userData || !userData.id) return;
+    
     try {
-      const response = await axios.get('http://localhost:4000/api/users/tutors');
-      setTutors(response.data);
-      setLoading(false);
+      const response = await axios.get(`${BACKEND_URL}/api/sessions/student/${userData.id}`, {
+        withCredentials: true
+      });
+      setUpcomingSessions(response.data);
     } catch (error) {
-      setError('Error loading tutors');
-      setLoading(false);
+      console.error('Error fetching upcoming sessions:', error);
     }
-  };
+  }, [userData]);
 
-  const fetchAvailableTimeSlots = async () => {
+  // Define fetchAvailableTimeSlots as a useCallback function
+  const fetchAvailableTimeSlots = useCallback(async () => {
     if (!selectedDate || !selectedTutor) return;
     
     try {
       setError('');
       const response = await axios.get(
-        `http://localhost:4000/api/sessions/availability/${selectedTutor}/${selectedDate}`
+        `${BACKEND_URL}/api/sessions/availability/${selectedTutor}/${selectedDate}`,
+        { withCredentials: true }
       );
       
       if (Array.isArray(response.data)) {
@@ -67,7 +89,33 @@ function StudentSchedule() {
       setAvailableTimeSlots([]);
       setSelectedTime('');
     }
-  };
+  }, [selectedDate, selectedTutor]);
+
+  // Initial data fetch once session is loaded
+  useEffect(() => {
+    if (userData && userData.id) {
+      const fetchTutors = async () => {
+        try {
+          const response = await axios.get(`${BACKEND_URL}/api/users/tutors`, {
+            withCredentials: true
+          });
+          setTutors(response.data);
+          setLoading(false);
+        } catch (error) {
+          setError('Error loading tutors');
+          setLoading(false);
+        }
+      };
+
+      fetchTutors();
+      fetchUpcomingSessions();
+    }
+  }, [userData, fetchUpcomingSessions]);
+
+  // Fetch time slots whenever date or tutor changes
+  useEffect(() => {
+    fetchAvailableTimeSlots();
+  }, [fetchAvailableTimeSlots]);
 
   const handleDateChange = (e) => {
     const newDate = e.target.value;
@@ -85,15 +133,22 @@ function StudentSchedule() {
     e.preventDefault();
     setError('');
 
+    if (!userData || !userData.id) {
+      setError('User session expired. Please log in again.');
+      return;
+    }
+
     try {
       const localDateTime = new Date(`${selectedDate}T${selectedTime}`);
       
-      const response = await axios.post('http://localhost:4000/api/sessions', {
+      const response = await axios.post(`${BACKEND_URL}/api/sessions`, {
         tutorId: selectedTutor,
-        studentId,
+        studentId: userData.id, // Use session data instead of localStorage
         sessionTime: localDateTime.toISOString(),
         duration: 60,
         specialRequest
+      }, {
+        withCredentials: true
       });
 
       if (response.data.success) {
@@ -116,15 +171,6 @@ function StudentSchedule() {
     }
   };
 
-  const fetchUpcomingSessions = async () => {
-    try {
-      const response = await axios.get(`http://localhost:4000/api/sessions/student/${studentId}`);
-      setUpcomingSessions(response.data);
-    } catch (error) {
-      console.error('Error fetching upcoming sessions:', error);
-    }
-  };
-
   const formatDateTime = (dateTime) => {
     const date = new Date(dateTime);
     return date.toLocaleString('en-US', {
@@ -133,10 +179,29 @@ function StudentSchedule() {
     });
   };
 
-  if (loading) {
+  if (sessionLoading || loading) {
     return (
-      <div className={styles.spinnerContainer}>
-        <div className={styles.spinner}></div>
+      <div className={styles.container}>
+        <StudentSidebar selected="Schedule" />
+        <div className={styles.mainContent}>
+          <div className={styles.spinnerContainer}>
+            <div className={styles.spinner}></div>
+            <p>Loading...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!userData) {
+    return (
+      <div className={styles.container}>
+        <StudentSidebar selected="Schedule" />
+        <div className={styles.mainContent}>
+          <div className={styles.error}>
+            Session expired or not found. Please log in again.
+          </div>
+        </div>
       </div>
     );
   }

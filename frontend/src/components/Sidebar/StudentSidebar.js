@@ -1,14 +1,15 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../../styles/component/StudentSideBar.module.css";
+import { handleLogout } from "../../utils/authUtils";
 
 const StudentSidebar = ({ selected }) => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem("role"); // Clear the role from localStorage
-    navigate("/login"); // Redirect to login page
-  };
+  // const handleLogout = () => {
+  //   localStorage.removeItem("role"); // Clear the role from localStorage
+  //   navigate("/login"); // Redirect to login page
+  // };
 
   return (
     <div className={styles.sidebar}>
@@ -18,6 +19,12 @@ const StudentSidebar = ({ selected }) => {
         onClick={() => navigate("/home")}
       >
         Dashboard
+      </button>
+      <button
+        className={selected === "profile" ? `${styles.selected}` : ""}
+        onClick={() => navigate("/student-profile")}
+      >
+        Profile
       </button>
       <button
         className={selected === "find-sessions" ? `${styles.selected}` : ""}

@@ -5,6 +5,14 @@ import AdminSidebar from '../../components/Sidebar/AdminSidebar';
 import ViewProfile from './ViewProfile';
 import styles from '../../styles/ManageUsers.module.css';
 
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
+
 function ManageUsers() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -15,7 +23,7 @@ function ManageUsers() {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('http://localhost:4000/api/users');
+                const response = await axios.get(`${BACKEND_URL}/api/users`);
                 const filteredUsers = response.data
                     .filter(user => selectedRole === "All" ? true : user.role === selectedRole)
                     .sort((a, b) => a.lastName.localeCompare(b.lastName));
