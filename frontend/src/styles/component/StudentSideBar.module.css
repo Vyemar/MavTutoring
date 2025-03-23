@@ -38,3 +38,19 @@
 .sidebar .logoutButton:hover {
   background-color: #a71d2a;
 }
+
+.sidebar .sidebarLogoGroup { 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+  padding: 20px 0px
+}
+
+.sidebar .sidebarLogo {
+  width: 37px;
+  height: 37px;
+  object-fit: contain;
+  border-radius: 50%;
+  background-color: #fff;
+  padding: 2px;
+}
