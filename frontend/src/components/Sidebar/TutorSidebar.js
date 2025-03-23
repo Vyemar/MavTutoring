@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "../../styles/component/TutorSideBar.module.css";
 import { handleLogout } from "../../utils/authUtils";
+import { FaEnvelope, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
+
 
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || "https";
@@ -14,30 +16,41 @@ const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 
 function TutorSidebar({ onLogout, selected }) {
   const navigate = useNavigate();
-  const [logo, setLogo] = useState("");
+  const [bugHouseInfo, setBugHouseInfo] = useState({
+    logo: "",
+    contactInfo: {
+      email: "",
+      phone: "",
+      address: "",
+    },
+  });
 
   useEffect(() => {
     // Fetch BugHouse settings to get the logo
-    const fetchLogo = async () => {
+    const fetchBugHouseInfo = async () => {
       try {
         const response = await axios.get(`${BACKEND_URL}/api/bughouse`);
-        setLogo(response.data.logo);
+        setBugHouseInfo(response.data);
       } catch (error) {
         console.error("Error fetching logo:", error);
       }
     };
 
-    fetchLogo();
+    fetchBugHouseInfo();
   }, []);
 
   return (
     <div className={styles.sidebar}>
       <div className={styles.sidebarLogoGroup}>
-        {logo && (
-          <img src={logo} alt="BugHouse Logo" className={styles.sidebarLogo} />
+        {bugHouseInfo.logo && (
+          <img
+            src={bugHouseInfo.logo}
+            alt="BugHouse Logo"
+            className={styles.sidebarLogo}
+          />
         )}
         <h1 style={{ margin: 0 }}>bugHouse</h1>
-      </div>{" "}
+      </div>
       <button
         className={selected === "home" ? `${styles.selected}` : ""}
         onClick={() => navigate("/home")}
@@ -77,6 +90,23 @@ function TutorSidebar({ onLogout, selected }) {
       <button className={styles.logoutButton} onClick={handleLogout}>
         Log Out
       </button>
+      <div className={styles.sidebarContactInfo}>
+        <h3>Contact Us</h3>
+        <div className={styles.contactDetails}>
+          <div className={styles.contactItem}>
+            <FaEnvelope className={styles.contactIcon} />
+            <span>{bugHouseInfo.contactInfo.email}</span>
+          </div>
+          <div className={styles.contactItem}>
+            <FaPhone className={styles.contactIcon} />
+            <span>{bugHouseInfo.contactInfo.phone}</span>
+          </div>
+          <div className={styles.contactItem}>
+            <FaMapMarkerAlt className={styles.contactIcon} />
+            <span>{bugHouseInfo.contactInfo.address}</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

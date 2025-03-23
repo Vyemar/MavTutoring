@@ -54,3 +54,43 @@
   background-color: #fff;
   padding: 2px;
 }
+
+.sidebar .sidebarContactInfo {
+  padding: 10px 0px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.sidebar .sidebarContactInfo h3 {
+  color: white;
+  font-size: 1rem;
+  margin-bottom: 15px;
+  opacity: 0.8;
+}
+
+.sidebar .contactDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar .contactItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  opacity: 0.7;
+  font-size: 0.9rem;
+}
+
+.sidebar .contactIcon {
+  font-size: 1rem;
+  min-width: 20px;
+}
+
+/* Make long text wrap properly */
+.sidebar .contactItem span {
+  word-break: break-word;
+  line-height: 1.2;
+}
