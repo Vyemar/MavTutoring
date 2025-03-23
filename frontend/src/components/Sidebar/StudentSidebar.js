@@ -27,12 +27,6 @@ const StudentSidebar = ({ selected }) => {
         Profile
       </button>
       <button
-        className={selected === "find-sessions" ? `${styles.selected}` : ""}
-        onClick={() => navigate("/find-sessions")}
-      >
-        Find Sessions
-      </button>
-      <button
         className={selected === "find-tutors" ? `${styles.selected}` : ""}
         onClick={() => navigate("/find-tutors")}
       >
