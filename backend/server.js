@@ -107,10 +107,7 @@ app.use('/api/sessions', sessionRoutes);
 app.use('/api/analytics', analyticsRoutes); //analytics routes
 
 app.use("/api/notifications", notificationRoutes); // Notification routes
-// Connect to MongoDB using mongoose without deprecated options
-const dbUri = process.env.DB;
 
-if (!dbUri) {
 // === Connect to MongoDB ===
 if (!MONGO_URI) {
     console.error('MongoDB connection URI is undefined. Please check your .env file.');
@@ -188,5 +185,4 @@ if (USE_HTTPS) {
         console.log(`HTTP Server running on ${BACKEND_URL}`);
         console.log(`CORS enabled for origin: ${FRONTEND_URL}`);
     });
-}
 }
