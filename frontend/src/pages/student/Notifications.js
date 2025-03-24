@@ -4,38 +4,46 @@ import styles from "../../styles/Notifications.module.css";
 import StudentSidebar from "../../components/Sidebar/StudentSidebar";
 import { useEffect, useState } from "react";
 import axios from "axios";
+// Get configuration from environment variables
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
 
+// Construct the backend URL dynamically
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 function Notifications() {
+  const [sessionLoading, setSessionLoading] = useState(true);
+  const [userData, setUserData] = useState(null);
+  const [error, setError] = useState('');
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
-  // const notifications = [
-  //   {
-  //     id: 1,
-  //     content: "Your appointment with Tutor Smarika has been confirmed."
-  //   },
-  //   {
-  //     id: 2,
-  //     content: "Your appointment with Tutor Smarika has been confirmed."
-  //   },
-  //   {
-  //     id: 3,
-  //     content: "Your appointment with Tutor Smarika has been confirmed."
-  //   },
-  //   {
-  //     id: 4,
-  //     content: "Your appointment with Tutor Smarika has been confirmed."
-  //   },
-  //   {
-  //     id: 5,
-  //     content: "Your appointment with Tutor Smarika has been confirmed."
-  //   }
-  // ]
-  const StudentID = localStorage.getItem("userID"); // Safely access currentUser's ID  
-
-
+// Initial fetch of user session data
+useEffect(() => {
+  const fetchUserSession = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/auth/session`, {
+        withCredentials: true
+      });
+      
+      if (response.data && response.data.user) {
+        setUserData(response.data.user);
+      } else {
+        setError('No user session found. Please log in again.');
+      }
+    } catch (error) {
+      console.error('Error fetching user session:', error);
+      setError('Failed to authenticate user. Please log in again.');
+    } finally {
+      setSessionLoading(false);
+    }
+  };
+  
+  fetchUserSession();
+}, []);
   useEffect(() => {
+    if(userData !== null )
     axios
-      .get("http://localhost:4000/api/notifications/" + StudentID)
+      .get(`${BACKEND_URL}/api/notifications/${userData?.id}`)
       .then((response) => {
         const { data } = response;
         setNotifications(data);
@@ -48,7 +56,7 @@ function Notifications() {
           setLoading(false);
         }, 2000);
       });
-  }, []);
+  }, [userData]);
   return (
     <div className={styles.container}>
       <StudentSidebar selected="notifications"></StudentSidebar>
