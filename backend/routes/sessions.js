@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const mongoose = require('mongoose'); // Add this importS
 const Session = require('../models/Session');
 
 // Get available time slots for a tutor on a specific date
@@ -54,7 +55,8 @@ router.get('/availability/:tutorId/:date', async (req, res) => {
   }
 });
 
-// Book a session
+
+
 // Book a session
 router.post('/', async (req, res) => {
   try {
@@ -161,6 +163,69 @@ router.get('/tutor/:tutorId', async (req, res) => {
     res.status(500).json({ message: 'Error fetching sessions', error: error.message });
   }
 });
+
+//get all sessions
+router.get('/all', async (req, res) => {
+  try {
+    console.log('Starting sessions fetch...');
+    
+    // Fetch sessions with simpler error handling
+    const sessions = await Session.find()
+      .populate('studentID', 'firstName lastName')
+      .populate('tutorID', 'firstName lastName')
+      .sort({ sessionTime: 1 });
+
+    // Format sessions with basic error handling
+    const formattedSessions = sessions.map(session => {
+      try {
+        return {
+          id: session._id.toString(),
+          studentName: session.studentID 
+            ? `${session.studentID.firstName || 'Unknown'} ${session.studentID.lastName || ''}`.trim() 
+            : 'Unknown Student',
+          tutorName: session.tutorID 
+            ? `${session.tutorID.firstName || 'Unknown'} ${session.tutorID.lastName || ''}`.trim() 
+            : 'Unknown Tutor',
+          date: session.sessionTime 
+            ? new Date(session.sessionTime).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              }) 
+            : 'N/A',
+          time: session.sessionTime 
+            ? new Date(session.sessionTime).toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+              }) 
+            : 'N/A',
+          duration: session.duration || 'N/A',
+          status: session.status || 'Unknown'
+        };
+      } catch (formatError) {
+        console.error('Error formatting individual session:', formatError);
+        return {
+          id: session._id.toString(),
+          studentName: 'Format Error',
+          tutorName: 'Format Error',
+          date: 'Format Error',
+          time: 'Format Error',
+          duration: 'Format Error',
+          status: 'Format Error'
+        };
+      }
+    });
+    
+    res.json(formattedSessions);
+  } catch (error) {
+    console.error('Error fetching all sessions:', error);
+    res.status(500).json({ 
+      message: 'Error fetching all sessions'
+    });
+  }
+});
+
 
 // Update session status
 router.put('/:sessionId/status', async (req, res) => {
