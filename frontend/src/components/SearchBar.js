@@ -11,7 +11,7 @@ const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || "4000";
 // Construct the backend URL dynamically
 const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 
-export const SearchBar = ({ allTutors, setResults, /*setResultsList,*/ setSearch}) => {
+export const SearchBar = ({ allTutors, setResults, /*setResultsList,*/ setSearch, setClicked}) => {
   //Will store user input
   const [input, setInput] = useState("");
   const debounceTimer = useRef(null);
@@ -52,17 +52,24 @@ export const SearchBar = ({ allTutors, setResults, /*setResultsList,*/ setSearch
     setSearch(input);
 
     //If nothing has been entered so far, ALL TUTORS are returned
-    if (!input) return setResults(allTutors)
-
-    // Clear previous timer
-    if (debounceTimer.current) {
-      clearTimeout(debounceTimer.current);
+    if (!input) 
+    {
+      return setResults(allTutors)
     }
+    else
+    {
+      setClicked(false);
 
-    // Set new debounce timer
-    debounceTimer.current = setTimeout(() => {
-      fetchFilteredTutors(input.trim());
-    }, 300);
+      // Clear previous timer
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+
+      // Set new debounce timer
+      debounceTimer.current = setTimeout(() => {
+        fetchFilteredTutors(input.trim());
+      }, 300);
+    }
   };
 
   return (

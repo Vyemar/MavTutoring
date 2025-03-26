@@ -25,6 +25,11 @@
   color: black;
 }
 
+.searchInfoContent{
+  flex: 1;
+  padding: 15px 20px 0px;
+}
+
 .heading {
   font-size: 2rem;
   color: #ffffff;
@@ -69,6 +74,32 @@
   font-size: 1.5rem;
   color: #ffffff;
   text-align: justify;
+  padding-left: 5px;
+}
+
+.noTutors{
+  color: #ffffff;
+}
+
+.searchInfo{
+  display:flex;
+  flex-direction:row;
+  justify-content: space-between;
+}
+
+.returnButton{
+    border-radius: 5px;
+    background-color: #0064b1;
+    padding: 2px 2px;
+    width: 170px;
+    color: #e6ebee;
+    border: none;
+}
+
+.returnButton:hover {
+  transform: scale(1.03);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
 }
 
 .spinnerContainer {

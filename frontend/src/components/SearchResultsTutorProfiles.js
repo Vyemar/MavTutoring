@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "../styles/ViewTutors.module.css";
 import TutorCard from "./Sidebar/TutorCard";
 
-export const SearchResultsTutorProfiles = ({ results, search }) => {
+export const SearchResultsTutorProfiles = ({ results /*, setResults, allTutors, search*/ }) => {
   const [users, setUsers] = useState([]);
   //const [loading, setLoading] = useState(true);
 
@@ -35,20 +35,13 @@ export const SearchResultsTutorProfiles = ({ results, search }) => {
   return (
     <div className={styles.container}>
       <div className={styles.mainContent}>
-        {
-          search.length !== 0 ? (
-            <h1 className={styles.searchText}>Search results for "{search}" </h1>
-          ) : (
-            <h1 className={styles.searchDefaultText}>  All Tutors</h1>
-          )
-        }
         <div className={styles.cardContainer}>
           {users.length > 0 ? (
             users.map((user) => (
               <TutorCard user={user} key={user._id}></TutorCard>
             ))
           ) : (
-            <p>No tutors found.</p>
+            <p className = {styles.noTutors} >No tutors found.</p>
           )}
         </div>
       </div>

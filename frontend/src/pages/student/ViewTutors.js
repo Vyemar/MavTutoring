@@ -5,6 +5,7 @@ import StudentSidebar from "../../components/Sidebar/StudentSidebar";
 import { SearchBar } from "../../components/SearchBar";
 import { SearchResultsList } from "../../components/SearchResultsList";
 import { SearchResultsTutorProfiles } from "../../components/SearchResultsTutorProfiles";
+import { SearchInfo } from "../../components/SearchInfo";
 
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || "https";
@@ -20,7 +21,8 @@ function ViewTutors() {
   const [results, setResults] = useState([]); //Will store the filtered tutor user objects (that is used for our search results) we get each time a user enters something in the searchbar
   //const [resultsList, setResultsList] = useState([]) //Will store drop down suggestions below search bar
   const [search, setSearch] = useState(""); //Will store what the user searched and will be used for SearchResultsTutorProfiles.js
-
+  const [clicked, setClicked] = useState(true); //If this is true that means the default case of SearchInfo component will show which is that the title "All Tutors" with no return button on the side is shown
+ 
   //Fetching ALL tutor profiles (the default case)
   useEffect(() => {
     const fetchAllTutors = async () => {
@@ -31,7 +33,6 @@ function ViewTutors() {
           );
           const tutors = response.data.filter((user) => user.role === "Tutor");
 
-
           setResults(tutors);
           setAllTutors(tutors);
           setLoading(false);
@@ -41,15 +42,13 @@ function ViewTutors() {
           setLoading(false);
         }
       };
-
-
     fetchAllTutors();
   }, []);
 
   /*if (loading) {
     return <p>Loading...</p>;
   }*/
- 
+
   if (loading) {
      return (
        <div className={styles.container}>
@@ -73,11 +72,13 @@ function ViewTutors() {
         <div className="App">
           <div className="search-bar-container">
             {/*Creates a searchbar the user can enter inputs in*/}
-            <SearchBar allTutors={allTutors} setResults={setResults} /*setResultsList = {setResultsList}*/ setSearch = {setSearch} />{" "}
+            <SearchBar allTutors={allTutors} setResults={setResults} /*setResultsList = {setResultsList}*/ setSearch={setSearch} setClicked={setClicked} />{" "}
             {/*<SearchResultsList results = {results} /*resultsList = {resultsList}/>*/}{/*Takes results from user input and lists Tutor profile name suggestions*/}
           </div>
+          {/*This component controls the text directly below the searchbar*/}
+          <SearchInfo setResults={setResults} allTutors={allTutors} search={search} setClicked={setClicked} clicked={clicked}/>
           {/*Takes results from user input and lists Tutor profile cards*/}
-          <SearchResultsTutorProfiles results={results} search = {search} />{" "}
+          <SearchResultsTutorProfiles results={results} /*setResults={setResults} allTutors={allTutors} search={search}*/ />{" "}
         </div>
       </div>
     </div>
