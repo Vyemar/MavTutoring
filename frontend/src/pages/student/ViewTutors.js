@@ -3,7 +3,7 @@ import axios from "axios";
 import styles from "../../styles/ViewTutors.module.css";
 import StudentSidebar from "../../components/Sidebar/StudentSidebar";
 import { SearchBar } from "../../components/SearchBar";
-//import { SearchResultsList } from "../../components/SearchResultsList";
+import { SearchResultsList } from "../../components/SearchResultsList";
 import { SearchResultsTutorProfiles } from "../../components/SearchResultsTutorProfiles";
 
 // Get configuration from environment variables
@@ -18,16 +18,19 @@ function ViewTutors() {
   const [allTutors, setAllTutors] = useState([]); //Stores ALL tutor profiles
   const [loading, setLoading] = useState(true); //Allows us to output "loading.."" when somthing is loading
   const [results, setResults] = useState([]); //Will store the filtered tutor user objects (that is used for our search results) we get each time a user enters something in the searchbar
+  //const [resultsList, setResultsList] = useState([]) //Will store drop down suggestions below search bar
+  const [search, setSearch] = useState(""); //Will store what the user searched and will be used for SearchResultsTutorProfiles.js
 
   //Fetching ALL tutor profiles (the default case)
   useEffect(() => {
-    const /*fetchTutorsWithProfiles*/ fetchAllTutors = async () => {
+    const fetchAllTutors = async () => {
         try {
           // Fetch all users
           const response = await axios.get(
             `${BACKEND_URL}/api/users/tutors/ALL`
           );
           const tutors = response.data.filter((user) => user.role === "Tutor");
+
 
           setResults(tutors);
           setAllTutors(tutors);
@@ -39,13 +42,28 @@ function ViewTutors() {
         }
       };
 
-    //fetchTutorsWithProfiles();
+
     fetchAllTutors();
   }, []);
 
-  if (loading) {
+  /*if (loading) {
     return <p>Loading...</p>;
+  }*/
+ 
+  if (loading) {
+     return (
+       <div className={styles.container}>
+         <StudentSidebar />
+         <div className={styles.mainContent}>
+           <div className={styles.spinnerContainer}>
+             <div className={styles.spinner}></div>
+             <p>Loading tutors...</p>
+           </div>
+         </div>
+       </div>
+     );
   }
+
 
   return (
     <div className={styles.container}>
@@ -54,12 +72,12 @@ function ViewTutors() {
         <h1 className={styles.heading}>Our Tutors</h1>
         <div className="App">
           <div className="search-bar-container">
-            <SearchBar allTutors={allTutors} setResults={setResults} />{" "}
             {/*Creates a searchbar the user can enter inputs in*/}
-            {/*<SearchResultsList results = {results}/>/*Takes results from user input and lists Tutor profile name suggestions*/}
+            <SearchBar allTutors={allTutors} setResults={setResults} /*setResultsList = {setResultsList}*/ setSearch = {setSearch} />{" "}
+            {/*<SearchResultsList results = {results} /*resultsList = {resultsList}/>*/}{/*Takes results from user input and lists Tutor profile name suggestions*/}
           </div>
-          <SearchResultsTutorProfiles results={results} />{" "}
           {/*Takes results from user input and lists Tutor profile cards*/}
+          <SearchResultsTutorProfiles results={results} search = {search} />{" "}
         </div>
       </div>
     </div>

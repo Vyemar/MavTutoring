@@ -32,6 +32,23 @@ router.get('/tutors/:search', async (req, res) => {
         },
       },
       {
+        $addFields:{
+          fullName:{
+            $concat:[
+              '$firstName',
+              '$lastName',
+            ]
+          },
+          courseNS:{ //Will store the courses with no spaces
+            $replaceAll: {
+              input: "$profile.courses",
+              find: " ",
+              replacement: ""
+            }
+          }
+        }
+      },
+      {
         $match:
           searchValue === 'ALL'
             ? { $and: [{ role: 'Tutor' }] }
@@ -40,12 +57,11 @@ router.get('/tutors/:search', async (req, res) => {
                   { role: 'Tutor' },
                   {
                     $or: [
-                      { firstName: { $regex: searchValue, $options: 'i' } },
-                      { lastName: { $regex: searchValue, $options: 'i' } },
+                      { fullName: { $regex: searchValue, $options: 'ix' } },
                       {
-                        'profile.courses': {
+                        courseNS: {
                           $regex: searchValue,
-                          $options: 'i',
+                          $options: 'ix',
                         },
                       },
                     ],

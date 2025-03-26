@@ -11,7 +11,7 @@ const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || "4000";
 // Construct the backend URL dynamically
 const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 
-export const SearchBar = ({ allTutors, setResults }) => {
+export const SearchBar = ({ allTutors, setResults, /*setResultsList,*/ setSearch}) => {
   //Will store user input
   const [input, setInput] = useState("");
   const debounceTimer = useRef(null);
@@ -25,18 +25,34 @@ export const SearchBar = ({ allTutors, setResults }) => {
       const response = await axios.get(
         `${BACKEND_URL}/api/users/tutors/${value}`
       );
-      //console.log(response.data);
+      console.log(response.data);
       setResults(response.data);
     } else {
       //console.log("All Tutors");
       setResults(allTutors);
+
+      //Stores list of suggestions under search bar if something has been entered
+      //setResultsList(input);
     }
   };
 
   //Handles any changes in input in the searchbar
   const handleChange = (e) => {
     const value = e.target.value;
+
+    //Returns list of suggestions under search bar if something has been entered
+    //if (value) return setResultsList(value)
+   
+    //Stores value in input to be used for handleClick function
     setInput(value);
+  };
+
+  const handleClick = () => {
+    //setting search result text
+    setSearch(input);
+
+    //If nothing has been entered so far, ALL TUTORS are returned
+    if (!input) return setResults(allTutors)
 
     // Clear previous timer
     if (debounceTimer.current) {
@@ -45,16 +61,9 @@ export const SearchBar = ({ allTutors, setResults }) => {
 
     // Set new debounce timer
     debounceTimer.current = setTimeout(() => {
-      fetchFilteredTutors(value.trim());
+      fetchFilteredTutors(input.trim());
     }, 300);
   };
-
-  /*const handleClick = (input) => {
-      //If nothing has been entered so far, ALL TUTORS are returned
-      if (!input) return setResults(allTutors)
-
-      fetchFilteredTutors(input);
-    }*/
 
   return (
     <div className="input-wrapper" onSubmit={handleSubmit}>
@@ -62,13 +71,15 @@ export const SearchBar = ({ allTutors, setResults }) => {
 
       {/*Allows user to enter input in the searchbar*/}
       <input
-        placeholder="Type to search..."
+        placeholder="Enter tutor or course name..."
         onChange={handleChange}
-        value={input}
-        /*onChange = {(e)=> setInput(e.target.value)}*/
+        onKeyDown={(e) => {
+          if (e.key === "Enter")
+              handleClick();
+        }}
       />
 
-      <button /*onClick = {handleClick(input)}*/ className="searchButton">
+      <button onClick = {handleClick} className="searchButton">
         {" "}
         Search{" "}
       </button>
