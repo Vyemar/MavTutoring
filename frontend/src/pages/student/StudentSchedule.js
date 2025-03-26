@@ -182,7 +182,7 @@ function StudentSchedule() {
   if (sessionLoading || loading) {
     return (
       <div className={styles.container}>
-        <StudentSidebar selected="Schedule" />
+        <StudentSidebar selected="student-schedule" />
         <div className={styles.mainContent}>
           <div className={styles.spinnerContainer}>
             <div className={styles.spinner}></div>
@@ -196,7 +196,7 @@ function StudentSchedule() {
   if (!userData) {
     return (
       <div className={styles.container}>
-        <StudentSidebar selected="Schedule" />
+        <StudentSidebar selected="student-schedule" />
         <div className={styles.mainContent}>
           <div className={styles.error}>
             Session expired or not found. Please log in again.
@@ -208,7 +208,7 @@ function StudentSchedule() {
 
   return (
     <div className={styles.container}>
-      <StudentSidebar selected="Schedule" />
+      <StudentSidebar selected="student-schedule" />
       <div className={styles.mainContent}>
         <div className={styles.scheduleContainer}>
           <h1 className={styles.heading}>Schedule a Session</h1>

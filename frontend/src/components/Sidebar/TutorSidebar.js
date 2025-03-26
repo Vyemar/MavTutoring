@@ -1,14 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "../../styles/component/TutorSideBar.module.css";
+import styles from "../../styles/component/SideBar.module.css";
 import { handleLogout } from "../../utils/authUtils";
+import BaseSidebar from "./BaseSidebar";
 
 function TutorSidebar({ onLogout, selected }) {
   const navigate = useNavigate();
 
   return (
-    <div className={styles.sidebar}>
-      <h1>bugHouse</h1>
+    <BaseSidebar>
       <button
         className={selected === "home" ? `${styles.selected}` : ""}
         onClick={() => navigate("/home")}
@@ -16,18 +16,11 @@ function TutorSidebar({ onLogout, selected }) {
         Dashboard
       </button>{" "}
       <button
-        className={selected === "courses" ? `${styles.selected}` : ""}
-        onClick={() => navigate("/TutorCourses")}
-      >
-        Courses
-      </button>
-      <button
         className={selected === "profile" ? `${styles.selected}` : ""}
         onClick={() => navigate("/tutor-profile")}
       >
         Profile
       </button>
-      
       <button
         className={selected === "availability" ? `${styles.selected}` : ""}
         onClick={() => navigate("/availability")}
@@ -55,7 +48,7 @@ function TutorSidebar({ onLogout, selected }) {
       <button className={styles.logoutButton} onClick={handleLogout}>
         Log Out
       </button>
-    </div>
+    </BaseSidebar>
   );
 }
 

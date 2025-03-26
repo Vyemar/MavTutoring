@@ -10,9 +10,7 @@ import Notifications from "./pages/student/Notifications";
 import StudentSchedule from "./pages/student/StudentSchedule";
 import MyTutors from "./pages/student/MyTutors";
 import MySessions from "./pages/student/MySessions";
-import FindSessions from "./pages/student/FindSessions";
 import TutorSessions from "./pages/tutor/TutorSessions";
-import TutorCourses from "./pages/tutor/TutorCourses";
 import TutorNotifications from "./pages/tutor/TutorNotifications";
 import TutorSchedule from "./pages/tutor/TutorSchedule";
 import TutorProfile from "./pages/tutor/TutorProfile";
@@ -129,9 +127,7 @@ function App() {
         <Route path="/FindMyTutorProfile/:tutorId" element={<FindMyTutorProfile />} />
         <Route path="/my-tutors" element={<MyTutors />} />
         <Route path="/my-sessions" element={<MySessions />} />
-        <Route path="/find-sessions" element={<FindSessions />} />
         <Route path="/sessions" element={<TutorSessions />} />
-        <Route path="/TutorCourses" element={<TutorCourses />} />
         <Route path="/TutorNotifications" element={<TutorNotifications />} />
         <Route 
           path="/student-profile" 

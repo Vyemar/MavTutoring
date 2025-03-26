@@ -1,15 +1,15 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import styles from '../../styles/component/AdminSideBar.module.css';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import styles from "../../styles/component/SideBar.module.css";
 import { handleLogout } from "../../utils/authUtils";
+import BaseSidebar from "./BaseSidebar";
 
-function AdminSidebar({ onLogout, selected }) {
-    const navigate = useNavigate();
+const AdminSidebar = ({ onLogout, selected }) => {
+  const navigate = useNavigate();
 
-    return (
-        <div className={styles.sidebar}>
-            <h1>bugHouse</h1>
-            <button
+  return (
+    <BaseSidebar >
+      <button
         className={selected === "home" ? `${styles.selected}` : ""}
         onClick={() => navigate("/home")}
       >
@@ -33,11 +33,11 @@ function AdminSidebar({ onLogout, selected }) {
       >
         Settings
       </button>
-            <button className={styles.logoutButton} onClick={handleLogout}>
-                Log Out
-            </button>
-        </div>
-    );
-}
+      <button className={styles.logoutButton} onClick={handleLogout}>
+        Log Out
+      </button>
+    </BaseSidebar>
+  );
+};
 
 export default AdminSidebar;
