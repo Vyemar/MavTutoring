@@ -21,7 +21,9 @@
 
 .mainContent {
   flex: 1;
-  padding: 20px;
+  /*original:
+  padding: 20px;*/
+  padding: 12px;
   color: black;
 }
 
