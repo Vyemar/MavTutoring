@@ -1,0 +1,142 @@
+/* styles/AttendanceReport.module.css */
+.container {
+  display: flex;
+  height: 100vh;
+  background-color:linear-gradient(135deg, #007bff, #6f42c1);
+}
+
+.mainContent {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: linear-gradient(135deg, #007bff, #6f42c1);
+  margin: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e1e4e8;
+}
+
+.heading {
+  font-size: 24px;
+  color: #f3f5f7;
+  margin: 0;
+}
+
+.refreshContainer {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.lastUpdated {
+  color: #edf3f4;
+  font-size: 14px;
+}
+
+.refreshButton {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.refreshButton:hover {
+  background-color: #2980b9;
+}
+
+.refreshButton:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.attendanceSection {
+  background-color: #f9fafb;
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  color: #34495e;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e1e4e8;
+}
+
+.loadingContainer,
+.errorContainer,
+.emptyContainer {
+  text-align: center;
+  padding: 30px;
+  color: #7f8c8d;
+}
+
+.tableContainer {
+  overflow-x: auto;
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.sessionsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sessionsTable thead {
+  background-color: #f1f3f5;
+}
+
+.sessionsTable th,
+.sessionsTable td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.sessionsTable th {
+  font-weight: 600;
+  color: #2c3e50;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+.sessionsTable tr:hover {
+  background-color: #f8f9fa;
+  transition: background-color 0.2s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .headerContainer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .refreshContainer {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .sessionsTable {
+    font-size: 14px;
+  }
+
+  .sessionsTable th,
+  .sessionsTable td {
+    padding: 10px;
+  }
+}
