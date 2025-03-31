@@ -1,94 +1,95 @@
-import React, {useState} from "react";
-//import axios from "axios";
-import {FaSearch} from "react-icons/fa";
+import React, { useState, useRef } from "react";
+import { FaSearch } from "react-icons/fa";
 import "../styles/SearchBar.css";
+import axios from "axios";
 
 // Get configuration from environment variables
-const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
-const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
-const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || "https";
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || "localhost";
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || "4000";
 
 // Construct the backend URL dynamically
 const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 
-export const SearchBar = ({setResults}) => {
-    const [input, setInput] = useState("");
+export const SearchBar = ({ allTutors, setResults, /*setResultsList,*/ setSearch, setClicked}) => {
+  //Will store user input
+  const [input, setInput] = useState("");
+  const debounceTimer = useRef(null);
 
+  const handleSubmit = (e) => e.preventDefault();
 
-    //Fetch relevant tutors from database
-    const fetchTutors = (value) => {
-      fetch(`${BACKEND_URL}/api/users`)
-      .then((response) => response.json())
-      .then((json) => {
-        const results = json.filter((user) => {
-          const name = user.firstName + user.lastName;
-          return (
-            //Filters our results so that it's only tutors and those whose name match
-            value &&
-            user &&
-            user.role === "Tutor" &&
-            (name.replaceAll(" ","").toLowerCase().includes(value.replaceAll(" ","").toLowerCase()))
-          );
-        });
-        //Sets our results the filtered objects we just got
-        setResults(results);
-        /*console.log(results);*/
-      });
-    };
+  //Fetch relevant tutors from database
+  const fetchFilteredTutors = async (value) => {
+    if (value) {
+      //console.log(`${BACKEND_URL}/api/users/tutors/${value}`);
+      const response = await axios.get(
+        `${BACKEND_URL}/api/users/tutors/${value}`
+      );
+      console.log(response.data);
+      setResults(response.data);
+    } else {
+      //console.log("All Tutors");
+      setResults(allTutors);
 
+      //Stores list of suggestions under search bar if something has been entered
+      //setResultsList(input);
+    }
+  };
 
+  //Handles any changes in input in the searchbar
+  const handleChange = (e) => {
+    const value = e.target.value;
 
+    //Returns list of suggestions under search bar if something has been entered
+    //if (value) return setResultsList(value)
+   
+    //Stores value in input to be used for handleClick function
+    setInput(value);
+  };
 
-    /*const fetchTutorsWithProfiles = async (value) => {
-      try {
-        // Fetch all users
-        const response = await axios.get("http://localhost:4000/api/users");
-        const tutors = response.data.filter((user) => user.role === "Tutor");*/
+  const handleClick = () => {
+    //setting search result text
+    setSearch(input);
 
+    //If nothing has been entered so far, ALL TUTORS are returned
+    if (!input) 
+    {
+      return setResults(allTutors)
+    }
+    else
+    {
+      setClicked(false);
 
-        // Fetch profiles for each tutor
-        /*const tutorsWithProfiles = await Promise.all(
-          tutors.map(async (tutor) => {
-            try {
-              const profileResponse = await axios.get(
-                `http://localhost:4000/api/profile/${tutor._id}`
-              );
-              return {
-                ...tutor,
-                profile: profileResponse.data
-              };
-            } catch (error) {
-              // Return tutor without profile if profile doesn't exist
-              return tutor;
-            }
-          })
-        );*/
-        /*setUsers(tutorsWithProfiles);
-        setLoading(false);
-        console.log("Fetched tutors with profiles:", tutorsWithProfiles);*/
-      /*} catch (error) {
-        console.error("Error fetching users:", error);
-        setLoading(false);
+      // Clear previous timer
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
       }
-    };*/
 
+      // Set new debounce timer
+      debounceTimer.current = setTimeout(() => {
+        fetchFilteredTutors(input.trim());
+      }, 300);
+    }
+  };
 
-    //What happens whenever the input changes
-    const handleChange = (value) => {
-      setInput(value);
-      fetchTutors(value);
-    };
+  return (
+    <div className="input-wrapper" onSubmit={handleSubmit}>
+      <FaSearch id="search-icon" />
 
+      {/*Allows user to enter input in the searchbar*/}
+      <input
+        placeholder="Enter tutor or course name..."
+        onChange={handleChange}
+        onKeyDown={(e) => {
+          if (e.key === "Enter")
+              handleClick();
+        }}
+      />
 
-    return (
-        <div className = "input-wrapper">
-            <FaSearch id="search-icon" />
-            <input
-                placeholder="Type to search..."
-                value={input}
-                //Passes our value through our function that handles changes in input
-                onChange={(e) => handleChange(e.target.value)}
-            />
-        </div>
-    );
+      <button onClick = {handleClick} className="searchButton">
+        {" "}
+        Search{" "}
+      </button>
+    </div>
+  );
 };
