@@ -202,6 +202,155 @@ body {
     font-weight: bold;
     color: #007bff;
   }
+
+  /* Add these to your existing FindMyTutorProfile.module.css file */
+
+.calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.scheduleControls {
+  display: flex;
+  gap: 10px;
+}
+
+.editScheduleButton {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.editScheduleButton:hover {
+  background-color: #3a7bc8;
+}
+
+.fullscreenButton {
+  background-color: #7e57c2;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.fullscreenButton:hover {
+  background-color: #6a4caf;
+}
+
+.exitFullscreenButton {
+  background-color: #7e57c2;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.exitFullscreenButton:hover {
+  background-color: #6a4caf;
+}
+
+.saveButton {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.saveButton:hover {
+  background-color: #3e8e41;
+}
+
+.saveButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.cancelButton {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.cancelButton:hover {
+  background-color: #d32f2f;
+}
+
+.editingInstructions {
+  background-color: #f8f9fa;
+  border-left: 4px solid #4a90e2;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  border-radius: 0 4px 4px 0;
+}
+
+.editingInstructions p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.successMessage {
+  background-color: #dff0d8;
+  color: #3c763d;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  border-left: 4px solid #3c763d;
+}
+
+.error {
+  background-color: #f2dede;
+  color: #a94442;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  border-left: 4px solid #a94442;
+}
+
+/* Fullscreen mode styling */
+.fullscreenContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  z-index: 1000;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.fullscreenHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
   
   /* Responsive */
   @media (max-width: 768px) {
