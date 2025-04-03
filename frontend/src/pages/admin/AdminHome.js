@@ -61,6 +61,27 @@ function AdminHome() {
             </div>
           </div>
 
+          {/* Manage Tutor Schedules Card */}
+          <div className={styles.adminCard} onClick={() => navigate("/manage-schedules")}>
+            <div className={styles.cardIcon}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 10h18"></path>
+                <path d="M3 14h18"></path>
+                <path d="M7 6v12"></path>
+                <path d="M17 6v12"></path>
+              </svg>
+            </div>
+            <h2>Manage Tutor Schedules</h2>
+            <p>Set, update, and manage tutors' schedules for appointments.</p>
+            <div className={styles.cardAction}>
+              <span>View and Edit Schedules</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14"></path>
+                <path d="M12 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </div>
+
           {/* Settings Card */}
           <div className={styles.adminCard} onClick={() => navigate("/admin-settings")}>
             <div className={styles.cardIcon}>
