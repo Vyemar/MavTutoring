@@ -44,13 +44,13 @@ function StudentSchedule() {
         setSessionLoading(false);
       }
     };
-    
+
     fetchUserSession();
   }, []);
 
   const fetchUpcomingSessions = useCallback(async () => {
     if (!userData || !userData.id) return;
-    
+
     try {
       const response = await axios.get(`${BACKEND_URL}/api/sessions/student/${userData.id}`, {
         withCredentials: true
@@ -63,14 +63,14 @@ function StudentSchedule() {
 
   const fetchAvailableTimeSlots = useCallback(async () => {
     if (!selectedDate || !selectedTutor) return;
-    
+
     try {
       setError('');
       const response = await axios.get(
         `${BACKEND_URL}/api/sessions/availability/${selectedTutor}/${selectedDate}`,
         { withCredentials: true }
       );
-      
+
       if (Array.isArray(response.data)) {
         if (response.data.length > 0) {
           setAvailableTimeSlots(response.data);
@@ -124,6 +124,15 @@ function StudentSchedule() {
     setSelectedTime('');
   };
 
+  const sendNotification = async (id) => {
+    const {data} = await axios.post(`${BACKEND_URL}/api/notifications/send-notification`, {
+      sessionId: id
+    }, {
+      withCredentials: true
+    });
+    return data;
+  }
+
   const handleBooking = async (e) => {
     e.preventDefault();
     setError('');
@@ -135,10 +144,10 @@ function StudentSchedule() {
 
     try {
       const localDateTime = new Date(`${selectedDate}T${selectedTime}`);
-      
+
       const response = await axios.post(`${BACKEND_URL}/api/sessions`, {
         tutorId: selectedTutor,
-        studentId: userData.id,
+        studentId: userData.id, 
         sessionTime: localDateTime.toISOString(),
         duration: 60,
         specialRequest
@@ -148,6 +157,7 @@ function StudentSchedule() {
 
       if (response.data.success) {
         setSuccessMessage('Session booked successfully!');
+        const res = await sendNotification(response.data.session._id);
         fetchUpcomingSessions();
         setSelectedDate('');
         setSelectedTutor('');
@@ -182,7 +192,7 @@ function StudentSchedule() {
       hour: 'numeric',
       minute: '2-digit',
       hour12: true,
-      timeZone: 'America/Chicago'
+      timeZone: 'America/Chicago'      
     });
   };
 
@@ -219,7 +229,7 @@ function StudentSchedule() {
       <div className={styles.mainContent}>
         <div className={styles.scheduleContainer}>
           <h1 className={styles.heading}>Schedule a Session</h1>
-          
+
           {error && <div className={styles.error}>{error}</div>}
           {successMessage && <div className={styles.success}>{successMessage}</div>}
 
@@ -240,7 +250,7 @@ function StudentSchedule() {
                       <option value="">Select a tutor</option>
                       {tutors.map((tutor) => (
                         <option key={tutor._id} value={tutor._id}>
-                          {tutor.firstName} {tutor.lastName} 
+                          {tutor.firstName} {tutor.lastName}
                         </option>
                       ))}
                     </select>
