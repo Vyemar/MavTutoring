@@ -61,3 +61,94 @@ The bugHouse project is a web application designed to manage student-tutor inter
 1. Clone the repository:
    ```bash
    git clone https://github.com/Ethyn-N/bugHouse.git
+   ```
+
+2. Install dependencies:
+   
+   For backend:
+   ```bash
+   cd bugHouse/backend
+   npm install
+   ```
+   
+   For frontend:
+   ```bash
+   cd bugHouse/frontend
+   npm install
+   ```
+
+## Running the Application
+
+### Development Mode
+
+1. Start the backend server:
+   ```bash
+   cd bugHouse/backend
+   npm start
+   ```
+   This will start the backend server on port 4000 as configured in your .env file.
+
+2. In a separate terminal, start the frontend development server:
+   ```bash
+   cd bugHouse/frontend
+   npm start
+   ```
+   This will launch the React development server on port 3000, and open the application in your default web browser.
+
+### Environment Variables
+
+Make sure to set up the required environment variables before running the application:
+
+1. Create a `.env` file in the backend directory with the following variables:
+   ```
+   DB=mongodb+srv://username:password@bughouse.qllqm.mongodb.net/bugHouse_db?retryWrites=true&w=majority
+   BACKEND_PORT=4000
+   FRONTEND_PORT=3000
+   PROTOCOL=http
+   BACKEND_HOST=localhost
+   FRONTEND_HOST=localhost
+   SESSION_SECRET=your_session_secret_here
+   ```
+
+2. Create a `.env` file in the frontend directory:
+   ```
+   REACT_APP_PROTOCOL=http
+   HTTPS=false
+   REACT_APP_BACKEND_HOST=localhost
+   REACT_APP_BACKEND_PORT=4000
+   ```
+
+## Building for Production
+
+When you're ready to deploy the application to a production environment:
+
+1. Build the frontend:
+   ```bash
+   cd bugHouse/frontend
+   npm run build
+   ```
+   This creates an optimized production build in the `build` folder that can be served by any static file server.
+
+2. To serve the frontend build with the backend:
+   - Configure your backend to serve static files from the frontend build directory
+   - Or deploy the frontend build to a static file hosting service
+   
+3. For the backend, ensure you have the appropriate environment variables set for production, and use a process manager like PM2 to keep the server running:
+   ```bash
+   npm install -g pm2
+   cd bugHouse/backend
+   pm2 start server.js
+   ```
+
+## Troubleshooting
+
+If you encounter issues when running the application:
+
+- Check that all dependencies are installed correctly
+- Verify that MongoDB is running and accessible
+- Ensure that environment variables are set correctly
+- Check the console for error messages
+
+## Contributing
+
+Please read our contributing guidelines before submitting pull requests.
