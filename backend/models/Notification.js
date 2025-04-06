@@ -6,27 +6,23 @@ const notificationschema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    userType: { 
-        type: String, 
-        enum: ['student', 'tutor'], 
-        // required: true 
-    },
-    message: { 
-        type: String, 
-        required: true 
+    message: {
+        type: String,
+        required: true
     }, // Notification message
     sessionId: {
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Session'
-    },    
-    isRead: { 
-        type: Boolean, 
-        default: false 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Session',
+        required: true
+    },
+    isRead: {
+        type: Boolean,
+        default: false
     }, // Read/unread status
-    
-    createdAt: { 
-        type: Date, 
-        default: Date.now 
+
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 
 });
