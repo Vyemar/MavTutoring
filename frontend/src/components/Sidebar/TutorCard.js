@@ -7,7 +7,6 @@ import styles from "../../styles/component/TutorCard.module.css";
 import { v4 as uuidv4 } from "uuid";
 
 const TutorCard = ({ user }) => {
-
   const navigate = useNavigate(); //Define navigate
 
   // Get profile picture URL, fallback to default avatar if not available
@@ -21,9 +20,9 @@ const TutorCard = ({ user }) => {
   // Get courses from profile if available
   const getCourses = () => {
     if (user.profile && user.profile.courses) {
-      return user.profile.courses.split(',').map(course => course.trim());
+      return user.profile.courses.split(",").map((course) => course.trim());
     }
-    return ["Computer Graphics", "Computer Networks", "Calculus 2"]; // Default courses
+    return ["None"]; //Emptyr Array
   };
 
   return (
@@ -36,7 +35,8 @@ const TutorCard = ({ user }) => {
             alt={`${user.firstName} ${user.lastName}`}
             onError={(e) => {
               e.target.onerror = null;
-              e.target.src = "https://gravatar.com/avatar/3cee6af8588784b73feeca82f894957a?s=400&d=mp&r=x";
+              e.target.src =
+                "https://gravatar.com/avatar/3cee6af8588784b73feeca82f894957a?s=400&d=mp&r=x";
             }}
           />
         </div>
@@ -45,7 +45,7 @@ const TutorCard = ({ user }) => {
             {user.firstName} {user.lastName}
           </div>
           <div className={styles.skills}>
-            {getCourses().map(course => (
+            {getCourses().map((course) => (
               <div className={styles.skill} key={uuidv4()}>
                 {course}
               </div>
@@ -93,12 +93,18 @@ const TutorCard = ({ user }) => {
       </div>
       <hr className={styles.separater}></hr>
       <div className={styles.tutorButtons}>
-      <button className={styles.tutorButton} onClick={() => navigate("/feedback")}>
-        Rate
-      </button>
-      <button className={styles.tutorButton} onClick={() => navigate(`/FindMyTutorProfile/${user._id}`)}>
+        <button
+          className={styles.tutorButton}
+          onClick={() => navigate("/feedback")}
+        >
+          Rate
+        </button>
+        <button
+          className={styles.tutorButton}
+          onClick={() => navigate(`/FindMyTutorProfile/${user._id}`)}
+        >
           Profile
-      </button>
+        </button>
       </div>
     </div>
   );
@@ -112,9 +118,9 @@ TutorCard.propTypes = {
     rating: PropTypes.number,
     profile: PropTypes.shape({
       profilePicture: PropTypes.string,
-      courses: PropTypes.string
-    })
-  }).isRequired
+      courses: PropTypes.string,
+    }),
+  }).isRequired,
 };
 
 export default TutorCard;

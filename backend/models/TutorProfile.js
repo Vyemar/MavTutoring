@@ -6,6 +6,11 @@ const tutorProfileSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    studentID: {
+        type: String,
+        required: true,
+        trim: true
+    },
     profilePicture: {
         type: String,
         default: null
@@ -26,7 +31,6 @@ const tutorProfileSchema = new mongoose.Schema({
     skills: {
         type: String,
         trim: true
-
     },
     major: {
         type: String,

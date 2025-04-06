@@ -21,6 +21,8 @@ import FindMyTutorProfile from "./pages/student/FindmyTutorProfile";
 import ViewProfile from "./pages/admin/ViewProfile";
 import TutorDetails from "./pages/admin/TutorDetails";
 import AnalyticsOptions from "./pages/admin/AnalyticsOptions";
+import Attendance from "./pages/admin/AttendanceReport";
+import SessionCardSwipe from "./pages/admin/SessionCardSwipe";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import { useEffect, useState } from "react";
@@ -145,12 +147,22 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        <Route
+          path="/card-swipe"
+          element={
+            <ProtectedRoute>
+              <SessionCardSwipe />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/schedule" element={<TutorSchedule />} />
         <Route path="/analytics" element={<AnalyticsOptions/>} />
         <Route path="/analytics/tutor-performance" element={<SystemAnalytics/>} />
+        <Route path="/analytics/attendance-reports" element={<Attendance/>} />
+        
         <Route path="/tutor/:tutorId" element={<TutorDetails />} />
         <Route path="/ViewProfile/:userId" element={<ViewProfile />} />
-        
         <Route path="/admin-settings" element={<Settings />} />
       </Routes>
     </BrowserRouter>

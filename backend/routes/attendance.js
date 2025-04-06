@@ -1,89 +1,133 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const Attendance = require("../models/Attendance");
-const Session = require("../models/Session");
-const User = require("../models/User");
+const Attendance = require('../models/Attendance');
+const Session = require('../models/Session');
+const User = require('../models/User');
 
-// Fetch all attendance records
-router.get("/", async (req, res) => {
-    try {
-        const records = await Attendance.find()
-            .populate("sessionID", "sessionTime duration") // Populate session details
-            .populate("studentID", "firstname lastname"); // Populate student details
-        res.status(200).json(records);
-    } catch (err) {
-        console.error("Error fetching attendance records:", err);
-        res.status(500).json({ message: "Failed to fetch attendance records" });
-    }
-});
-
-// Fetch attendance for a specific student
-router.get("/student/:studentID", async (req, res) => {
-    try {
-        const records = await Attendance.find({ studentID: req.params.studentID })
-            .populate("sessionID", "sessionTime duration")
-            .populate("studentID", "firstname lastname");
-        res.status(200).json(records);
-    } catch (err) {
-        console.error("Error fetching attendance for student:", err);
-        res.status(500).json({ message: "Failed to fetch attendance for student" });
-    }
-});
-
-// Add or update attendance record
-router.post("/", async (req, res) => {
-    const { sessionID, studentID, checkInTime, checkOutTime } = req.body;
+router.post("/check", async (req, res) => {
+    const { cardID, firstName, lastName, studentID } = req.body;
 
     try {
-        // Calculate duration if both check-in and check-out times are provided
-        let duration = null;
-        if (checkInTime && checkOutTime) {
-            const checkIn = new Date(checkInTime);
-            const checkOut = new Date(checkOutTime);
-            duration = Math.floor((checkOut - checkIn) / (1000 * 60)); // Convert to minutes
+        let user = null;
+
+        if (cardID) user = await User.findOne({ cardID });
+        if (!user && studentID) user = await User.findOne({ studentID });
+        if (!user && firstName && lastName) {
+            user = await User.findOne({
+                firstName: new RegExp(`^${firstName}$`, "i"),
+                lastName: new RegExp(`^${lastName}$`, "i")
+            });
         }
 
-        // Check if an attendance record already exists for the session and student
-        let attendance = await Attendance.findOne({ sessionID, studentID });
-
-        if (attendance) {
-            // Update existing record
-            attendance.checkInTime = checkInTime || attendance.checkInTime;
-            attendance.checkOutTime = checkOutTime || attendance.checkOutTime;
-            attendance.duration = duration || attendance.duration;
-            attendance.updatedAt = Date.now();
-            await attendance.save();
-            return res.status(200).json({ message: "Attendance updated", attendance });
+        if (user && !user.cardID && cardID) {
+            user.cardID = cardID;
+            await user.save();
         }
 
-        // Create a new attendance record
-        attendance = new Attendance({
-            sessionID,
-            studentID,
-            checkInTime,
-            checkOutTime,
-            duration,
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found." });
+        }
+
+        const startOfDay = new Date(); startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(); endOfDay.setHours(23, 59, 59, 999);
+
+        const sessionsToday = await Session.find({
+            studentID: user._id,
+            sessionTime: { $gte: startOfDay, $lte: endOfDay },
+            status: 'Scheduled'
+        }).populate('tutorID', 'firstName lastName');
+
+        if (!sessionsToday.length) {
+            return res.status(404).json({ success: false, message: "No scheduled session found for today." });
+        }
+
+        const now = new Date();
+        let closestSession = sessionsToday.reduce((prev, curr) => {
+            return Math.abs(new Date(curr.sessionTime) - now) < Math.abs(new Date(prev.sessionTime) - now)
+                ? curr : prev;
         });
 
-        const savedAttendance = await attendance.save();
-        res.status(201).json({ message: "Attendance created", attendance: savedAttendance });
-    } catch (err) {
-        console.error("Error saving attendance record:", err);
-        res.status(500).json({ message: "Failed to save attendance record" });
-    }
-});
+        const sessionEnd = new Date(closestSession.sessionTime.getTime() + closestSession.duration * 60000);
 
-// Delete an attendance record
-router.delete("/:id", async (req, res) => {
-    try {
-        const deletedAttendance = await Attendance.findByIdAndDelete(req.params.id);
-        if (!deletedAttendance) {
-            return res.status(404).json({ message: "Attendance record not found" });
+        let attendance = await Attendance.findOne({
+            sessionID: closestSession._id,
+            studentID: user._id
+        });
+
+        // Case 1: No attendance yet — CHECK IN
+        if (!attendance || attendance.wasNoShow === true) {
+            const diffInMinutes = (now - closestSession.sessionTime) / 60000;
+            let checkInStatus = 'On Time';
+            if (diffInMinutes < -5) checkInStatus = 'Early';
+            else if (diffInMinutes > 5) checkInStatus = 'Late';
+
+            attendance = new Attendance({
+                sessionID: closestSession._id,
+                studentID: user._id,
+                checkInTime: now,
+                checkInStatus,
+                wasNoShow: false
+            });
+
+            await attendance.save();
+
+            return res.status(201).json({
+                success: true,
+                message: `Checked in for session with ${closestSession.tutorID.firstName} for student ${user.firstName}. Session is still in progress.`,
+                session: {
+                    tutorName: `${closestSession.tutorID.firstName} ${closestSession.tutorID.lastName}`,
+                    studentName: `${user.firstName} ${user.lastName}`,
+                    sessionTime: closestSession.sessionTime,
+                    duration: closestSession.duration
+                }
+            });
         }
-        res.status(200).json({ message: "Attendance record deleted", attendance: deletedAttendance });
-    } catch (err) {
-        console.error("Error deleting attendance record:", err);
-        res.status(500).json({ message: "Failed to delete attendance record" });
+
+        // Case 2: Already checked in, not yet checked out — MANUAL CHECK OUT
+        if (attendance && !attendance.checkOutTime) {
+            const duration = Math.max(1, Math.round((now - attendance.checkInTime) / 60000)); // Ensure minimum 1 minute
+            let checkOutStatus = 'On Time';
+            if (now < sessionEnd) checkOutStatus = 'Early';
+            else if (now > sessionEnd.getTime() + 5 * 60000) checkOutStatus = 'Late';
+
+            attendance.checkOutTime = now;
+            attendance.duration = duration;
+            attendance.checkOutStatus = checkOutStatus;
+            attendance.updatedAt = new Date();
+
+            await attendance.save();
+
+            closestSession.status = 'Completed';
+            closestSession.updatedAt = new Date();
+            await closestSession.save();
+
+            return res.status(200).json({
+                success: true,
+                message: `Checked out from session with ${closestSession.tutorID.firstName} for student ${user.firstName}. Duration: ${duration} minutes.`,
+                session: {
+                    tutorName: `${closestSession.tutorID.firstName} ${closestSession.tutorID.lastName}`,
+                    studentName: `${user.firstName} ${user.lastName}`,
+                    sessionTime: closestSession.sessionTime,
+                    duration
+                }
+            });
+        }
+
+        // Case 3: Already fully checked in and out
+        return res.status(200).json({
+            success: true,
+            message: "Already checked in and out for this session.",
+            session: {
+                tutorName: `${closestSession.tutorID.firstName} ${closestSession.tutorID.lastName}`,
+                studentName: `${user.firstName} ${user.lastName}`,
+                sessionTime: closestSession.sessionTime,
+                duration: closestSession.duration
+            }
+        });
+
+    } catch (error) {
+        console.error("Error checking card:", error);
+        return res.status(500).json({ success: false, message: "Server error", error: error.message });
     }
 });
 

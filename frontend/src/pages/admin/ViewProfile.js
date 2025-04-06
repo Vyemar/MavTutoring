@@ -17,6 +17,24 @@ const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 
 const localizer = momentLocalizer(moment);
 
+// Define custom formats for the calendar
+const formats = {
+  dayFormat: 'dddd', // Use full day name (Monday, Tuesday, etc.)
+};
+
+// Custom components for the calendar
+const customComponents = {
+  work_week: {
+    header: ({ date }) => {
+      return (
+        <div style={{ textAlign: "center", fontWeight: "bold" }}>
+          {moment(date).format('dddd')}
+        </div>
+      );
+    },
+  }
+};
+
 function ViewProfile() {
   const { userId } = useParams();
   const [profile, setProfile] = useState(null);
@@ -28,6 +46,8 @@ function ViewProfile() {
   const [isChangingRole, setIsChangingRole] = useState(false);
   const [newRole, setNewRole] = useState("");
   const [adminSession, setAdminSession] = useState(null);
+  const [isEditingSchedule, setIsEditingSchedule] = useState(false);
+  const [isCalendarFullscreen, setIsCalendarFullscreen] = useState(false);
 
   // Get admin session info
   useEffect(() => {
@@ -180,24 +200,6 @@ function ViewProfile() {
     fetchData();
   }, [userId]);
 
-  // Custom day header component
-  const customDayHeader = ({ label }) => {
-    const dayName = label.split(" ")[0]; // Extract only the day name
-    return <div style={{ textAlign: "center", fontWeight: "bold" }}>{dayName}</div>;
-  };
-
-  // Event style getter
-  const eventStyleGetter = () => ({
-    style: {
-      backgroundColor: '#4CAF50',
-      borderRadius: '3px',
-      opacity: 0.8,
-      color: 'white',
-      border: '0',
-      display: 'block'
-    }
-  });
-
   // Handle role change
   const handleRoleChange = async () => {
     if (!user || !newRole || user.role === newRole) {
@@ -229,6 +231,169 @@ function ViewProfile() {
       setLoading(false);
     }
   };
+
+  // SCHEDULE EDITING FUNCTIONS (copied from SetAvailability.js)
+
+  // Prevent overlapping events
+  const hasOverlap = (newStart, newEnd) => {
+    return events.some(
+        ({ start, end }) =>
+            (newStart >= start && newStart < end) || // New start overlaps
+            (newEnd > start && newEnd <= end) || // New end overlaps
+            (newStart <= start && newEnd >= end) // Encompasses existing event
+    );
+  };
+
+  // Handle slot selection (add new events)
+  const handleSelectSlot = (slotInfo) => {
+    // Check if it's a weekend day
+    const day = moment(slotInfo.start).format('dddd');
+    if (['Saturday', 'Sunday'].includes(day)) {
+      alert("Cannot set availability for weekends");
+      return;
+    }
+
+    if (
+      !hasOverlap(slotInfo.start, slotInfo.end) &&
+      slotInfo.start.getHours() >= 10 &&
+      slotInfo.end.getHours() <= 18
+    ) {
+      const newEvent = {
+        id: Date.now(), // Temporary unique ID
+        start: slotInfo.start,
+        end: slotInfo.end,
+        title: 'Available'
+      };
+      setEvents((prevEvents) => [...prevEvents, newEvent]);
+    } else {
+      alert("Cannot create overlapping availability or outside of 10 AM - 6 PM");
+    }
+  };
+
+  // Handle event deletion
+  const handleEventDelete = (event) => {
+    if (window.confirm("Do you want to remove this availability slot?")) {
+      setEvents((prevEvents) => prevEvents.filter((e) => e.id !== event.id));
+    }
+  };
+
+  // Save the updated schedule
+  const handleSaveSchedule = async () => {
+    try {
+      setLoading(true);
+      
+      // Convert events to availability slots
+      const formattedEvents = events
+        .map((event) => ({
+          day: moment(event.start).format("dddd"),
+          startTime: moment(event.start).format("HH:mm"),
+          endTime: moment(event.end).format("HH:mm"),
+        }))
+        .filter(event => !['Saturday', 'Sunday'].includes(event.day)) // Filter out weekends
+        .sort((a, b) => { // Sort by day of week
+          const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+          return days.indexOf(a.day) - days.indexOf(b.day);
+        });
+
+      // Call the API to update the availability
+      await axios.post(
+        `${BACKEND_URL}/api/availability/${userId}/submit`,
+        { availability: formattedEvents },
+        { withCredentials: true }
+      );
+      
+      setSuccessMessage("Tutor's schedule has been successfully updated");
+      setIsEditingSchedule(false);
+      setIsCalendarFullscreen(false);
+      
+    } catch (error) {
+      console.error("Error updating schedule:", error);
+      setError("Failed to update schedule. " + 
+        (error.response?.data?.error || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Cancel editing
+  const handleCancelEditSchedule = async () => {
+    try {
+      // Reset to original state by refetching
+      const availabilityResponse = await axios.get(
+        `${BACKEND_URL}/api/availability/${userId}`
+      );
+
+      // Convert availability data to calendar events
+      const formattedEvents = [];
+      // Start from Monday of current week
+      const currentDate = moment().startOf('week').add(1, 'days');
+
+      availabilityResponse.data.forEach((slot) => {
+        // Skip slots with empty times
+        if (slot.startTime === "00:00" && slot.endTime === "00:00") {
+          return;
+        }
+
+        // Skip weekend days
+        if (['Saturday', 'Sunday'].includes(slot.day)) {
+          return;
+        }
+        
+        // Get the day index (0-4 for Monday-Friday)
+        const dayMapping = {
+          'Monday': 0,
+          'Tuesday': 1,
+          'Wednesday': 2,
+          'Thursday': 3,
+          'Friday': 4
+        };
+        
+        // Create date for this week's occurrence of the day
+        const eventDate = currentDate.clone().add(dayMapping[slot.day], 'days');
+        
+        // Create start and end times
+        const startDateTime = eventDate.clone()
+          .set('hour', parseInt(slot.startTime.split(':')[0]))
+          .set('minute', parseInt(slot.startTime.split(':')[1]));
+        
+        const endDateTime = eventDate.clone()
+          .set('hour', parseInt(slot.endTime.split(':')[0]))
+          .set('minute', parseInt(slot.endTime.split(':')[1]));
+
+        formattedEvents.push({
+          id: `${slot.day}-${slot.startTime}-${slot.endTime}`,
+          start: startDateTime.toDate(),
+          end: endDateTime.toDate(),
+          title: 'Available'
+        });
+      });
+
+      setEvents(formattedEvents);
+      setIsEditingSchedule(false);
+      setIsCalendarFullscreen(false);
+      
+    } catch (error) {
+      console.error("Error resetting schedule:", error);
+      setError("Failed to reset schedule. Please reload the page.");
+    }
+  };
+
+  // Toggle fullscreen calendar for editing
+  const toggleCalendarFullscreen = () => {
+    setIsCalendarFullscreen(!isCalendarFullscreen);
+  };
+
+  // Event style getter
+  const eventStyleGetter = () => ({
+    style: {
+      backgroundColor: '#4CAF50',
+      borderRadius: '3px',
+      opacity: 0.8,
+      color: 'white',
+      border: '0',
+      display: 'block'
+    }
+  });
 
   if (loading) {
     return (
@@ -272,6 +437,65 @@ function ViewProfile() {
   }
 
   const userName = profile?.name || `${user?.firstName} ${user?.lastName}`;
+
+  // Display only the calendar in fullscreen mode when editing
+  if (isCalendarFullscreen && isEditingSchedule) {
+    return (
+      <div className={styles.fullscreenContainer}>
+        <div className={styles.fullscreenHeader}>
+          <h2>Editing {userName}'s Availability</h2>
+          <div className={styles.scheduleControls}>
+            <button 
+              onClick={handleSaveSchedule}
+              className={styles.saveButton}
+            >
+              Save Schedule
+            </button>
+            <button 
+              onClick={handleCancelEditSchedule}
+              className={styles.cancelButton}
+            >
+              Cancel
+            </button>
+            <button 
+              onClick={toggleCalendarFullscreen}
+              className={styles.exitFullscreenButton}
+            >
+              Exit Fullscreen
+            </button>
+          </div>
+        </div>
+        
+        <div className={styles.editingInstructions}>
+          <p>Click and drag on the calendar to add availability slots.</p>
+          <p>Click on existing slots to remove them.</p>
+          <p>Availability can only be set between 10 AM - 6 PM, Monday to Friday.</p>
+        </div>
+        
+        <Calendar
+          localizer={localizer}
+          events={events}
+          startAccessor="start"
+          endAccessor="end"
+          style={{ height: 'calc(100vh - 150px)', width: "100%" }}
+          views={["work_week"]}
+          defaultView="work_week"
+          date={moment().toDate()}
+          toolbar={false}
+          min={moment().hours(10).minutes(0).toDate()}
+          max={moment().hours(18).minutes(0).toDate()}
+          step={30}
+          timeslots={2}
+          formats={formats}
+          components={customComponents}
+          eventPropGetter={eventStyleGetter}
+          selectable
+          onSelectSlot={handleSelectSlot}
+          onSelectEvent={handleEventDelete}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -348,6 +572,7 @@ function ViewProfile() {
             <div className={styles.profileInfo}>
               <p><strong>Name:</strong> {userName}</p>
               <p><strong>Email:</strong> {user.email}</p>
+              <p><strong>Student ID:</strong> {user.studentID || 'Not provided'}</p>
               {user.phone && <p><strong>Phone:</strong> {user.phone}</p>}
               
               {/* Render fields based on user role */}
@@ -387,7 +612,54 @@ function ViewProfile() {
         {/* Only show availability calendar for tutors */}
         {user.role === 'Tutor' && (
           <div className={styles.calendarContainer}>
-            <h2 className={styles.heading}>Availability</h2>
+            <div className={styles.calendarHeader}>
+              <h2 className={styles.heading}>Availability</h2>
+              
+              {/* Edit Schedule button for admin */}
+              {adminSession && (
+                <div className={styles.scheduleControls}>
+                  {isEditingSchedule ? (
+                    <>
+                      <button 
+                        onClick={handleSaveSchedule}
+                        className={styles.saveButton}
+                      >
+                        Save Schedule
+                      </button>
+                      <button 
+                        onClick={handleCancelEditSchedule}
+                        className={styles.cancelButton}
+                      >
+                        Cancel
+                      </button>
+                      <button 
+                        onClick={toggleCalendarFullscreen}
+                        className={styles.fullscreenButton}
+                      >
+                        Edit in Fullscreen
+                      </button>
+                    </>
+                  ) : (
+                    <button 
+                      onClick={() => setIsEditingSchedule(true)}
+                      className={styles.editScheduleButton}
+                    >
+                      Edit Schedule
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+            
+            {isEditingSchedule && (
+              <div className={styles.editingInstructions}>
+                <p>Click and drag on the calendar to add availability slots.</p>
+                <p>Click on existing slots to remove them.</p>
+                <p>For easier editing, use the "Edit in Fullscreen" button above.</p>
+                <p>Availability can only be set between 10 AM - 6 PM, Monday to Friday.</p>
+              </div>
+            )}
+            
             <Calendar
               localizer={localizer}
               events={events}
@@ -402,12 +674,12 @@ function ViewProfile() {
               max={moment().hours(18).minutes(0).toDate()}
               step={30}
               timeslots={2}
+              formats={formats}
+              components={customComponents}
               eventPropGetter={eventStyleGetter}
-              components={{
-                work_week: {
-                  header: customDayHeader,
-                },
-              }}
+              selectable={isEditingSchedule}
+              onSelectSlot={isEditingSchedule ? handleSelectSlot : undefined}
+              onSelectEvent={isEditingSchedule ? handleEventDelete : undefined}
             />
           </div>
         )}

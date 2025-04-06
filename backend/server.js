@@ -93,6 +93,8 @@ const profileRoutes = require('./routes/profile');
 const notificationRoutes = require("./routes/notifications/confirmation"); // Notification routes
 const sessionRoutes = require('./routes/sessions')
 const analyticsRoutes = require('./routes/analytics');
+const bugHouse = require('./routes/bugHouse');
+
 
 // Mount other routes
 app.use('/api/auth', auth.router); // Use the router exported from auth.js
@@ -105,6 +107,8 @@ app.use('/api/feedback', feedbackRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/sessions', sessionRoutes);
 app.use('/api/analytics', analyticsRoutes); //analytics routes
+app.use('/api/bugHouse', bugHouse); //Bug House settings information
+
 
 app.use("/api/notifications", notificationRoutes); // Notification routes
 
