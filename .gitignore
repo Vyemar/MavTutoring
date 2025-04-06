@@ -7,3 +7,4 @@ backend/ssl/server.cert
 
 # Environment variables
 backend/.env
+.DS_Store
