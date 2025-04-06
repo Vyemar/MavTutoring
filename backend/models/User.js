@@ -8,11 +8,6 @@ const availabilitySchema = new Schema({
   endTime: { type: String, required: true }, // Store as "HH:mm"
 });
 
-const bookedSessionSchema = new Schema({
-  sessionTime: { type: Date, required: true }, // Exact session time
-  duration: { type: Number, required: true }, // Duration in minutes
-});
-
 const userSchema = new Schema({
   firstName: {
     type: String,
@@ -25,7 +20,7 @@ const userSchema = new Schema({
   phone: {
     type: String,
     required: function () {
-      return !this.isSSO; // Require phone nunmber only if NOT an SSO user
+      return !this.isSSO; // Require phone number only if NOT an SSO user
     },
   },
   email: {
@@ -52,7 +47,16 @@ const userSchema = new Schema({
     type: Number,
   },
   availability: [availabilitySchema],
-  bookedSessions: [bookedSessionSchema], // Track booked slots
+  cardID: {
+    type: String,
+    unique: true,
+    sparse: true, // Allows multiple docs with `null` cardID
+  },
+  studentID: {
+    type: String,
+    unique: true,
+    sparse: true, // Optional student number for lookup and attendance
+  }
 });
 
 // Pre-save hook to hash password before saving

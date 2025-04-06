@@ -4,167 +4,131 @@ const Attendance = require('../models/Attendance');
 const Session = require('../models/Session');
 const User = require('../models/User');
 
-// Get attendance records by sessionID
-router.get('/', async (req, res) => {
-  try {
-    const { sessionID } = req.query;
-    
-    if (!sessionID) {
-      return res.status(400).json({ message: 'Session ID is required' });
-    }
-    
-    const attendanceRecords = await Attendance.find({ sessionID })
-      .populate('studentID', 'firstName lastName')
-      .sort({ createdAt: 1 });
-      
-    res.json(attendanceRecords);
-  } catch (error) {
-    console.error('Error fetching attendance records:', error);
-    res.status(500).json({ message: 'Error fetching attendance records', error: error.message });
-  }
-});
+router.post("/check", async (req, res) => {
+    const { cardID, firstName, lastName, studentID } = req.body;
 
-// Get specific attendance record
-router.get('/:id', async (req, res) => {
-  try {
-    const attendance = await Attendance.findById(req.params.id)
-      .populate('studentID', 'firstName lastName')
-      .populate('sessionID');
-      
-    if (!attendance) {
-      return res.status(404).json({ message: 'Attendance record not found' });
-    }
-    
-    res.json(attendance);
-  } catch (error) {
-    console.error('Error fetching attendance record:', error);
-    res.status(500).json({ message: 'Error fetching attendance record', error: error.message });
-  }
-});
+    try {
+        let user = null;
 
-// Create a new attendance record (check-in)
-router.post('/', async (req, res) => {
-  try {
-    const { sessionID, studentID, checkInTime } = req.body;
-    
-    // Validate required fields
-    if (!sessionID || !studentID) {
-      return res.status(400).json({ message: 'Missing required fields' });
-    }
-    
-    // Check if session exists and is completed
-    const session = await Session.findById(sessionID);
-    if (!session) {
-      return res.status(404).json({ message: 'Session not found' });
-    }
-    
-    // Check if student exists
-    const student = await User.findById(studentID);
-    if (!student) {
-      return res.status(404).json({ message: 'Student not found' });
-    }
-    
-    // Check if attendance record already exists
-    const existingRecord = await Attendance.findOne({ sessionID, studentID });
-    if (existingRecord) {
-      return res.status(400).json({ message: 'Attendance record already exists for this student' });
-    }
-    
-    // Create new attendance record
-    const attendance = new Attendance({
-      sessionID,
-      studentID,
-      checkInTime: checkInTime || new Date(),
-    });
-    
-    await attendance.save();
-    
-    res.status(201).json({ 
-      success: true, 
-      attendance,
-      message: 'Check-in recorded successfully' 
-    });
-  } catch (error) {
-    console.error('Error recording attendance:', error);
-    res.status(500).json({ message: 'Error recording attendance', error: error.message });
-  }
-});
+        if (cardID) user = await User.findOne({ cardID });
+        if (!user && studentID) user = await User.findOne({ studentID });
+        if (!user && firstName && lastName) {
+            user = await User.findOne({
+                firstName: new RegExp(`^${firstName}$`, "i"),
+                lastName: new RegExp(`^${lastName}$`, "i")
+            });
+        }
 
-// Update attendance record (check-out)
-router.put('/:attendanceId', async (req, res) => {
-  try {
-    const { checkOutTime, duration } = req.body;
-    
-    const attendance = await Attendance.findByIdAndUpdate(
-      req.params.attendanceId,
-      { 
-        checkOutTime: checkOutTime || new Date(),
-        duration,
-        updatedAt: new Date()
-      },
-      { new: true }
-    );
-    
-    if (!attendance) {
-      return res.status(404).json({ message: 'Attendance record not found' });
-    }
-    
-    res.json({
-      success: true,
-      attendance,
-      message: 'Check-out recorded successfully'
-    });
-  } catch (error) {
-    console.error('Error updating attendance record:', error);
-    res.status(500).json({ message: 'Error updating attendance record', error: error.message });
-  }
-});
+        if (user && !user.cardID && cardID) {
+            user.cardID = cardID;
+            await user.save();
+        }
 
-// Get attendance summary by date range
-router.get('/summary', async (req, res) => {
-  try {
-    const { startDate, endDate } = req.query;
-    
-    if (!startDate || !endDate) {
-      return res.status(400).json({ message: 'Start and end dates are required' });
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found." });
+        }
+
+        const startOfDay = new Date(); startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(); endOfDay.setHours(23, 59, 59, 999);
+
+        const sessionsToday = await Session.find({
+            studentID: user._id,
+            sessionTime: { $gte: startOfDay, $lte: endOfDay },
+            status: 'Scheduled'
+        }).populate('tutorID', 'firstName lastName');
+
+        if (!sessionsToday.length) {
+            return res.status(404).json({ success: false, message: "No scheduled session found for today." });
+        }
+
+        const now = new Date();
+        let closestSession = sessionsToday.reduce((prev, curr) => {
+            return Math.abs(new Date(curr.sessionTime) - now) < Math.abs(new Date(prev.sessionTime) - now)
+                ? curr : prev;
+        });
+
+        const sessionEnd = new Date(closestSession.sessionTime.getTime() + closestSession.duration * 60000);
+
+        let attendance = await Attendance.findOne({
+            sessionID: closestSession._id,
+            studentID: user._id
+        });
+
+        // Case 1: No attendance yet — CHECK IN
+        if (!attendance || attendance.wasNoShow === true) {
+            const diffInMinutes = (now - closestSession.sessionTime) / 60000;
+            let checkInStatus = 'On Time';
+            if (diffInMinutes < -5) checkInStatus = 'Early';
+            else if (diffInMinutes > 5) checkInStatus = 'Late';
+
+            attendance = new Attendance({
+                sessionID: closestSession._id,
+                studentID: user._id,
+                checkInTime: now,
+                checkInStatus,
+                wasNoShow: false
+            });
+
+            await attendance.save();
+
+            return res.status(201).json({
+                success: true,
+                message: `Checked in for session with ${closestSession.tutorID.firstName} for student ${user.firstName}. Session is still in progress.`,
+                session: {
+                    tutorName: `${closestSession.tutorID.firstName} ${closestSession.tutorID.lastName}`,
+                    studentName: `${user.firstName} ${user.lastName}`,
+                    sessionTime: closestSession.sessionTime,
+                    duration: closestSession.duration
+                }
+            });
+        }
+
+        // Case 2: Already checked in, not yet checked out — MANUAL CHECK OUT
+        if (attendance && !attendance.checkOutTime) {
+            const duration = Math.max(1, Math.round((now - attendance.checkInTime) / 60000)); // Ensure minimum 1 minute
+            let checkOutStatus = 'On Time';
+            if (now < sessionEnd) checkOutStatus = 'Early';
+            else if (now > sessionEnd.getTime() + 5 * 60000) checkOutStatus = 'Late';
+
+            attendance.checkOutTime = now;
+            attendance.duration = duration;
+            attendance.checkOutStatus = checkOutStatus;
+            attendance.updatedAt = new Date();
+
+            await attendance.save();
+
+            closestSession.status = 'Completed';
+            closestSession.updatedAt = new Date();
+            await closestSession.save();
+
+            return res.status(200).json({
+                success: true,
+                message: `Checked out from session with ${closestSession.tutorID.firstName} for student ${user.firstName}. Duration: ${duration} minutes.`,
+                session: {
+                    tutorName: `${closestSession.tutorID.firstName} ${closestSession.tutorID.lastName}`,
+                    studentName: `${user.firstName} ${user.lastName}`,
+                    sessionTime: closestSession.sessionTime,
+                    duration
+                }
+            });
+        }
+
+        // Case 3: Already fully checked in and out
+        return res.status(200).json({
+            success: true,
+            message: "Already checked in and out for this session.",
+            session: {
+                tutorName: `${closestSession.tutorID.firstName} ${closestSession.tutorID.lastName}`,
+                studentName: `${user.firstName} ${user.lastName}`,
+                sessionTime: closestSession.sessionTime,
+                duration: closestSession.duration
+            }
+        });
+
+    } catch (error) {
+        console.error("Error checking card:", error);
+        return res.status(500).json({ success: false, message: "Server error", error: error.message });
     }
-    
-    // Find sessions in date range
-    const sessions = await Session.find({
-      sessionTime: {
-        $gte: new Date(startDate),
-        $lte: new Date(endDate)
-      },
-      status: 'Completed'
-    });
-    
-    const sessionIds = sessions.map(session => session._id);
-    
-    // Get attendance records for these sessions
-    const attendanceRecords = await Attendance.find({
-      sessionID: { $in: sessionIds }
-    }).populate('studentID', 'firstName lastName');
-    
-    // Calculate summary statistics
-    const summary = {
-      totalSessions: sessions.length,
-      totalAttendance: attendanceRecords.length,
-      completeAttendance: attendanceRecords.filter(record => record.checkOutTime).length,
-      incompleteAttendance: attendanceRecords.filter(record => !record.checkOutTime).length,
-      averageDuration: attendanceRecords.filter(record => record.duration)
-        .reduce((sum, record) => sum + record.duration, 0) / 
-        attendanceRecords.filter(record => record.duration).length || 0
-    };
-    
-    res.json({
-      summary,
-      sessions,
-      attendanceRecords
-    });
-  } catch (error) {
-    console.error('Error generating attendance summary:', error);
-    res.status(500).json({ message: 'Error generating attendance summary', error: error.message });
-  }
 });
 
 module.exports = router;

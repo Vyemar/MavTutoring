@@ -16,6 +16,12 @@ const AdminSidebar = ({ onLogout, selected }) => {
         Dashboard
       </button>
       <button
+        className={selected === "ID Card Session" ? `${styles.selected}` : ""}
+        onClick={() => navigate("/card-swipe")}
+      >
+        ID Card Session
+      </button>
+      <button
         className={selected === "manage-users" ? `${styles.selected}` : ""}
         onClick={() => navigate("/manage-users")}
       >

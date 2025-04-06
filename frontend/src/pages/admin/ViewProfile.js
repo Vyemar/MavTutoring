@@ -572,6 +572,7 @@ function ViewProfile() {
             <div className={styles.profileInfo}>
               <p><strong>Name:</strong> {userName}</p>
               <p><strong>Email:</strong> {user.email}</p>
+              <p><strong>Student ID:</strong> {user.studentID || 'Not provided'}</p>
               {user.phone && <p><strong>Phone:</strong> {user.phone}</p>}
               
               {/* Render fields based on user role */}

@@ -25,7 +25,6 @@ function StudentSchedule() {
   const [specialRequest, setSpecialRequest] = useState('');
   const [userData, setUserData] = useState(null);
 
-  // Initial fetch of user session data
   useEffect(() => {
     const fetchUserSession = async () => {
       try {
@@ -49,7 +48,6 @@ function StudentSchedule() {
     fetchUserSession();
   }, []);
 
-  // Define fetchUpcomingSessions as a useCallback function
   const fetchUpcomingSessions = useCallback(async () => {
     if (!userData || !userData.id) return;
     
@@ -63,7 +61,6 @@ function StudentSchedule() {
     }
   }, [userData]);
 
-  // Define fetchAvailableTimeSlots as a useCallback function
   const fetchAvailableTimeSlots = useCallback(async () => {
     if (!selectedDate || !selectedTutor) return;
     
@@ -91,7 +88,6 @@ function StudentSchedule() {
     }
   }, [selectedDate, selectedTutor]);
 
-  // Initial data fetch once session is loaded
   useEffect(() => {
     if (userData && userData.id) {
       const fetchTutors = async () => {
@@ -112,7 +108,6 @@ function StudentSchedule() {
     }
   }, [userData, fetchUpcomingSessions]);
 
-  // Fetch time slots whenever date or tutor changes
   useEffect(() => {
     fetchAvailableTimeSlots();
   }, [fetchAvailableTimeSlots]);
@@ -143,7 +138,7 @@ function StudentSchedule() {
       
       const response = await axios.post(`${BACKEND_URL}/api/sessions`, {
         tutorId: selectedTutor,
-        studentId: userData.id, // Use session data instead of localStorage
+        studentId: userData.id,
         sessionTime: localDateTime.toISOString(),
         duration: 60,
         specialRequest
@@ -154,13 +149,11 @@ function StudentSchedule() {
       if (response.data.success) {
         setSuccessMessage('Session booked successfully!');
         fetchUpcomingSessions();
-        // Reset form
         setSelectedDate('');
         setSelectedTutor('');
         setSelectedTime('');
         setSpecialRequest('');
         setAvailableTimeSlots([]);
-        
         setTimeout(() => {
           setSuccessMessage('');
         }, 3000);
@@ -175,7 +168,21 @@ function StudentSchedule() {
     const date = new Date(dateTime);
     return date.toLocaleString('en-US', {
       dateStyle: 'medium',
-      timeStyle: 'short'
+      timeStyle: 'short',
+      timeZone: 'America/Chicago'
+    });
+  };
+
+  const formatTo12Hour = (time24) => {
+    const [hour, minute] = time24.split(':');
+    const date = new Date();
+    date.setHours(parseInt(hour));
+    date.setMinutes(parseInt(minute));
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: 'America/Chicago'
     });
   };
 
@@ -265,7 +272,7 @@ function StudentSchedule() {
                         <option value="">Select time</option>
                         {availableTimeSlots.map((slot, index) => (
                           <option key={index} value={slot}>
-                            {slot}
+                            {formatTo12Hour(slot)}
                           </option>
                         ))}
                       </select>
@@ -294,7 +301,6 @@ function StudentSchedule() {
               </div>
             </div>
 
-            {/* Upcoming Sessions */}
             <div className={styles.upcomingSessions}>
               <div className={styles.card}>
                 <h2 className={styles.cardTitle}>Upcoming Sessions</h2>

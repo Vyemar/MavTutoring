@@ -51,5 +51,12 @@ export function validateSignup(values) {
         error.password = "";
     }
 
+    // Validate Student ID
+    if (!values.studentID) {
+        error.studentID = "Student ID should not be empty";
+    } else {
+        error.studentID = "";
+    }
+    
     return error;
 }

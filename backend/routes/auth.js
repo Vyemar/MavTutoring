@@ -6,9 +6,9 @@ const User = require('../models/User');
 // Get configuration from environment variables
 const PROTOCOL = process.env.PROTOCOL || 'https';
 const BACKEND_HOST = process.env.BACKEND_HOST || 'localhost';
-const BACKEND_PORT = process.env.BACKEND_PORT || 4000;
+const BACKEND_PORT = process.env.BACKEND_PORT || '4000';
 const FRONTEND_HOST = process.env.FRONTEND_HOST || 'localhost';
-const FRONTEND_PORT = process.env.FRONTEND_PORT || 3000;
+const FRONTEND_PORT = process.env.FRONTEND_PORT || '3000';
 
 // Construct URLs dynamically
 const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
@@ -25,7 +25,7 @@ MIIC8DCCAdigAwIBAgIQX5Xik+PqsIVE5xiJqcWsADANBgkqhkiG9w0BAQsFADA0MTIwMAYDVQQDEylN
 
 // Handle the signup POST request
 router.post('/signup', async (req, res) => {
-    const { firstName, lastName, phone, email, password, role } = req.body;
+    const { firstName, lastName, phone, email, password, studentID } = req.body;
     try {
         // Create new user with the provided data
         const userData = {
@@ -34,62 +34,41 @@ router.post('/signup', async (req, res) => {
             phone,
             email,
             password,
-            role: role || 'Student' // Default to 'Student' if role is not provided
+            studentID,
+            role: 'Student'
         };
         const newUser = new User(userData);
         const saveUser = await newUser.save();
-       
+
         if (saveUser) {
             // Create a profile based on the user's role
             try {
                 const fullName = `${firstName} ${lastName}`;
-                
-                if (role === 'Tutor') {
-                    const TutorProfile = require('../models/TutorProfile');
-                    
-                    // Create a default tutor profile
-                    const defaultTutorProfile = new TutorProfile({
-                        userId: saveUser._id,
-                        name: fullName,
-                        bio: "",
-                        courses: "",
-                        skills: "",
-                        major: "Not Specified",
-                        currentYear: "Not Specified",
-                        profilePicture: null
-                    });
-                    
-                    // Save the default tutor profile
-                    await defaultTutorProfile.save();
-                    console.log('Default tutor profile created for user:', saveUser._id);
-                } else if (role === 'Student') {
-                    const StudentProfile = require('../models/StudentProfile');
-                    
-                    // Create a default student profile
-                    const defaultStudentProfile = new StudentProfile({
-                        userId: saveUser._id,
-                        name: fullName,
-                        bio: "",
-                        major: "",
-                        currentYear: "Not Specified",
-                        coursesEnrolled: [],
-                        areasOfInterest: [],
-                        preferredLearningStyle: "Not Specified",
-                        academicGoals: "",
-                        profilePicture: null
-                    });
-                    
-                    // Save the default student profile
-                    await defaultStudentProfile.save();
-                    console.log('Default student profile created for user:', saveUser._id);
-                }
-                // No profile creation for Admin users
-                
+
+                const StudentProfile = require('../models/StudentProfile');
+
+                // Create a default student profile
+                const defaultStudentProfile = new StudentProfile({
+                    userId: saveUser._id,
+                    studentID: studentID,
+                    name: fullName,
+                    bio: "",
+                    major: "",
+                    currentYear: "Not Specified",
+                    coursesEnrolled: [],
+                    areasOfInterest: [],
+                    preferredLearningStyle: "Not Specified",
+                    academicGoals: "",
+                    profilePicture: null
+                });
+
+                await defaultStudentProfile.save();
+                console.log('Default student profile created for user:', saveUser._id);
             } catch (profileError) {
                 console.error('Error creating default profile:', profileError);
                 // Continue anyway, as the user was successfully created
             }
-            
+
             res.status(201).json({ message: 'Signup successful', user: saveUser });
             console.log('User saved successfully:', saveUser);
         }
@@ -102,15 +81,15 @@ router.post('/signup', async (req, res) => {
 // Handle the login POST request
 router.post('/login', async (req, res) => {
     console.log('Login request received with body:', req.body);
-   
+
     // Validate request data
     if (!req.body || !req.body.email || !req.body.password) {
         console.log('Missing required fields in login request');
         return res.status(400).json({ error: "Email and password are required" });
     }
-   
+
     const { email, password } = req.body;
-   
+
     try {
         // Find the user by email
         const user = await User.findOne({ email });
@@ -118,16 +97,16 @@ router.post('/login', async (req, res) => {
             console.log('User not found for email:', email);
             return res.status(400).json({ error: "Invalid email or password" });
         }
-       
+
         console.log('User found:', user.email);
-       
+
         // Compare the plain password with the hashed password using the model method
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {
             console.log('Password does not match for user:', user.email);
             return res.status(400).json({ error: "Invalid email or password" });
         }
-       
+
         // Create a user session similar to the SSO flow
         if (req.session) {
             req.session.user = {
@@ -136,18 +115,18 @@ router.post('/login', async (req, res) => {
                 lastName: user.lastName,
                 email: user.email,
                 phone: user.phone,
-                role: user.role
+                role: user.role,
+                studentID: user.studentID || null
             };
-           
+
             console.log('Session created for user:', user.email);
         }
-       
-        // Return a response
+
         return res.status(200).json({
             success: true,
             role: user.role,
             ID: user._id,
-            id: user._id, // Adding both formats for compatibility
+            id: user._id,
             user: {
                 id: user._id,
                 role: user.role,
@@ -167,111 +146,79 @@ router.get('/saml', passport.authenticate('saml', { failureRedirect: '/' }));
 
 // SAML callback route
 router.post('/saml/callback',
-    passport.authenticate('saml', { failureRedirect: '/' }), 
+    passport.authenticate('saml', { failureRedirect: '/' }),
     async (req, res) => {
         console.log("SAML authentication successful:", req.user);
 
         try {
-            // Extract first name, last name, and email from SAML response
             const firstName = req.user['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] || "Unknown";
             const lastName = req.user['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'] || "Unknown";
             const phone = req.user['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone/PhoneNumber'] || "Unknown";
-            const email = req.user.nameID; // Use email as unique identifier
+            const email = req.user.nameID;
+            const studentID = req.user['StudentNumber'] || req.user.StudentNumber;
 
-            // Check if user exists in MongoDB
             let user = await User.findOne({ email });
             let isNewUser = false;
 
             if (!user) {
-                // Create new user in MongoDB if they don't exist
                 isNewUser = true;
                 user = new User({
                     firstName,
                     lastName,
                     email,
                     phone,
-                    password: null, // No password for SSO users
-                    role: "Student", // Default role
-                    isSSO: true // Set SSO flag
+                    studentID,
+                    password: null,
+                    role: "Student",
+                    isSSO: true
                 });
                 await user.save();
             }
 
-            // Store user in session
             req.session.user = {
                 id: user._id,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
                 phone: user.phone,
-                role: user.role
+                role: user.role,
+                studentID: user.studentID || null
             };
 
             console.log("User session stored:", req.session.user);
 
-            // If this is a new user, create a profile
             if (isNewUser) {
                 try {
                     const fullName = `${firstName} ${lastName}`;
-                    
-                    if (user.role === 'Tutor') {
-                        const TutorProfile = require('../models/TutorProfile');
-                        
-                        // Check if profile already exists
-                        const existingProfile = await TutorProfile.findOne({ userId: user._id });
-                        if (!existingProfile) {
-                            // Create a default tutor profile
-                            const defaultTutorProfile = new TutorProfile({
-                                userId: user._id,
-                                name: fullName,
-                                bio: "",
-                                courses: "",
-                                skills: "",
-                                major: "Not Specified",
-                                currentYear: "Not Specified",
-                                profilePicture: null
-                            });
-                            
-                            await defaultTutorProfile.save();
-                            console.log('Default tutor profile created for SSO user:', user._id);
-                        }
-                    } else if (user.role === 'Student') {
-                        const StudentProfile = require('../models/StudentProfile');
-                        
-                        // Check if profile already exists
-                        const existingProfile = await StudentProfile.findOne({ userId: user._id });
-                        if (!existingProfile) {
-                            // Create a default student profile
-                            const defaultStudentProfile = new StudentProfile({
-                                userId: user._id,
-                                name: fullName,
-                                bio: "",
-                                major: "",
-                                currentYear: "Not Specified",
-                                coursesEnrolled: [],
-                                areasOfInterest: [],
-                                preferredLearningStyle: "Not Specified",
-                                academicGoals: "",
-                                profilePicture: null
-                            });
-                            
-                            await defaultStudentProfile.save();
-                            console.log('Default student profile created for SSO user:', user._id);
-                        }
+                    const StudentProfile = require('../models/StudentProfile');
+                    const existingProfile = await StudentProfile.findOne({ userId: user._id });
+                    if (!existingProfile) {
+                        const defaultStudentProfile = new StudentProfile({
+                            userId: user._id,
+                            studentID: studentID,
+                            name: fullName,
+                            bio: "",
+                            major: "",
+                            currentYear: "Not Specified",
+                            coursesEnrolled: [],
+                            areasOfInterest: [],
+                            preferredLearningStyle: "Not Specified",
+                            academicGoals: "",
+                            profilePicture: null
+                        });
+                        await defaultStudentProfile.save();
+                        console.log('Default student profile created for SSO user:', user._id);
                     }
                 } catch (profileError) {
                     console.error('Error creating profile for SSO user:', profileError);
-                    // Continue anyway, as the user authentication was successful
                 }
             }
 
-            req.session.save((err) => {  // Ensure session is saved before redirecting
+            req.session.save((err) => {
                 if (err) {
                     console.error("Session save error:", err);
                     return res.status(500).json({ error: "Failed to save session" });
                 }
-                
-                // Redirect to the frontend home page using environment variables
                 res.redirect(`${FRONTEND_URL}/home`);
             });
 
@@ -279,8 +226,7 @@ router.post('/saml/callback',
             console.error("SAML Login Error:", error);
             res.status(500).json({ message: "Error logging in with SSO", error: error.message });
         }
-    }
-);
+    });
 
 // Get current session
 router.get('/session', (req, res) => {
@@ -300,10 +246,7 @@ router.get('/logout', (req, res) => {
                 return res.status(500).json({ error: "Logout failed" });
             }
 
-            // Clear session cookie
             res.clearCookie("connect.sid", { path: "/" });
-
-            // Send response immediately instead of redirecting
             res.json({ message: "Logged out successfully" });
             console.log("User logged out successfully");
         });
@@ -316,10 +259,10 @@ module.exports.samlConfig = {
     issuer: SAML_ISSUER,
     callbackUrl: SAML_CALLBACK_URL,
     logoutUrl: SAML_LOGOUT_URL,
-    identifierFormat: null, // Microsoft Entra ID does not require a format
+    identifierFormat: null,
     acceptedClockSkewMs: -1,
-    disableRequestedAuthnContext: true, // Required for Microsoft Entra ID
-    cert: SAML_CERT.replace(/\\n/g, '\n') // Ensures correct formatting
+    disableRequestedAuthnContext: true,
+    cert: SAML_CERT.replace(/\n/g, '\n')
 };
 
 module.exports.router = router;

@@ -223,6 +223,7 @@ router.put('/update-role/:userId', async (req, res) => {
                 // Create new tutor profile using data from student profile
                 const tutorProfile = new TutorProfile({
                     userId: userId,
+                    studentID: studentProfile.studentID,
                     name: studentProfile.name,
                     bio: studentProfile.bio || "",
                     courses: "",
@@ -244,6 +245,7 @@ router.put('/update-role/:userId', async (req, res) => {
                 const fullName = `${user.firstName} ${user.lastName}`;
                 const defaultTutorProfile = new TutorProfile({
                     userId: userId,
+                    studentID: user.studentID,
                     name: fullName,
                     bio: "",
                     courses: "",
@@ -264,6 +266,7 @@ router.put('/update-role/:userId', async (req, res) => {
                 // Create new student profile using data from tutor profile
                 const studentProfile = new StudentProfile({
                     userId: userId,
+                    studentID: tutorProfile.studentID, 
                     name: tutorProfile.name,
                     bio: tutorProfile.bio || "",
                     major: tutorProfile.major || "",
@@ -287,6 +290,7 @@ router.put('/update-role/:userId', async (req, res) => {
                 const fullName = `${user.firstName} ${user.lastName}`;
                 const defaultStudentProfile = new StudentProfile({
                     userId: userId,
+                    studentID: user.studentID,
                     name: fullName,
                     bio: "",
                     major: "",
@@ -313,6 +317,7 @@ router.put('/update-role/:userId', async (req, res) => {
             if (newRole === 'Student') {
                 const defaultStudentProfile = new StudentProfile({
                     userId: userId,
+                    studentID: user.studentID,
                     name: fullName,
                     bio: "",
                     major: "",
@@ -329,6 +334,7 @@ router.put('/update-role/:userId', async (req, res) => {
             } else if (newRole === 'Tutor') {
                 const defaultTutorProfile = new TutorProfile({
                     userId: userId,
+                    studentID: user.studentID,
                     name: fullName,
                     bio: "",
                     courses: "",
