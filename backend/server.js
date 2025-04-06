@@ -90,6 +90,7 @@ const attendanceRoutes = require('./routes/attendance'); // Attendance routesS
 const availabilityRoutes = require("./routes/availability"); // Availability routes
 const feedbackRoutes = require('./routes/feedback'); //feedback routes
 const profileRoutes = require('./routes/profile');
+const notificationRoutes = require("./routes/notifications/confirmation"); // Notification routes
 const sessionRoutes = require('./routes/sessions')
 const analyticsRoutes = require('./routes/analytics');
 const bugHouse = require('./routes/bugHouse');
@@ -108,6 +109,8 @@ app.use('/api/sessions', sessionRoutes);
 app.use('/api/analytics', analyticsRoutes); //analytics routes
 app.use('/api/bugHouse', bugHouse); //Bug House settings information
 
+
+app.use("/api/notifications", notificationRoutes); // Notification routes
 
 // === Connect to MongoDB ===
 if (!MONGO_URI) {
