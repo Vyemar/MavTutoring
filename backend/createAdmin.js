@@ -17,10 +17,6 @@ const createAdmin = async () => {
         email: 'admin@example.com',
         password: 'adminpassword', // The password will be hashed by the pre-save hook
         role: 'Admin', // Set the role to Admin
-        isSSO: false, // Not an SSO user
-        availability: [], // Empty availability array
-        bookedSessions: [], // Empty booked sessions array
-        rating: null // No rating for admin
     });
 
     try {

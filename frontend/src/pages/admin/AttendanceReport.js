@@ -11,8 +11,8 @@ const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
 // Construct the backend URL dynamically
 const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 
-// Create a cache object to store the sessions data
-const sessionsCache = {
+// Create a cache object to store the attendance data
+const attendanceCache = {
   data: null,
   timestamp: null,
   cacheDuration: 5 * 60 * 1000 // 5 minutes in milliseconds
@@ -112,40 +112,45 @@ function formatDateTime(isoString) {
 }
 
 function AttendanceReport() {
-  const [sessions, setSessions] = useState([]);
+  const [attendanceRecords, setAttendanceRecords] = useState([]);
   const [allSessionsCount, setAllSessionsCount] = useState(0);
   const [lastMonthCount, setLastMonthCount] = useState(0);
+  const [noShowCount, setNoShowCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
   
-  // Define fetchSessions as a useCallback
-  const fetchSessions = useCallback(async () => {
+  // Define fetchAttendance as a useCallback
+  const fetchAttendance = useCallback(async () => {
     try {
       setLoading(true);
       
       // Check if we have valid cached data
       const now = new Date();
       if (
-        sessionsCache.data && 
-        sessionsCache.timestamp && 
-        now.getTime() - sessionsCache.timestamp < sessionsCache.cacheDuration
+        attendanceCache.data && 
+        attendanceCache.timestamp && 
+        now.getTime() - attendanceCache.timestamp < attendanceCache.cacheDuration
       ) {
-        console.log("Using cached sessions data");
-        setSessions(sessionsCache.data);
-        setLastUpdated(new Date(sessionsCache.timestamp));
+        console.log("Using cached attendance data");
+        setAttendanceRecords(attendanceCache.data);
+        setLastUpdated(new Date(attendanceCache.timestamp));
         setLoading(false);
         return;
       }
       
-      console.log("Fetching fresh sessions data...");
+      console.log("Fetching fresh attendance data...");
       
       try {
-        // This is a multi-step fetch to get all sessions with their user info properly populated
+        // Fetch all attendance records with populated data
+        const attendanceResponse = await axios.get(`${BACKEND_URL}/api/attendance/all`);
+        let attendanceList = attendanceResponse.data || [];
         
-        // STEP 1: Fetch all sessions first
+        console.log("Raw attendance data:", attendanceList);
+        
+        // Fetch all sessions to get the total count
         const sessionsResponse = await axios.get(`${BACKEND_URL}/api/sessions`);
-        let sessionsList = sessionsResponse.data || [];
+        const sessionsList = sessionsResponse.data || [];
         
         // Store counts for statistics
         setAllSessionsCount(sessionsList.length);
@@ -165,98 +170,62 @@ function AttendanceReport() {
         
         setLastMonthCount(lastMonthSessions.length);
         
-        // Filter to only include completed sessions for display in the table
-        const completedSessions = sessionsList.filter(session => session.status === 'Completed');
+        // Calculate no-show count
+        const noShows = attendanceList.filter(record => record.wasNoShow === true);
+        setNoShowCount(noShows.length);
         
-        // STEP 3: Create a set of all unique student and tutor IDs
-        const studentIds = new Set();
-        const tutorIds = new Set();
-        
-        completedSessions.forEach(session => {
-          if (session.studentID) studentIds.add(session.studentID);
-          if (session.tutorID) tutorIds.add(session.tutorID);
-        });
-        
-        // STEP 4: Fetch all required user information
-        const userRequests = [];
-        
-        // Fetch student info
-        for (const studentId of studentIds) {
-          if (typeof studentId === 'string') {
-            userRequests.push(
-              axios.get(`${BACKEND_URL}/api/users/${studentId}`)
-                .catch(err => {
-                  console.error(`Error fetching student ${studentId}:`, err);
-                  return { data: { _id: studentId, firstName: 'Unknown', lastName: 'Student' } };
-                })
-            );
-          }
-        }
-        
-        // Fetch tutor info
-        for (const tutorId of tutorIds) {
-          if (typeof tutorId === 'string') {
-            userRequests.push(
-              axios.get(`${BACKEND_URL}/api/users/${tutorId}`)
-                .catch(err => {
-                  console.error(`Error fetching tutor ${tutorId}:`, err);
-                  return { data: { _id: tutorId, firstName: 'Unknown', lastName: 'Tutor' } };
-                })
-            );
-          }
-        }
-        
-        // Wait for all user fetch requests to complete
-        const userResponses = await Promise.all(userRequests);
-        
-        // STEP 5: Build a user lookup map
-        const userMap = {};
-        userResponses.forEach(response => {
-          if (response && response.data && response.data._id) {
-            userMap[response.data._id] = response.data;
-          }
-        });
-        
-        console.log("User data map:", userMap);
-        
-        // STEP 6: Process the sessions data with proper user names
-        const processedSessions = completedSessions.map(session => {
-          // Get student info from map
-          const student = session.studentID && userMap[session.studentID] 
-            ? userMap[session.studentID] 
-            : null;
-            
-          // Get tutor info from map
-          const tutor = session.tutorID && userMap[session.tutorID] 
-            ? userMap[session.tutorID] 
-            : null;
-          
-          // Generate names
-          const studentName = student 
-            ? `${student.firstName || ''} ${student.lastName || ''}`.trim()
+        // Process the attendance records data
+        const processedRecords = attendanceList.map(record => {
+          // Get student info
+          const studentName = record.studentID 
+            ? `${record.studentID.firstName || ''} ${record.studentID.lastName || ''}`.trim()
             : 'Unknown Student';
             
-          const tutorName = tutor 
-            ? `${tutor.firstName || ''} ${tutor.lastName || ''}`.trim()
+          // Get tutor info
+          const tutorName = record.sessionID && record.sessionID.tutorID 
+            ? `${record.sessionID.tutorID.firstName || ''} ${record.sessionID.tutorID.lastName || ''}`.trim()
             : 'Unknown Tutor';
           
           // Format date and time from sessionTime
-          const { date, time } = formatDateTime(session.sessionTime);
+          const sessionTime = record.sessionID ? record.sessionID.sessionTime : null;
+          const { date, time } = formatDateTime(sessionTime);
+          
+          // Split the date for the multi-line display
+          let formattedDate = date;
+          if (date !== 'N/A') {
+            const dateParts = date.split(',');
+            if (dateParts.length === 2) {
+              formattedDate = `${dateParts[0]},${dateParts[1]}`;
+            }
+          }
+          
+          // Format check-in and check-out times
+          const checkInDateTime = formatDateTime(record.checkInTime);
+          const checkOutDateTime = formatDateTime(record.checkOutTime);
           
           return {
-            id: session._id || 'N/A',
+            id: record._id || 'N/A',
+            sessionId: record.sessionID ? record.sessionID._id : 'N/A',
             studentName,
             tutorName,
-            date,
+            date: formattedDate,
             startTime: time,
-            duration: session.duration || 'N/A',
-            endTime: calculateEndTime(time, session.duration),
-            status: session.status || 'Unknown'
+            duration: record.sessionID ? record.sessionID.duration : (record.duration || 'N/A'),
+            endTime: calculateEndTime(time, record.sessionID ? record.sessionID.duration : record.duration),
+            checkInTime: checkInDateTime.time,
+            checkOutTime: checkOutDateTime.time,
+            checkInStatus: record.checkInStatus || 'N/A',
+            checkOutStatus: record.checkOutStatus || 'N/A',
+            wasNoShow: record.wasNoShow,
+            status: record.sessionID && record.sessionID.status === 'Cancelled' ? 'Cancelled' : 
+                   (record.wasNoShow ? 'No Show' : 
+                   (record.checkOutTime ? 'Completed' : 
+                   (record.checkInTime ? 'In Progress' : 'Scheduled')))
           };
         });
         
-        // Sort sessions by date (most recent first)
-        processedSessions.sort((a, b) => {
+        // Sort attendance records by date (most recent first)
+        processedRecords.sort((a, b) => {
           try {
             return new Date(b.date) - new Date(a.date);
           } catch (error) {
@@ -264,13 +233,13 @@ function AttendanceReport() {
           }
         });
         
-        console.log("Processed sessions:", processedSessions);
+        console.log("Processed attendance records:", processedRecords);
         
         // Update the cache with the new data
-        sessionsCache.data = processedSessions;
-        sessionsCache.timestamp = now.getTime();
+        attendanceCache.data = processedRecords;
+        attendanceCache.timestamp = now.getTime();
         
-        setSessions(processedSessions);
+        setAttendanceRecords(processedRecords);
         setLastUpdated(now);
         setLoading(false);
         
@@ -297,7 +266,7 @@ function AttendanceReport() {
           : "Failed to connect to the server. Please try again later.";
         
         // Fallback to local sample data
-        const sampleSessions = [
+        const sampleRecords = [
           {
             id: 1,
             studentName: "Emily Johnson",
@@ -306,6 +275,11 @@ function AttendanceReport() {
             startTime: "10:00 AM",
             duration: "90 mins",
             endTime: "11:30 AM",
+            checkInTime: "09:55 AM",
+            checkOutTime: "11:28 AM",
+            checkInStatus: "Early",
+            checkOutStatus: "On Time",
+            wasNoShow: false,
             status: "Completed"
           },
           {
@@ -316,14 +290,35 @@ function AttendanceReport() {
             startTime: "02:00 PM",
             duration: "75 mins",
             endTime: "03:15 PM",
+            checkInTime: "02:10 PM",
+            checkOutTime: "03:20 PM",
+            checkInStatus: "Late",
+            checkOutStatus: "Late",
+            wasNoShow: false,
             status: "Completed"
+          },
+          {
+            id: 3,
+            studentName: "Alex Wong",
+            tutorName: "Maria Garcia",
+            date: "March 18, 2024",
+            startTime: "11:00 AM",
+            duration: "60 mins",
+            endTime: "12:00 PM",
+            checkInTime: "N/A",
+            checkOutTime: "N/A",
+            checkInStatus: "No Show",
+            checkOutStatus: "No Show",
+            wasNoShow: true,
+            status: "No Show"
           }
         ];
         
-        setSessions(sampleSessions);
+        setAttendanceRecords(sampleRecords);
         setError(`${errorMessage} (Using sample data for display purposes)`);
-        setAllSessionsCount(sampleSessions.length + 5); // Sample total count
-        setLastMonthCount(sampleSessions.length + 3); // Sample last month count
+        setAllSessionsCount(sampleRecords.length + 5); // Sample total count
+        setLastMonthCount(sampleRecords.length + 3); // Sample last month count
+        setNoShowCount(1); // Sample no-show count
         setLoading(false);
       }
     } catch (generalError) {
@@ -333,32 +328,79 @@ function AttendanceReport() {
     }
   }, [error]);
 
-  // Fetch sessions data on component mount
+  // Fetch attendance data on component mount
   useEffect(() => {
-    fetchSessions();
-  }, [fetchSessions]);
+    fetchAttendance();
+  }, [fetchAttendance]);
   
-  // Add enhanced styles for the statistics and tables
+  // Add enhanced styles for the statistics, tables, and status badges
   useEffect(() => {
     // This will add the styles if they don't exist in your CSS file already
     const styleElement = document.createElement('style');
     styleElement.innerHTML = `
+      /* Header Styles */
+      .${styles.headerContainer} {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+      }
+      
+      .${styles.heading} {
+        font-size: 28px;
+        font-weight: 700;
+        color: #fff;
+        margin: 0;
+      }
+      
+      .${styles.refreshContainer} {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      
+      .${styles.lastUpdated} {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 14px;
+      }
+      
+      .${styles.refreshButton} {
+        background-color: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      
+      .${styles.refreshButton}:hover {
+        background-color: rgba(255, 255, 255, 0.25);
+      }
+      
+      .${styles.refreshButton}:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      
       /* Statistics Container Styles */
       .statisticsContainer {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 24px;
+        margin-bottom: 40px;
         flex-wrap: wrap;
-        gap: 16px;
+        gap: 30px;
       }
       
       .statCard {
         flex: 1;
-        min-width: 180px;
-        background: linear-gradient(145deg, #ffffff, #f0f0f0);
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        min-width: 200px;
+        background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
         border: 1px solid #e1e4e8;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
@@ -369,17 +411,17 @@ function AttendanceReport() {
       }
       
       .statTitle {
-        margin: 0 0 10px 0;
-        font-size: 14px;
+        margin: 0 0 12px 0;
+        font-size: 15px;
         color: #5a6775;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.7px;
         font-weight: 600;
       }
       
       .statValue {
         margin: 0;
-        font-size: 28px;
+        font-size: 32px;
         font-weight: bold;
         background: linear-gradient(90deg, #3498db, #2980b9);
         -webkit-background-clip: text;
@@ -390,56 +432,86 @@ function AttendanceReport() {
       
       /* Enhanced Table Styles */
       .${styles.tableContainer} {
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        border-radius: 16px;
+        overflow-x: auto;
+        overflow-y: auto;
+        max-height: 600px; /* Limit height to enable vertical scrolling */
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         transition: all 0.3s ease;
         border: 1px solid #e9ecef;
+        margin-top: 30px;
       }
       
-      .${styles.sessionsTable} thead {
+      .${styles.attendanceTable} {
+        width: 100%;
+        min-width: 1200px; /* Ensure table doesn't compress too much */
+        border-collapse: separate;
+        border-spacing: 0;
+        table-layout: fixed;
+      }
+      
+      .${styles.attendanceTable} thead {
         background: linear-gradient(to right, #f8f9fa, #e9ecef);
+        position: sticky;
+        top: 0;
+        z-index: 10;
       }
       
-      .${styles.sessionsTable} th {
+      .${styles.attendanceTable} th {
         padding: 15px;
+        padding-right: 50px;
         font-weight: 600;
         color: #394b59;
         text-transform: uppercase;
-        font-size: 12px;
+        font-size: 13px;
         letter-spacing: 0.7px;
         border-bottom: 2px solid #dee2e6;
+        text-align: left;
+        white-space: nowrap;
       }
       
-      .${styles.sessionsTable} td {
-        padding: 12px 15px;
+      .${styles.attendanceTable} td {
+        padding: 15px;
+        padding-right: 50px;
         vertical-align: middle;
         transition: background-color 0.2s ease;
+        border-bottom: 1px solid #eaeaea;
+        white-space: nowrap;
       }
       
-      .${styles.sessionsTable} tr:nth-child(even) {
+      .${styles.attendanceTable} tr:nth-child(even) {
         background-color: #f8f9fa;
       }
       
-      .${styles.sessionsTable} tr:hover td {
+      .${styles.attendanceTable} tr:hover td {
         background-color: #e3f2fd;
       }
       
-      /* Improved status styles */
+      .${styles.attendanceTable} tr:last-child td {
+        border-bottom: none;
+      }
+      
+      /* Status badge styles */
       .statusBadge {
         display: inline-block;
         padding: 4px 10px;
-        border-radius: 12px;
+        border-radius: 20px;
         font-size: 12px;
         font-weight: 600;
         text-align: center;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        margin-left: 8px;
       }
       
       .statusCompleted {
         background-color: #d4edda;
         color: #155724;
+      }
+      
+      .statusInProgress {
+        background-color: #fff3cd;
+        color: #856404;
       }
       
       .statusScheduled {
@@ -452,10 +524,35 @@ function AttendanceReport() {
         color: #721c24;
       }
       
+      .statusNoShow {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+      
+      .checkStatusEarly {
+        background-color: #d1ecf1;
+        color: #0c5460;
+      }
+      
+      .checkStatusOnTime {
+        background-color: #d4edda;
+        color: #155724;
+      }
+      
+      .checkStatusLate {
+        background-color: #fff3cd;
+        color: #856404;
+      }
+      
+      .checkStatusNoShow {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+      
       .durationBadge {
         display: inline-block;
         padding: 4px 10px;
-        border-radius: 12px;
+        border-radius: 20px;
         background-color: #e9ecef;
         color: #495057;
         font-size: 12px;
@@ -463,10 +560,10 @@ function AttendanceReport() {
       }
       
       .${styles.sectionTitle} {
-        font-size: 20px;
+        font-size: 24px;
         color: #2c3e50;
-        margin-bottom: 20px;
-        padding-bottom: 12px;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
         border-bottom: 2px solid #e1e4e8;
         position: relative;
       }
@@ -476,17 +573,40 @@ function AttendanceReport() {
         position: absolute;
         bottom: -2px;
         left: 0;
-        width: 60px;
+        width: 80px;
         height: 2px;
         background: #3498db;
       }
       
       .${styles.attendanceSection} {
         background-color: #ffffff;
+        border-radius: 16px;
+        padding: 35px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+        margin-bottom: 35px;
+      }
+      
+      /* Loading and Error States */
+      .${styles.loadingContainer}, 
+      .${styles.errorContainer}, 
+      .${styles.emptyContainer} {
+        padding: 30px;
+        text-align: center;
         border-radius: 12px;
-        padding: 25px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        margin-bottom: 20px;
+        background-color: #f8f9fa;
+        margin-top: 20px;
+      }
+      
+      .${styles.loadingContainer} {
+        color: #007bff;
+      }
+      
+      .${styles.errorContainer} {
+        color: #dc3545;
+      }
+      
+      .${styles.emptyContainer} {
+        color: #6c757d;
       }
       
       /* Responsive Fixes */
@@ -499,6 +619,16 @@ function AttendanceReport() {
           width: 100%;
           margin-right: 0;
           margin-bottom: 16px;
+        }
+        
+        .${styles.attendanceTable} {
+          display: block;
+          overflow-x: auto;
+        }
+        
+        .${styles.attendanceTable} th,
+        .${styles.attendanceTable} td {
+          padding: 15px;
         }
       }
     `;
@@ -513,9 +643,9 @@ function AttendanceReport() {
   // Function to manually refresh the data
   const handleRefresh = () => {
     // Clear the cache and re-fetch
-    sessionsCache.data = null;
-    sessionsCache.timestamp = null;
-    fetchSessions();
+    attendanceCache.data = null;
+    attendanceCache.timestamp = null;
+    fetchAttendance();
   };
 
   // Format the last updated time
@@ -551,7 +681,7 @@ function AttendanceReport() {
   return (
     <div className={styles.container}>
       <AdminSideBar selected="attendance"></AdminSideBar>
-      <div className={styles.mainContent}>
+      <div className={styles.mainContent} style={{ padding: '30px' }}>
         <div className={styles.headerContainer}>
           <h1 className={styles.heading}>Attendance Report</h1>
           
@@ -578,59 +708,96 @@ function AttendanceReport() {
               <p className="statValue">{loading ? "..." : allSessionsCount}</p>
             </div>
             <div className="statCard">
-              <h3 className="statTitle">Last Month's Booked Sessions</h3>
+              <h3 className="statTitle">Last Month's Sessions</h3>
               <p className="statValue">{loading ? "..." : lastMonthCount}</p>
             </div>
             <div className="statCard">
-              <h3 className="statTitle">Total Completed Sessions</h3>
-              <p className="statValue">{loading ? "..." : sessions.length}</p>
+              <h3 className="statTitle">Completed Sessions</h3>
+              <p className="statValue">{loading ? "..." : attendanceRecords.filter(record => record.status === 'Completed').length}</p>
+            </div>
+            <div className="statCard">
+              <h3 className="statTitle">No-Show Sessions</h3>
+              <p className="statValue">{loading ? "..." : noShowCount}</p>
             </div>
           </div>
           
-          <h2 className={styles.sectionTitle}>Completed Sessions</h2>
+          <h2 className={styles.sectionTitle}>Attendance Records</h2>
           
           {loading ? (
             <div className={styles.loadingContainer}>
-              <p>Loading session data...</p>
+              <p>Loading attendance data...</p>
             </div>
           ) : error ? (
             <div className={styles.errorContainer}>
               <p>{error}</p>
             </div>
-          ) : sessions.length === 0 ? (
+          ) : attendanceRecords.length === 0 ? (
             <div className={styles.emptyContainer}>
-              <p>No completed sessions available.</p>
+              <p>No attendance records available.</p>
             </div>
           ) : (
             <div className={styles.tableContainer}>
-              <table className={styles.sessionsTable}>
+              <table className={styles.attendanceTable}>
                 <thead>
                   <tr>
-                    <th>Student</th>
-                    <th>Tutor</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Duration</th>
-                    <th>Status</th>
+                    <th style={{ width: '13%', paddingRight: '50px', paddingLeft: '40px' }}>Student</th>
+                    <th style={{ width: '13%', paddingRight: '50px' }}>Tutor</th>
+                    <th style={{ width: '11%', paddingRight: '50px', minWidth: '120px' }}>Date</th>
+                    <th style={{ width: '13%', paddingRight: '50px', whiteSpace: 'nowrap' }}>Session Time</th>
+                    <th style={{ width: '13%', paddingRight: '50px' }}>Check-In</th>
+                    <th style={{ width: '13%', paddingRight: '50px' }}>Check-Out</th>
+                    <th style={{ width: '11%', paddingRight: '50px' }}>Duration</th>
+                    <th style={{ width: '13%', textAlign: 'center' }}>Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {sessions.map(session => (
-                    <tr key={session.id}>
-                      <td><strong>{session.studentName}</strong></td>
-                      <td><strong>{session.tutorName}</strong></td>
-                      <td>{session.date}</td>
-                      <td>
-                        {session.startTime} - {session.endTime}
+                  {attendanceRecords.map(record => (
+                    <tr key={record.id}>
+                      <td style={{ fontWeight: '500', paddingLeft: '40px', paddingRight: '50px' }}>{record.studentName}</td>
+                      <td style={{ fontWeight: '500', paddingRight: '50px' }}>{record.tutorName}</td>
+                      <td style={{ paddingRight: '50px', whiteSpace: 'normal' }}>
+                        <div>{record.date.split(',')[0]},</div>
+                        <div>{record.date.split(',')[1].trim()}</div>
                       </td>
-                      <td>
+                      <td style={{ paddingRight: '50px', whiteSpace: 'nowrap' }}>
+                        <span>{record.startTime} to {record.endTime}</span>
+                      </td>
+                      <td style={{ minWidth: '120px', paddingRight: '50px', whiteSpace: 'nowrap' }}>
+                        {record.checkInTime !== 'N/A' ? (
+                          <span>
+                            {record.checkInTime} <span className={`statusBadge checkStatus${record.checkInStatus.replace(/\s/g, '')}`}>{record.checkInStatus}</span>
+                          </span>
+                        ) : (
+                          record.wasNoShow ? (
+                            <span className="statusBadge checkStatusNoShow">No Show</span>
+                          ) : (
+                            <span style={{ color: '#6c757d' }}>Not Checked In</span>
+                          )
+                        )}
+                      </td>
+                      <td style={{ minWidth: '120px', paddingRight: '50px', whiteSpace: 'nowrap' }}>
+                        {record.checkOutTime !== 'N/A' ? (
+                          <span>
+                            {record.checkOutTime} <span className={`statusBadge checkStatus${record.checkOutStatus.replace(/\s/g, '')}`}>{record.checkOutStatus}</span>
+                          </span>
+                        ) : (
+                          record.wasNoShow ? (
+                            <span className="statusBadge checkStatusNoShow">No Show</span>
+                          ) : (
+                            record.checkInTime !== 'N/A' ? 
+                              <span style={{ color: '#856404', fontWeight: '500' }}>In Progress</span> : 
+                              <span style={{ color: '#6c757d' }}>Not Started</span>
+                          )
+                        )}
+                      </td>
+                      <td style={{ minWidth: '100px', paddingRight: '50px' }}>
                         <span className="durationBadge">
-                          {formatDuration(session.duration)}
+                          {formatDuration(record.duration)}
                         </span>
                       </td>
-                      <td>
-                        <span className={`statusBadge status${session.status}`}>
-                          {session.status}
+                      <td style={{ minWidth: '120px', textAlign: 'center' }}>
+                        <span className={`statusBadge status${record.status.replace(/\s/g, '')}`}>
+                          {record.status}
                         </span>
                       </td>
                     </tr>

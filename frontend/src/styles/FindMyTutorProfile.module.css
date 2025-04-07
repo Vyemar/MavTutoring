@@ -87,6 +87,24 @@ body {
   }
 }
 
+.roleChangeForm {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.roleSelectWrapper {
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+}
+
+.roleButtons {
+  display: flex;
+  gap: 10px;
+}
+
 /* Profile Section */
 .profileSection {
   position: relative;

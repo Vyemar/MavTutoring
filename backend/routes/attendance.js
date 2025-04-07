@@ -4,6 +4,26 @@ const Attendance = require('../models/Attendance');
 const Session = require('../models/Session');
 const User = require('../models/User');
 
+// GET all attendance records with student, session, and tutor info
+router.get('/all', async (req, res) => {
+    try {
+      const attendanceRecords = await Attendance.find()
+        .populate('studentID', 'firstName lastName')
+        .populate({
+          path: 'sessionID',
+          populate: { path: 'tutorID', select: 'firstName lastName' }
+        });
+  
+      res.json(attendanceRecords);
+    } catch (error) {
+      console.error("Error fetching attendance records:", error);
+      res.status(500).json({ 
+        message: 'Error fetching attendance records', 
+        error: error.message 
+      });
+    }
+});
+  
 router.post("/check", async (req, res) => {
     const { cardID, firstName, lastName, studentID } = req.body;
 

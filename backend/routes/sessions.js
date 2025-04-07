@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/User');
 const mongoose = require('mongoose'); // Add this importS
 const Session = require('../models/Session');
+const Attendance = require('../models/Attendance');
 
 // Get available time slots for a tutor on a specific date
 router.get('/availability/:tutorId/:date', async (req, res) => {
@@ -231,23 +232,59 @@ router.get('/all', async (req, res) => {
 router.put('/:sessionId/status', async (req, res) => {
   try {
     const { status } = req.body;
-    
+
     if (!['Scheduled', 'Completed', 'Cancelled'].includes(status)) {
       return res.status(400).json({ message: 'Invalid status' });
     }
 
-    const session = await Session.findByIdAndUpdate(
-      req.params.sessionId,
-      { status },
-      { new: true }
-    ).populate('studentID', 'firstName lastName');
-
+    const session = await Session.findById(req.params.sessionId).populate('studentID');
     if (!session) {
       return res.status(404).json({ message: 'Session not found' });
     }
 
+    const studentID = session.studentID._id;
+    const existingAttendance = await Attendance.findOne({
+      sessionID: session._id,
+      studentID
+    });
+
+    if (status === 'Completed' && !existingAttendance) {
+      const checkInTime = new Date(session.sessionTime);
+      const checkOutTime = new Date(checkInTime.getTime() + session.duration * 60000);
+
+      const attendance = new Attendance({
+        sessionID: session._id,
+        studentID,
+        checkInTime,
+        checkOutTime,
+        duration: session.duration,
+        checkInStatus: 'On Time',
+        checkOutStatus: 'On Time',
+        wasNoShow: false
+      });
+
+      await attendance.save();
+    }
+
+    if (status === 'Cancelled' && !existingAttendance) {
+      const attendance = new Attendance({
+        sessionID: session._id,
+        studentID,
+        wasNoShow: true,
+        checkInStatus: 'Cancelled',
+        checkOutStatus: 'Cancelled',
+        duration: 0
+      });
+
+      await attendance.save();
+    }
+
+    session.status = status;
+    await session.save();
+
     res.json(session);
   } catch (error) {
+    console.error('Error updating session status:', error);
     res.status(500).json({ message: 'Error updating session status', error: error.message });
   }
 });
