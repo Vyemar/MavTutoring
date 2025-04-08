@@ -16,7 +16,7 @@ function StudentHome({ handleLogout }) {
 
         {/* Schedule Section */}
         <section>
-          <h2>This Week's Schedule</h2>
+          <h2>Calendar</h2>
           <StudentCalendar />
         </section>
 

@@ -96,9 +96,8 @@ const StudentCalendar = () => {
       // Convert UTC to CDT manually (Central Time = UTC-5 or UTC-6 depending on daylight saving)
       const utcDate = new Date(session.sessionTime);
   
-      // You can force conversion to CDT like this:
       const options = {
-        timeZone: 'America/Chicago', // CDT/CST zone
+        timeZone: 'America/Chicago', // CDT zone
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -122,17 +121,34 @@ const StudentCalendar = () => {
       const start = new DayPilot.Date(localDateStr);
       const end = start.addMinutes(session.duration || 60);
   
+      // Set color based on status
+      let backColor;
+      switch (session.status.toLowerCase()) {
+        case 'scheduled':
+          backColor = '#3498db'; // blue
+          break;
+        case 'completed':
+          backColor = '#93c47d'; // green
+          break;
+        case 'cancelled':
+          backColor = '#e74c3c'; // red
+          break;
+        default:
+          backColor = '#bdc3c7'; // gray fallback
+      }
+  
       return {
         id: session._id,
-        text: `Tutoring with ${session.tutorID?.firstName || 'Unknown'} ${session.tutorID?.lastName || ''}`,
+        text: `Tutor: ${session.tutorID?.firstName || 'Unknown'} ${session.tutorID?.lastName || ''}`,
         start,
         end,
-        backColor: "#93c47d"
+        backColor
       };
     });
   
     setEvents(formattedEvents);
   }, [upcomingSessions]);
+  
   
   
   return (
