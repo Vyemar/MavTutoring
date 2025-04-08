@@ -69,10 +69,9 @@ const TutorCalendar = () => {
   // Format and set events for DayPilot
   useEffect(() => {
     if (!upcomingSessions || upcomingSessions.length === 0) return;
+  
+    const formattedEvents = upcomingSessions.map((session) => {
 
-    const formattedEvents = upcomingSessions
-      .filter(session => session.status.toLowerCase() !== 'cancelled')
-      .map(session => {
         const utcDate = new Date(session.sessionTime);
 
         const options = {
@@ -96,16 +95,20 @@ const TutorCalendar = () => {
         const start = new DayPilot.Date(localDateStr);
         const end = start.addMinutes(session.duration || 60);
 
+        // Set color based on status
         let backColor;
         switch (session.status.toLowerCase()) {
           case 'scheduled':
-            backColor = '#3498db'; // Blue
+            backColor = '#3498db'; // blue
             break;
           case 'completed':
-            backColor = '#93c47d'; // Green
+            backColor = '#93c47d'; // green
+            break;
+          case 'cancelled':
+            backColor = '#e74c3c'; // red
             break;
           default:
-            backColor = '#bdc3c7'; // Gray fallback
+            backColor = '#bdc3c7'; // gray fallback
         }
 
         return {
