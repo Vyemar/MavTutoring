@@ -1,6 +1,6 @@
 import React, { useEffect, useState,  useCallback } from 'react';
 import { DayPilot, DayPilotCalendar, DayPilotMonth, DayPilotNavigator } from "@daypilot/daypilot-lite-react";
-import "../../styles/StudentCalendar.css";
+import "../../styles/CalendarDaypilot.css";
 import { axiosGetData } from '../../utils/api'; // Import the API utility
 import axios from 'axios';
 
