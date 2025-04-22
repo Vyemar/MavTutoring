@@ -197,12 +197,12 @@ function TutorProfile() {
                         )}
 
                         {isEditing && (
-                            <input type="file" accept="image/*" onChange={handleImageUpload} />
+                            <input type="file" accept="image/*" onChange={handleImageUpload} className={styles.inputField} />
                         )}
 
                         <div className={styles.profileInfo}>
                             <p><strong>Name:</strong> {isEditing ? (
-                                <input type="text" name="name" value={profile.name} onChange={handleChange} required />
+                                <input type="text" name="name" value={profile.name} onChange={handleChange} required className={styles.inputField} />
                             ) : (
                                 profile.name || "Not provided"
                             )}</p>
@@ -210,31 +210,31 @@ function TutorProfile() {
                             <p><strong>Student ID:</strong> {profile.studentID || "Not provided"}</p>
 
                             <p><strong>Bio:</strong> {isEditing ? (
-                                <textarea name="bio" value={profile.bio} onChange={handleChange} />
+                                <textarea name="bio" value={profile.bio} onChange={handleChange} className={styles.textareaField}/>
                             ) : (
                                 profile.bio || "Not provided"
                             )}</p>
 
                             <p><strong>Courses:</strong> {isEditing ? (
-                                <input type="text" name="courses" value={profile.courses} onChange={handleChange} />
+                                <input type="text" name="courses" value={profile.courses} onChange={handleChange} className={styles.inputField}/>
                             ) : (
                                 profile.courses || "Not provided"
                             )}</p>
 
                             <p><strong>Skills:</strong> {isEditing ? (
-                                <input type="text" name="skills" value={profile.skills} onChange={handleChange} />
+                                <input type="text" name="skills" value={profile.skills} onChange={handleChange} className={styles.inputField}/>
                             ) : (
                                 profile.skills || "Not provided"
                             )}</p>
 
                             <p><strong>Major:</strong> {isEditing ? (
-                                <input type="text" name="major" value={profile.major} onChange={handleChange} required />
+                                <input type="text" name="major" value={profile.major} onChange={handleChange} required className={styles.inputField}/>
                             ) : (
                                 profile.major || "Not provided"
                             )}</p>
 
                             <p><strong>Year:</strong> {isEditing ? (
-                                <select name="currentYear" value={profile.currentYear} onChange={handleChange} required>
+                                <select name="currentYear" value={profile.currentYear} onChange={handleChange} required className={styles.selectField}>
                                     <option value="">Select Year</option>
                                     <option value="Freshman">Freshman</option>
                                     <option value="Sophomore">Sophomore</option>
