@@ -6,6 +6,7 @@
 .mainContent {
   flex-grow: 1;
   padding: 2rem;
+  margin-left :80px;/*accounts for sidebar when its minimized*/
 }
 
 .heading {

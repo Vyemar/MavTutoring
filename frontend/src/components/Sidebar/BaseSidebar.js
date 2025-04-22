@@ -8,7 +8,7 @@ const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || "localhost";
 const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || "4000";
 const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 
-function BaseSidebar({ children }) {
+function BaseSidebar({ children, isCollapsed }) {
   const [bugHouseInfo, setBugHouseInfo] = useState({
     logo: "",
     contactInfo: {
@@ -32,7 +32,7 @@ function BaseSidebar({ children }) {
   }, []);
 
   return (
-    <div className={styles.sidebar}>
+    <div className={`${styles.sidebar} ${isCollapsed ? styles.sidebarActive : ""}`}>
       <div className={styles.sidebarLogoGroup}>
         {bugHouseInfo.logo && (
           <img
@@ -41,30 +41,32 @@ function BaseSidebar({ children }) {
             className={styles.sidebarLogo}
           />
         )}
-        <h1 style={{ margin: 0 }}>bugHouse</h1>
+        <div className={`${styles.sidebarTitle} ${isCollapsed ? styles.sidebarTitleHidden : ""}`}>bugHouse</div>
       </div>
 
       {/* Render the menu items passed as children */}
       {children}
-
-      <div className={styles.sidebarContactInfo}>
-        <h3>Contact Us</h3>
-        <div className={styles.contactDetails}>
-          <div className={styles.contactItem}>
-            <FaEnvelope className={styles.contactIcon} />
-            <span>{bugHouseInfo.contactInfo.email}</span>
-          </div>
-          <div className={styles.contactItem}>
-            <FaPhone className={styles.contactIcon} />
-            <span>{bugHouseInfo.contactInfo.phone}</span>
-          </div>
-          <div className={styles.contactItem}>
-            <FaMapMarkerAlt className={styles.contactIcon} />
-            <span>{bugHouseInfo.contactInfo.address}</span>
+      
+      {!isCollapsed && (
+        <div className={styles.sidebarContactInfo}>
+          <h3>Contact Us</h3>
+          <div className={styles.contactDetails}>
+            <div className={styles.contactItem}>
+              <FaEnvelope className={styles.contactIcon} />
+              <span>{bugHouseInfo.contactInfo.email}</span>
+            </div>
+            <div className={styles.contactItem}>
+              <FaPhone className={styles.contactIcon} />
+              <span>{bugHouseInfo.contactInfo.phone}</span>
+            </div>
+            <div className={styles.contactItem}>
+              <FaMapMarkerAlt className={styles.contactIcon} />
+              <span>{bugHouseInfo.contactInfo.address}</span>
+            </div>
           </div>
         </div>
+        )}
       </div>
-    </div>
   );
 }
 

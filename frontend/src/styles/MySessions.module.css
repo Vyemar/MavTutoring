@@ -8,6 +8,7 @@
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
+  margin-left :80px;/*accounts for sidebar when its minimized*/
 }
 
 .heading {

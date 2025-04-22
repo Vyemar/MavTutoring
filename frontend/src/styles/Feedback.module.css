@@ -22,6 +22,7 @@
   max-width: 500px;
   width: 100%;
   text-align: center;
+  margin-left :80px;/*accounts for sidebar when its minimized*/
 
   /* Center positioning */
   position: absolute;
