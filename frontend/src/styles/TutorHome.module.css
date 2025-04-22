@@ -16,6 +16,19 @@ html, body {
   flex: 1;
   padding: 20px;
   color: #e0e7ed; /* Light text for better contrast */
+  margin-left :80px;/*accounts for sidebar when its minimized*/
+}
+
+.calSubHeading{
+  /*text-align:center;*/
+  margin-top:10px;
+  margin-bottom: 20px;
+  margin-left:10px;
+}
+
+.tutorHomeSec{
+  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 .sidebar {

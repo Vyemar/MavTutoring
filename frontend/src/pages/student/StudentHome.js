@@ -16,7 +16,7 @@ function StudentHome({ handleLogout }) {
 
         {/* Schedule Section */}
         <section>
-          <h2>Calendar</h2>
+          <h2 className = {styles.calSubHeading}>Calendar</h2>
           <StudentCalendar />
         </section>
 

@@ -25,6 +25,7 @@ body {
   justify-content: flex-start;
   padding: 20px;
   color: #212529;
+  margin-left :80px;/*accounts for sidebar when its minimized*/
 }
 
 .heading {

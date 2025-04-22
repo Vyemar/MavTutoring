@@ -210,11 +210,11 @@ function StudentProfile() {
                             </div>
                         )}
 
-                        {isEditing && <input type="file" accept="image/*" onChange={handleImageUpload} />}
+                        {isEditing && <input type="file" accept="image/*" onChange={handleImageUpload} className={styles.inputField} />}
 
                         <div className={styles.profileInfo}>
                             <p><strong>Name:</strong> {isEditing ? (
-                                <input type="text" name="name" value={profile.name} onChange={handleChange} required />
+                                <input type="text" name="name" value={profile.name} onChange={handleChange} required className={styles.inputField}/>
                             ) : (
                                 profile.name || "Not provided"
                             )}</p>
@@ -222,19 +222,19 @@ function StudentProfile() {
                             <p><strong>Student ID:</strong> {profile.studentID || "Not provided"}</p>
 
                             <p><strong>Bio:</strong> {isEditing ? (
-                                <textarea name="bio" value={profile.bio} onChange={handleChange} />
+                                <textarea name="bio" value={profile.bio} onChange={handleChange} className={styles.textareaField}/>
                             ) : (
                                 profile.bio || "Not provided"
                             )}</p>
 
                             <p><strong>Major:</strong> {isEditing ? (
-                                <input type="text" name="major" value={profile.major} onChange={handleChange} />
+                                <input type="text" name="major" value={profile.major} onChange={handleChange} className={styles.inputField}/>
                             ) : (
                                 profile.major || "Not provided"
                             )}</p>
 
                             <p><strong>Year:</strong> {isEditing ? (
-                                <select name="currentYear" value={profile.currentYear} onChange={handleChange} required>
+                                <select name="currentYear" value={profile.currentYear} onChange={handleChange} required className={styles.selectField}>
                                     <option value="">Select Year</option>
                                     <option value="Freshman">Freshman</option>
                                     <option value="Sophomore">Sophomore</option>
@@ -248,19 +248,19 @@ function StudentProfile() {
                             )}</p>
 
                             <p><strong>Courses Enrolled:</strong> {isEditing ? (
-                                <input type="text" value={profile.coursesEnrolled.join(', ')} onChange={(e) => handleArrayChange(e, 'coursesEnrolled')} />
+                                <input type="text" value={profile.coursesEnrolled.join(', ')} onChange={(e) => handleArrayChange(e, 'coursesEnrolled')} className={styles.inputField} />
                             ) : (
                                 displayArray(profile.coursesEnrolled)
                             )}</p>
 
                             <p><strong>Areas of Interest:</strong> {isEditing ? (
-                                <input type="text" value={profile.areasOfInterest.join(', ')} onChange={(e) => handleArrayChange(e, 'areasOfInterest')} />
+                                <input type="text" value={profile.areasOfInterest.join(', ')} onChange={(e) => handleArrayChange(e, 'areasOfInterest')} className={styles.inputField}/>
                             ) : (
                                 displayArray(profile.areasOfInterest)
                             )}</p>
 
                             <p><strong>Preferred Learning Style:</strong> {isEditing ? (
-                                <select name="preferredLearningStyle" value={profile.preferredLearningStyle} onChange={handleChange}>
+                                <select name="preferredLearningStyle" value={profile.preferredLearningStyle} onChange={handleChange} className={styles.selectField}>
                                     <option value="">Select Learning Style</option>
                                     <option value="Visual">Visual</option>
                                     <option value="Auditory">Auditory</option>
@@ -273,7 +273,7 @@ function StudentProfile() {
                             )}</p>
 
                             <p><strong>Academic Goals:</strong> {isEditing ? (
-                                <textarea name="academicGoals" value={profile.academicGoals} onChange={handleChange} />
+                                <textarea name="academicGoals" value={profile.academicGoals} onChange={handleChange} className={styles.inputField}/>
                             ) : (
                                 profile.academicGoals || "Not provided"
                             )}</p>

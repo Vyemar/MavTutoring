@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styles from '../../styles/TutorHome.module.css';
 import TutorSidebar from '../../components/Sidebar/TutorSidebar';
 import axios from 'axios';
+import TutorCalendar from "./TutorCalendar";
 
 function TutorHome() {
     const navigate = useNavigate();
@@ -25,8 +26,14 @@ function TutorHome() {
             <div className={styles.mainContent}>
                 <h1 className={styles.heading}>Dashboard</h1>
 
+                {/* Schedule Section */}
+                <section className = {styles.tutorHomeSec}>
+                    <h2 className = {styles.calSubHeading}>Calendar</h2>
+                        <TutorCalendar />
+                    </section>
+
                 {/* Availability Section */}
-                <section>
+                <section className = {styles.tutorHomeSec}>
                     <h2>Your Availability</h2>
                     <div className={styles.availability}>
                         {availability.length > 0 ? (

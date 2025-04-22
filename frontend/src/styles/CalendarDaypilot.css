@@ -23,6 +23,7 @@ body .month_default_event_inner {
 .container {
     display: flex;
     flex-direction: row;
+    margin-left :80px;/*accounts for sidebar when its minimized*/
 }
 
 .navigator {
