@@ -1,7 +1,7 @@
 
 .sidebar {
   width: 16rem;
-  height: 100vh;
+  height: 100dvh;
   background: white;
   position: fixed;
   top: 0;
@@ -15,6 +15,7 @@
   min-width: 0;              /* Prevent it from enforcing a min width */
   flex-shrink: 1;            /* Allow shrinking */
   box-sizing: border-box;    /* Safe sizing */
+  z-index:10000;
 }
 
 /* When sidebar is collapsed */
@@ -133,7 +134,7 @@
 }
 
 .contentsContainer {
-  margin: 2rem 0 0 0;
+  margin: 1.3rem 0 0 0;
   justify-content: flex-start;
 }
 
@@ -159,7 +160,7 @@
   justify-content: flex-start;
   flex-direction: row;
   margin: 0;
-  padding: 0.75rem 0;
+  padding: 0.50rem 0;
   width: 100%;
   border-radius: 1rem;
   cursor: pointer;
@@ -173,12 +174,11 @@
 .aItem {
   text-decoration: none;
   color: #0064B1;
-  font-size: 20px;
+  font-size: 18.5px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin: 0 0 0 0.5rem;
-  /*below is new code*/
   opacity: 1;
   transform: translateX(0);
   transition: opacity 0.4s ease, transform 0.4s ease;

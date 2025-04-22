@@ -13,7 +13,7 @@ import { MdOutlineSpaceDashboard, MdOutlineFeedback, MdLogout, MdOutlineSchedule
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { SlCalender } from "react-icons/sl";
 
-function TutorSidebar({ onLogout/*, selected*/}) {
+function TutorSidebar() {
   const location = useLocation();
 
 

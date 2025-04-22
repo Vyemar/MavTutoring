@@ -13,7 +13,7 @@ import { MdOutlineSpaceDashboard, MdOutlineFeedback, MdLogout} from "react-icons
 import { IoPeopleSharp } from "react-icons/io5";
 import { IoMdNotificationsOutline } from "react-icons/io";
 
-const StudentSidebar = (/*{ selected }*/) => {
+const StudentSidebar = () => {
   const location = useLocation();
 
 
