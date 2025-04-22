@@ -78,13 +78,13 @@ const StudentSidebar = () => {
               <span className={styles.aItem}>My Sessions</span>
             </li>
 
-            <li
+            {/*<li
               className={styles.liStudent}
               onClick={() => (window.location.href = "/my-tutors")}
             >
               <IoPeopleSharp className={styles.sidebarIcon} />
               <span className={styles.aItem}>My Tutors</span>
-            </li>
+            </li>*/}
 
             <li
               className={styles.liStudent}

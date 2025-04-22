@@ -27,13 +27,13 @@ function TutorHome() {
                 <h1 className={styles.heading}>Dashboard</h1>
 
                 {/* Schedule Section */}
-                <section>
+                <section className = {styles.tutorHomeSec}>
                     <h2 className = {styles.calSubHeading}>Calendar</h2>
                         <TutorCalendar />
                     </section>
 
                 {/* Availability Section */}
-                <section>
+                <section className = {styles.tutorHomeSec}>
                     <h2>Your Availability</h2>
                     <div className={styles.availability}>
                         {availability.length > 0 ? (

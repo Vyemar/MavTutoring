@@ -26,6 +26,11 @@ html, body {
   margin-left:10px;
 }
 
+.tutorHomeSec{
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
 .sidebar {
   width: 250px;
   background: rgba(0, 0, 0, 0.8); /* Sidebar background */
