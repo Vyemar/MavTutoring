@@ -3,7 +3,7 @@ import styles from "../../styles/StudentHome.module.css";
 import StudentCalendar from "./StudentCalendar";
 import StudentSidebar from "../../components/Sidebar/StudentSidebar";
 
-function StudentHome({ handleLogout }) {
+function StudentHome(/*{ handleLogout }*/) {
 
   return (
     <div className={styles.container}>
@@ -12,7 +12,7 @@ function StudentHome({ handleLogout }) {
 
       {/* Main Content */}
       <div className={styles.mainContent}>
-        <h1 className={styles.heading}>Dashboard</h1>
+        <h1 className={styles.heading}>Student Dashboard</h1>
 
         {/* Schedule Section */}
         <section>

@@ -24,7 +24,7 @@ function TutorHome() {
 
             {/* Main Content */}
             <div className={styles.mainContent}>
-                <h1 className={styles.heading}>Dashboard</h1>
+                <h1 className={styles.heading}>Tutor Dashboard</h1>
 
                 {/* Schedule Section */}
                 <section className = {styles.tutorHomeSec}>
