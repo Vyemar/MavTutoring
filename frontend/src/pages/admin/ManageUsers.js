@@ -16,7 +16,7 @@ const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 function ManageUsers() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [selectedRole, setSelectedRole] = useState("Tutor");
+    const [selectedRole, setSelectedRole] = useState("All");
 
     const navigate = useNavigate();  // Initialize navigate using useNavigate
 
@@ -50,10 +50,10 @@ function ManageUsers() {
                     <div className={styles.roleSelector}>
                         <label htmlFor="role">Select Role:</label>
                         <select id="role" value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
+                            <option value="All">All Users</option>
                             <option value="Tutor">Tutors</option>
                             <option value="Student">Students</option>
                             <option value="Admin">Admins</option>
-                            <option value="All">All Users</option>
                         </select>
                     </div>
                 </div>

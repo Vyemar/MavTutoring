@@ -9,7 +9,7 @@ function TutorSchedule() {
     <div className={styles.container}>
       <TutorSidebar selected="schedule"></TutorSidebar>
       <div className={styles.mainContent}>
-        <h1 className={styles.heading}>Tutor Schedule</h1>
+        <h1 className={styles.heading}>Tutor Calender</h1>
         <TutorCalendar />
       </div>
     </div>
