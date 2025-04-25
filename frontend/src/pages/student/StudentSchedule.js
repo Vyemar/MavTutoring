@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import styles from '../../styles/StudentSchedule.module.css';
 import StudentSidebar from '../../components/Sidebar/StudentSidebar';
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
@@ -12,6 +13,7 @@ const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
 const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 
 function StudentSchedule() {
+  const { isCollapsed } = useSidebar();
   const [tutors, setTutors] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTutor, setSelectedTutor] = useState('');
@@ -200,7 +202,7 @@ function StudentSchedule() {
     return (
       <div className={styles.container}>
         <StudentSidebar selected="student-schedule" />
-        <div className={styles.mainContent}>
+        <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "260px" }}>
           <div className={styles.spinnerContainer}>
             <div className={styles.spinner}></div>
             <p>Loading...</p>
@@ -214,7 +216,7 @@ function StudentSchedule() {
     return (
       <div className={styles.container}>
         <StudentSidebar selected="student-schedule" />
-        <div className={styles.mainContent}>
+        <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "260px" }}>
           <div className={styles.error}>
             Session expired or not found. Please log in again.
           </div>
@@ -226,7 +228,7 @@ function StudentSchedule() {
   return (
     <div className={styles.container}>
       <StudentSidebar selected="student-schedule" />
-      <div className={styles.mainContent}>
+      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "270px" , transition: "margin-left 0.5s ease"}}>
         <div className={styles.scheduleContainer}>
           <h1 className={styles.heading}>Schedule a Session</h1>
 

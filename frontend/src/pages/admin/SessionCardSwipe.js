@@ -2,14 +2,17 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "../../styles/SessionCardSwipe.module.css";
 import AdminSidebar from "../../components/Sidebar/AdminSidebar";
 import { axiosPostData } from "../../utils/api";
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
 function SessionCardSwipe() {
     const [statusMessage, setStatusMessage] = useState("Awaiting card swipe...");
     const [sessionDetails, setSessionDetails] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [showSidebar, setShowSidebar] = useState(false);
     const [lastSwipeTime, setLastSwipeTime] = useState(0);
     const inputRef = useRef(null);
+    
+    // Get sidebar context
+    const { isCollapsed, toggleSidebar } = useSidebar();
 
     const parseCardData = (rawData) => {
         const match = rawData.match(/%B(\d+)\^([\w\-/ ]+)\^/);
@@ -23,61 +26,61 @@ function SessionCardSwipe() {
     };
 
     const processCardData = async (rawData) => {
-      try {
-          console.log("Raw data:", rawData);
-          setStatusMessage("Processing swipe...");
-          setSessionDetails(null);
-          setIsLoading(true);
-  
-          let response;
-  
-          if (rawData.startsWith("%B")) {
-              const parsed = parseCardData(rawData);
-              console.log("Parsed card data:", parsed);
-  
-              if (!parsed) {
-                  setStatusMessage("Invalid card swipe format.");
-                  return;
-              }
-  
-              response = await axiosPostData("/api/attendance/check", parsed);
-          } else if (rawData.startsWith(";")) {
-              const idMatch = rawData.match(/^;(\d{10})\?/);
-              if (!idMatch) {
-                  setStatusMessage("Invalid Track 2 swipe.");
-                  return;
-              }
-  
-              const studentID = idMatch[1];
-              console.log("Parsed student ID from track 2:", studentID);
-              response = await axiosPostData("/api/attendance/check", { studentID });
-          } else {
-              setStatusMessage("Unrecognized card format.");
-              return;
-          }
-  
-          console.log("Response received:", response);
-          setStatusMessage(response.data.message || "Success");
-  
-          if (response.data.session) {
-              setSessionDetails(response.data.session);
-          }
-  
-      } catch (error) {
-          console.error("Swipe error:", error);
-          const message =
-              error.response?.data?.message ||
-              "Error occurred while checking in/out.";
-          setStatusMessage(message);
-      } finally {
-          setIsLoading(false);
-          // Always reset after 5 seconds
-          setTimeout(() => {
-              setStatusMessage("Awaiting card swipe...");
-              setSessionDetails(null);
-          }, 5000);
-      }
-  };  
+        try {
+            console.log("Raw data:", rawData);
+            setStatusMessage("Processing swipe...");
+            setSessionDetails(null);
+            setIsLoading(true);
+
+            let response;
+
+            if (rawData.startsWith("%B")) {
+                const parsed = parseCardData(rawData);
+                console.log("Parsed card data:", parsed);
+
+                if (!parsed) {
+                    setStatusMessage("Invalid card swipe format.");
+                    return;
+                }
+
+                response = await axiosPostData("/api/attendance/check", parsed);
+            } else if (rawData.startsWith(";")) {
+                const idMatch = rawData.match(/^;(\d{10})\?/);
+                if (!idMatch) {
+                    setStatusMessage("Invalid Track 2 swipe.");
+                    return;
+                }
+
+                const studentID = idMatch[1];
+                console.log("Parsed student ID from track 2:", studentID);
+                response = await axiosPostData("/api/attendance/check", { studentID });
+            } else {
+                setStatusMessage("Unrecognized card format.");
+                return;
+            }
+
+            console.log("Response received:", response);
+            setStatusMessage(response.data.message || "Success");
+
+            if (response.data.session) {
+                setSessionDetails(response.data.session);
+            }
+
+        } catch (error) {
+            console.error("Swipe error:", error);
+            const message =
+                error.response?.data?.message ||
+                "Error occurred while checking in/out.";
+            setStatusMessage(message);
+        } finally {
+            setIsLoading(false);
+            // Always reset after 5 seconds
+            setTimeout(() => {
+                setStatusMessage("Awaiting card swipe...");
+                setSessionDetails(null);
+            }, 5000);
+        }
+    };
 
     useEffect(() => {
         const keepFocus = () => {
@@ -112,15 +115,17 @@ function SessionCardSwipe() {
         <div className={styles.container}>
             <button
                 className={styles.sidebarToggle}
-                onClick={() => setShowSidebar(!showSidebar)}
+                onClick={toggleSidebar}
                 aria-label="Toggle Sidebar"
             >
-                {showSidebar ? "←" : "☰"}
+                {isCollapsed ? "☰" : "←"}
             </button>
 
-            {showSidebar && <AdminSidebar selected="card-login" />}
+            <AdminSidebar selected="card-swipe" />
 
-            <div className={styles.mainContent}>
+            <div 
+                className={styles.mainContent}
+            >
                 <h1 className={styles.heading}>Session Check-In/Out</h1>
                 <div className={styles.cardReaderBox}>
                     <p className={styles.instruction}>

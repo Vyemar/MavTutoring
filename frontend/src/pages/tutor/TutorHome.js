@@ -4,9 +4,11 @@ import styles from '../../styles/TutorHome.module.css';
 import TutorSidebar from '../../components/Sidebar/TutorSidebar';
 import axios from 'axios';
 import TutorCalendar from "./TutorCalendar";
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
 function TutorHome() {
     const navigate = useNavigate();
+    const { isCollapsed } = useSidebar();
     const [availability, setAvailability] = useState([]);
     const [notifications, setNotifications] = useState([]);
 
@@ -23,7 +25,8 @@ function TutorHome() {
             <TutorSidebar selected="home"/>
 
             {/* Main Content */}
-            <div className={styles.mainContent}>
+            <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "90px" : "280px" , transition: "margin-left 0.5s ease"}}
+>
                 <h1 className={styles.heading}>Tutor Dashboard</h1>
 
                 {/* Schedule Section */}
@@ -31,37 +34,6 @@ function TutorHome() {
                     <h2 className = {styles.calSubHeading}>Calendar</h2>
                         <TutorCalendar />
                     </section>
-
-                {/* Availability Section */}
-                <section className = {styles.tutorHomeSec}>
-                    <h2>Your Availability</h2>
-                    <div className={styles.availability}>
-                        {availability.length > 0 ? (
-                            availability.map((slot, index) => (
-                                <div key={index} className={styles.card}>
-                                    <p>{slot.day}</p>
-                                    <p>{slot.time}</p>
-                                </div>
-                            ))
-                        ) : (
-                            <p>No availability set. Use the "Set Availability" option to add slots.</p>
-                        )}
-                    </div>
-                </section>
-
-                {/* Notifications Section */}
-                <section className={styles.notifications}>
-                    <h2>Notifications</h2>
-                    {notifications.length > 0 ? (
-                        <ul>
-                            {notifications.map((notification, index) => (
-                                <li key={index}>{notification}</li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>No new notifications</p>
-                    )}
-                </section>
             </div>
         </div>
     );

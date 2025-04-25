@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import AdminSidebar from '../../components/Sidebar/AdminSidebar';
 import ViewProfile from './ViewProfile';
 import styles from '../../styles/ManageUsers.module.css';
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
@@ -17,6 +18,8 @@ function ManageUsers() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedRole, setSelectedRole] = useState("All");
+    const { isCollapsed } = useSidebar();
+    const sidebarWidth = isCollapsed ? "80px" : "270px";
 
     const navigate = useNavigate();  // Initialize navigate using useNavigate
 
@@ -44,7 +47,8 @@ function ManageUsers() {
             <AdminSidebar selected="manage-users"/>
 
             {/* Main Content */}
-            <div className={styles.mainContent}>
+            <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "260px", transition: "margin-left 0.5s ease", "--sidebar-width": sidebarWidth}}
+>
                 <div className={styles.headerSection}>
                     <h1 className={styles.heading}>Manage Users</h1>
                     <div className={styles.roleSelector}>

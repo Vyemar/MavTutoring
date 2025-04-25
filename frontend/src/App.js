@@ -23,6 +23,7 @@ import TutorDetails from "./pages/admin/TutorDetails";
 import AnalyticsOptions from "./pages/admin/AnalyticsOptions";
 import Attendance from "./pages/admin/AttendanceReport";
 import SessionCardSwipe from "./pages/admin/SessionCardSwipe";
+import { SidebarProvider } from "./components/Sidebar/SidebarContext";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import { useEffect, useState } from "react";
@@ -66,106 +67,108 @@ function ProtectedRoute({ children }) {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Redirect from root to login */}
-        <Route path="/" element={<Navigate to="/login" />} />
+    <SidebarProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Redirect from root to login */}
+          <Route path="/" element={<Navigate to="/login" />} />
 
-        {/* Public routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+          {/* Public routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
-        {/* Protected routes */}
-        <Route
-          path="/home"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/availability"
-          element={
-            <ProtectedRoute>
-              <SetAvailability />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/manage-users"
-          element={
-            <ProtectedRoute>
-              <ManageUsers />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/find-tutors"
-          element={
-            <ProtectedRoute>
-              <ViewTutors />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/Viewtutors"
-          element={
-            <ProtectedRoute>
-              <ViewTutors />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/Feedback"
-          element={
-            <ProtectedRoute>
-              <Feedback />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/Notifications" element={<Notifications />} />
-        <Route path="/StudentSchedule" element={<StudentSchedule />} />
-        <Route path="/FindMyTutorProfile/:tutorId" element={<FindMyTutorProfile />} />
-        <Route path="/my-tutors" element={<MyTutors />} />
-        <Route path="/my-sessions" element={<MySessions />} />
-        <Route path="/sessions" element={<TutorSessions />} />
-        <Route path="/TutorNotifications" element={<TutorNotifications />} />
-        <Route 
-          path="/student-profile" 
-          element={
-            <ProtectedRoute>
-              <StudentProfile />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/tutor-profile" 
-          element={
-            <ProtectedRoute>
-              <TutorProfile />
-            </ProtectedRoute>
-          } 
-        />
-        <Route
-          path="/card-swipe"
-          element={
-            <ProtectedRoute>
-              <SessionCardSwipe />
-            </ProtectedRoute>
-          }
-        />
+          {/* Protected routes */}
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/availability"
+            element={
+              <ProtectedRoute>
+                <SetAvailability />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/manage-users"
+            element={
+              <ProtectedRoute>
+                <ManageUsers />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/find-tutors"
+            element={
+              <ProtectedRoute>
+                <ViewTutors />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/Viewtutors"
+            element={
+              <ProtectedRoute>
+                <ViewTutors />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/Feedback"
+            element={
+              <ProtectedRoute>
+                <Feedback />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/Notifications" element={<Notifications />} />
+          <Route path="/StudentSchedule" element={<StudentSchedule />} />
+          <Route path="/FindMyTutorProfile/:tutorId" element={<FindMyTutorProfile />} />
+          <Route path="/my-tutors" element={<MyTutors />} />
+          <Route path="/my-sessions" element={<MySessions />} />
+          <Route path="/sessions" element={<TutorSessions />} />
+          <Route path="/TutorNotifications" element={<TutorNotifications />} />
+          <Route 
+            path="/student-profile" 
+            element={
+              <ProtectedRoute>
+                <StudentProfile />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/tutor-profile" 
+            element={
+              <ProtectedRoute>
+                <TutorProfile />
+              </ProtectedRoute>
+            } 
+          />
+          <Route
+            path="/card-swipe"
+            element={
+              <ProtectedRoute>
+                <SessionCardSwipe />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route path="/schedule" element={<TutorSchedule />} />
-        <Route path="/analytics" element={<AnalyticsOptions/>} />
-        <Route path="/analytics/tutor-performance" element={<SystemAnalytics/>} />
-        <Route path="/analytics/attendance-reports" element={<Attendance/>} />
-        
-        <Route path="/tutor/:tutorId" element={<TutorDetails />} />
-        <Route path="/ViewProfile/:userId" element={<ViewProfile />} />
-        <Route path="/admin-settings" element={<Settings />} />
-      </Routes>
-    </BrowserRouter>
+          <Route path="/schedule" element={<TutorSchedule />} />
+          <Route path="/analytics" element={<AnalyticsOptions/>} />
+          <Route path="/analytics/tutor-performance" element={<SystemAnalytics/>} />
+          <Route path="/analytics/attendance-reports" element={<Attendance/>} />
+          
+          <Route path="/tutor/:tutorId" element={<TutorDetails />} />
+          <Route path="/ViewProfile/:userId" element={<ViewProfile />} />
+          <Route path="/admin-settings" element={<Settings />} />
+        </Routes>
+      </BrowserRouter>`
+    </SidebarProvider>
   );
 }
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import styles from "../../styles/FindMyTutorProfile.module.css";
+import styles from "../../styles/TutorProfile.module.css";
 import TutorSidebar from "../../components/Sidebar/TutorSidebar";
 
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
@@ -174,7 +174,7 @@ function TutorProfile() {
 
     return (
         <div className={styles.container}>
-            <TutorSidebar selected="profile" />
+            <TutorSidebar selected="tutor-profile" />
             <div className={styles.mainContent}>
                 <div className={styles.profileContainer}>
                     <h1 className={styles.heading}>Profile</h1>
@@ -248,11 +248,12 @@ function TutorProfile() {
                             )}</p>
                         </div>
 
+                        <div className={styles.buttonGroup}>
                         <button className={styles.editButton} onClick={() => {
                             if (isEditing) {
-                                handleSubmit();
+                            handleSubmit();
                             } else {
-                                setIsEditing(true);
+                            setIsEditing(true);
                             }
                         }}>
                             {isEditing ? "Save" : "Edit"}
@@ -260,12 +261,13 @@ function TutorProfile() {
 
                         {isEditing && (
                             <button className={styles.cancelButton} onClick={() => {
-                                setIsEditing(false);
-                                fetchProfile();
+                            setIsEditing(false);
+                            fetchProfile();
                             }}>
-                                Cancel
+                            Cancel
                             </button>
                         )}
+                        </div>
                     </div>
                 </div>
             </div>

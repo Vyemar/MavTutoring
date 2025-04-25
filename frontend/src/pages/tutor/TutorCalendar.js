@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DayPilot, DayPilotCalendar, DayPilotMonth, DayPilotNavigator } from "@daypilot/daypilot-lite-react";
 import "../../styles/CalendarDaypilot.css";
 import { axiosGetData } from '../../utils/api';
@@ -11,6 +12,7 @@ const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
 const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 
 const TutorCalendar = () => {
+  const navigate = useNavigate();
   const [view, setView] = useState("Week");
   const [startDate, setStartDate] = useState(DayPilot.Date.today());
   const [events, setEvents] = useState([]);
@@ -124,7 +126,7 @@ const TutorCalendar = () => {
   }, [upcomingSessions]);
 
   return (
-    <div className={"container"}>
+    <div className="container">
       <div className={"navigator"}>
         <DayPilotNavigator
           selectMode={view}

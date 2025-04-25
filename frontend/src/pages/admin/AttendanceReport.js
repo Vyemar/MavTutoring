@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import styles from "../../styles/AttendanceReport.module.css";
 import AdminSideBar from "../../components/Sidebar/AdminSidebar";
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
@@ -119,6 +120,7 @@ function AttendanceReport() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const { isCollapsed } = useSidebar();
   
   // Define fetchAttendance as a useCallback
   const fetchAttendance = useCallback(async () => {
@@ -479,8 +481,12 @@ function AttendanceReport() {
         white-space: nowrap;
       }
       
+      .${styles.attendanceTable} tr:nth-child(odd) {
+        background-color: #ffffff; /* White for odd rows */
+      }
+
       .${styles.attendanceTable} tr:nth-child(even) {
-        background-color: #f8f9fa;
+        background-color: #f2f2f2; /* Light gray for even rows */
       }
       
       .${styles.attendanceTable} tr:hover td {
@@ -680,8 +686,8 @@ function AttendanceReport() {
 
   return (
     <div className={styles.container}>
-      <AdminSideBar selected="attendance"></AdminSideBar>
-      <div className={styles.mainContent} style={{ padding: '30px' }}>
+      <AdminSideBar selected="analytics"></AdminSideBar>
+      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "100px" : "290px" , transition: "margin-left 0.5s ease"}}>
         <div className={styles.headerContainer}>
           <h1 className={styles.heading}>Attendance Report</h1>
           
@@ -737,7 +743,7 @@ function AttendanceReport() {
             </div>
           ) : (
             <div className={styles.tableContainer}>
-              <table className={styles.attendanceTable}>
+              <table className={styles.sessionsTable}>
                 <thead>
                   <tr>
                     <th style={{ width: '13%', paddingRight: '50px', paddingLeft: '40px' }}>Student</th>

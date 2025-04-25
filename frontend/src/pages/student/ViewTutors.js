@@ -6,6 +6,7 @@ import { SearchBar } from "../../components/SearchBar";
 import { SearchResultsList } from "../../components/SearchResultsList";
 import { SearchResultsTutorProfiles } from "../../components/SearchResultsTutorProfiles";
 import { SearchInfo } from "../../components/SearchInfo";
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || "https";
@@ -16,6 +17,7 @@ const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || "4000";
 const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 
 function ViewTutors() {
+  const { isCollapsed } = useSidebar();
   const [allTutors, setAllTutors] = useState([]); //Stores ALL tutor profiles
   const [loading, setLoading] = useState(true); //Allows us to output "loading.."" when somthing is loading
   const [results, setResults] = useState([]); //Will store the filtered tutor user objects (that is used for our search results) we get each time a user enters something in the searchbar
@@ -53,7 +55,7 @@ function ViewTutors() {
      return (
        <div className={styles.container}>
          <StudentSidebar />
-         <div className={styles.mainContent}>
+         <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "270px" , transition: "margin-left 0.5s ease"}}>
            <div className={styles.spinnerContainer}>
              <div className={styles.spinner}></div>
              <p>Loading tutors...</p>
@@ -67,7 +69,7 @@ function ViewTutors() {
   return (
     <div className={styles.container}>
       <StudentSidebar selected="find-tutors"></StudentSidebar>
-      <div className={styles.mainContent}>
+      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "100px" : "290px" , transition: "margin-left 0.5s ease"}}>
         <h1 className={styles.heading}>Our Tutors</h1>
         <div className="App">
           <div className="search-bar-container">

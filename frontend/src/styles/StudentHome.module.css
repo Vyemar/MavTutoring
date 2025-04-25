@@ -25,7 +25,7 @@ html, body {
 .mainContent {
   flex: 1;
   padding: 20px;
-  margin-left :80px;/*accounts for sidebar when its minimized*/
+  /* margin-left :80px;accounts for sidebar when its minimized */
   color: #e0e7ed;
 }
 

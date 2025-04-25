@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "../../styles/Settings.module.css";
 import AdminSideBar from "../../components/Sidebar/AdminSidebar";
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || "https";
@@ -22,6 +23,7 @@ function Settings() {
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { isCollapsed } = useSidebar();
 
   useEffect(() => {
     fetchSettings();
@@ -86,7 +88,7 @@ function Settings() {
   return (
     <div className={styles.container}>
       <AdminSideBar selected="admin-settings"></AdminSideBar>
-      <div className={styles.mainContent}>
+      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "90px" : "270px", transition: "margin-left 0.5s ease"}}>
         <h1 className={styles.heading}>BugHouse Settings</h1>
         <div className={styles.adminSettings}>
           <form onSubmit={handleSubmit}>

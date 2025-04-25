@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import styles from "../../styles/FindMyTutorProfile.module.css";
+import styles from "../../styles/StudentProfile.module.css";
 import StudentSidebar from "../../components/Sidebar/StudentSidebar";
 
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
@@ -164,7 +164,7 @@ function StudentProfile() {
     if (sessionLoading || loading) {
         return (
             <div className={styles.container}>
-                <StudentSidebar selected="Profile" />
+                <StudentSidebar selected="student-profile" />
                 <div className={styles.mainContent}>
                     <div className={styles.spinnerContainer}>
                         <div className={styles.spinner}></div>
@@ -178,7 +178,7 @@ function StudentProfile() {
     if (!userData) {
         return (
             <div className={styles.container}>
-                <StudentSidebar selected="Profile" />
+                <StudentSidebar selected="student-profile"/>
                 <div className={styles.mainContent}>
                     <div className={styles.error}>
                         Session expired or not found. Please log in again.
@@ -192,15 +192,15 @@ function StudentProfile() {
 
     return (
         <div className={styles.container}>
-            <StudentSidebar selected="Profile" />
+            <StudentSidebar selected="student-profile"/>
             <div className={styles.mainContent}>
                 <div className={styles.profileContainer}>
                     <h1 className={styles.heading}>Profile</h1>
                     <hr className={styles.profileDivider} />
-
+    
                     {error && <div className={styles.error}>{error}</div>}
-                    {successMessage && <div className={styles.success}>{successMessage}</div>}
-
+                    {successMessage && <div className={styles.successMessage}>{successMessage}</div>}
+    
                     <div className={styles.profileSection}>
                         {profile.profilePicture ? (
                             <img src={profile.profilePicture} alt="Profile" className={styles.profileImage} />
@@ -209,32 +209,63 @@ function StudentProfile() {
                                 <span>No Image</span>
                             </div>
                         )}
-
-                        {isEditing && <input type="file" accept="image/*" onChange={handleImageUpload} className={styles.inputField} />}
-
+    
+                        {isEditing && (
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                className={styles.inputField}
+                            />
+                        )}
+    
                         <div className={styles.profileInfo}>
                             <p><strong>Name:</strong> {isEditing ? (
-                                <input type="text" name="name" value={profile.name} onChange={handleChange} required className={styles.inputField}/>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={profile.name}
+                                    onChange={handleChange}
+                                    required
+                                    className={styles.inputField}
+                                />
                             ) : (
                                 profile.name || "Not provided"
                             )}</p>
-
+    
                             <p><strong>Student ID:</strong> {profile.studentID || "Not provided"}</p>
-
+    
                             <p><strong>Bio:</strong> {isEditing ? (
-                                <textarea name="bio" value={profile.bio} onChange={handleChange} className={styles.textareaField}/>
+                                <textarea
+                                    name="bio"
+                                    value={profile.bio}
+                                    onChange={handleChange}
+                                    className={styles.textareaField}
+                                />
                             ) : (
                                 profile.bio || "Not provided"
                             )}</p>
-
+    
                             <p><strong>Major:</strong> {isEditing ? (
-                                <input type="text" name="major" value={profile.major} onChange={handleChange} className={styles.inputField}/>
+                                <input
+                                    type="text"
+                                    name="major"
+                                    value={profile.major}
+                                    onChange={handleChange}
+                                    className={styles.inputField}
+                                />
                             ) : (
                                 profile.major || "Not provided"
                             )}</p>
-
+    
                             <p><strong>Year:</strong> {isEditing ? (
-                                <select name="currentYear" value={profile.currentYear} onChange={handleChange} required className={styles.selectField}>
+                                <select
+                                    name="currentYear"
+                                    value={profile.currentYear}
+                                    onChange={handleChange}
+                                    required
+                                    className={styles.selectField}
+                                >
                                     <option value="">Select Year</option>
                                     <option value="Freshman">Freshman</option>
                                     <option value="Sophomore">Sophomore</option>
@@ -246,21 +277,36 @@ function StudentProfile() {
                             ) : (
                                 profile.currentYear || "Not provided"
                             )}</p>
-
+    
                             <p><strong>Courses Enrolled:</strong> {isEditing ? (
-                                <input type="text" value={profile.coursesEnrolled.join(', ')} onChange={(e) => handleArrayChange(e, 'coursesEnrolled')} className={styles.inputField} />
+                                <input
+                                    type="text"
+                                    value={profile.coursesEnrolled.join(', ')}
+                                    onChange={(e) => handleArrayChange(e, 'coursesEnrolled')}
+                                    className={styles.inputField}
+                                />
                             ) : (
                                 displayArray(profile.coursesEnrolled)
                             )}</p>
-
+    
                             <p><strong>Areas of Interest:</strong> {isEditing ? (
-                                <input type="text" value={profile.areasOfInterest.join(', ')} onChange={(e) => handleArrayChange(e, 'areasOfInterest')} className={styles.inputField}/>
+                                <input
+                                    type="text"
+                                    value={profile.areasOfInterest.join(', ')}
+                                    onChange={(e) => handleArrayChange(e, 'areasOfInterest')}
+                                    className={styles.inputField}
+                                />
                             ) : (
                                 displayArray(profile.areasOfInterest)
                             )}</p>
-
+    
                             <p><strong>Preferred Learning Style:</strong> {isEditing ? (
-                                <select name="preferredLearningStyle" value={profile.preferredLearningStyle} onChange={handleChange} className={styles.selectField}>
+                                <select
+                                    name="preferredLearningStyle"
+                                    value={profile.preferredLearningStyle}
+                                    onChange={handleChange}
+                                    className={styles.selectField}
+                                >
                                     <option value="">Select Learning Style</option>
                                     <option value="Visual">Visual</option>
                                     <option value="Auditory">Auditory</option>
@@ -271,37 +317,50 @@ function StudentProfile() {
                             ) : (
                                 profile.preferredLearningStyle || "Not provided"
                             )}</p>
-
+    
                             <p><strong>Academic Goals:</strong> {isEditing ? (
-                                <textarea name="academicGoals" value={profile.academicGoals} onChange={handleChange} className={styles.inputField}/>
+                                <textarea
+                                    name="academicGoals"
+                                    value={profile.academicGoals}
+                                    onChange={handleChange}
+                                    className={styles.inputField}
+                                />
                             ) : (
                                 profile.academicGoals || "Not provided"
                             )}</p>
                         </div>
-
-                        <button className={styles.editButton} onClick={() => {
-                            if (isEditing) {
-                                handleSubmit();
-                            } else {
-                                setIsEditing(true);
-                            }
-                        }}>
-                            {isEditing ? "Save" : "Edit"}
-                        </button>
-
-                        {isEditing && (
-                            <button className={styles.cancelButton} onClick={() => {
-                                setIsEditing(false);
-                                fetchProfile();
-                            }}>
-                                Cancel
+    
+                        <div className={styles.roleButtons}>
+                            <button
+                                className={styles.saveButton}
+                                onClick={() => {
+                                    if (isEditing) {
+                                        handleSubmit();
+                                    } else {
+                                        setIsEditing(true);
+                                    }
+                                }}
+                            >
+                                {isEditing ? "Save" : "Edit"}
                             </button>
-                        )}
+    
+                            {isEditing && (
+                                <button
+                                    className={styles.cancelButton}
+                                    onClick={() => {
+                                        setIsEditing(false);
+                                        fetchProfile();
+                                    }}
+                                >
+                                    Cancel
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    );
+    );    
 }
 
 export default StudentProfile;

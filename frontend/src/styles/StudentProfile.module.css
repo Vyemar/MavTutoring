@@ -1,0 +1,435 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.mainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 20px;
+  color: #1b1b1b;
+  margin-left :80px;/*accounts for sidebar when its minimized*/
+}
+
+.heading {
+  font-size: 2rem;
+  color: #191818;
+  margin-bottom: 20px;
+  text-align: center;
+  width: 100%;
+}
+
+.profileContainer {
+  width: 80%;
+  max-width: 900px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  position: relative; /* Added for absolute positioning of profile image */
+}
+
+/*newcode*/
+.inputField {
+  width: 100%;
+  max-width: 400px;
+  padding: 8px 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  background-color: #fefefe;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.inputField:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+.textareaField {
+  width: 100%;
+  max-width: 600px;
+  min-height: 100px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  background-color: #fefefe;
+  resize: vertical;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.textareaField:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+.selectField {
+  padding: 8px 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  max-width: 300px;
+}
+/*end of newcode*/
+
+.submitButton {
+  padding: 10px 20px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: auto;
+  text-align: center;
+}
+
+.submitButton:hover {
+  background-color: #a71d2a;
+}
+
+.spinnerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 500px;
+  padding-left: 250px;
+  color: white;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 123, 255, 0.3);
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.roleChangeForm {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.roleSelectWrapper {
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+}
+
+.roleButtons {
+  display: flex;
+  gap: 10px;
+}
+
+/* Profile Section */
+.profileSection {
+  position: relative;
+  width: 100%;
+  padding-top: 20px;
+}
+
+.profileImage {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 100px; /* Smaller size */
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.profilePlaceholder {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #666;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.profileInfo {
+  margin: 20px 0;
+  color: #333;
+  padding-right: 140px; /* Make space for the profile image */
+}
+
+.profileInfo p {
+  margin: 10px 0;
+  font-size: 1rem;
+  text-align: left;
+}
+
+.profileInfo strong {
+  color: #555;
+  margin-right: 8px;
+}
+
+/* Availability Section */
+
+.calendarContainer {
+    width: 80%;
+    max-width: 900px;
+    border: 1px solid #000000;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.availabilitySection {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+  }
+  
+  .availabilitySection h2 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    text-align: center;
+  }
+  
+  .availabilityList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .availabilityItem {
+    padding: 12px;
+    background: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-size: 1rem;
+    color: #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s ease-in-out;
+  }
+  
+  .availabilityItem:hover {
+    background: #e9ecef;
+  }
+  
+  .availabilityTime {
+    font-weight: bold;
+    color: #007bff;
+  }
+
+  /* Add these to your existing FindMyTutorProfile.module.css file */
+
+.calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.scheduleControls {
+  display: flex;
+  gap: 10px;
+}
+
+.editScheduleButton {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.editScheduleButton:hover {
+  background-color: #3a7bc8;
+}
+
+.fullscreenButton {
+  background-color: #7e57c2;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.fullscreenButton:hover {
+  background-color: #6a4caf;
+}
+
+.exitFullscreenButton {
+  background-color: #7e57c2;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.exitFullscreenButton:hover {
+  background-color: #6a4caf;
+}
+
+.saveButton {
+  background-color: #007bff; /* Blue */
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+  margin-right: 10px; /* Add space between save and cancel */
+}
+
+.saveButton:hover {
+  background-color: #0056b3;
+}
+
+.saveButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+.cancelButton {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.cancelButton:hover {
+  background-color: #d32f2f;
+}
+
+.editingInstructions {
+  background-color: #f8f9fa;
+  border-left: 4px solid #4a90e2;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  border-radius: 0 4px 4px 0;
+}
+
+.editingInstructions p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.successMessage {
+  background-color: #dff0d8;
+  color: #3c763d;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  border-left: 4px solid #3c763d;
+}
+
+.error {
+  background-color: #f2dede;
+  color: #a94442;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  border-left: 4px solid #a94442;
+}
+
+/* Fullscreen mode styling */
+.fullscreenContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  z-index: 1000;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.fullscreenHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .availabilitySection {
+      width: 90%;
+      padding: 15px;
+    }
+    
+    .availabilityItem {
+      font-size: 0.9rem;
+      padding: 10px;
+    }
+  }
+  

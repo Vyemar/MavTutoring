@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styles from "../../styles/SystemAnalytics.module.css";
 import AdminSideBar from "../../components/Sidebar/AdminSidebar";
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
@@ -28,6 +29,7 @@ function SystemAnalytics() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const { isCollapsed } = useSidebar();
   
   // Initialize navigate for routing
   const navigate = useNavigate();
@@ -171,7 +173,7 @@ function SystemAnalytics() {
   return (
     <div className={styles.container}>
       <AdminSideBar selected="analytics"></AdminSideBar>
-      <div className={styles.mainContent}>
+      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "100px" : "290px" , transition: "margin-left 0.5s ease"}}>
         <div className={styles.headerContainer}>
           <h1 className={styles.heading}>System Analytics</h1>
           

@@ -1,6 +1,5 @@
-
 .sidebar {
-  width: 16rem;
+  width: 17rem;
   height: 100dvh;
   background: white;
   position: fixed;
@@ -15,7 +14,7 @@
   min-width: 0;              /* Prevent it from enforcing a min width */
   flex-shrink: 1;            /* Allow shrinking */
   box-sizing: border-box;    /* Safe sizing */
-  z-index:10000;
+  z-index: 10000;
 }
 
 /* When sidebar is collapsed */
@@ -24,12 +23,44 @@
   transition: 0.5s all;
 }
 
+.active {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #000000;
+  font-weight: bold;
+  border-left: 4px solid #0064B1; /* Add colored border on the left */
+}
+
+.sidebarIcon {
+  width: 25px;
+  height: 25px;
+  color: #0064B1;
+}
+
+.iconContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 30px;
+  position: relative;
+}
+
+.sidebarActive .iconContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.sidebarActive .active {
+  border-left: 4px solid #0064B1;
+}
+
 .sidebarTitle {
   font-size: 1.8rem;
   margin: 0;
   color: black;
   opacity: 1;
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
   transform: translateX(0);
   white-space: nowrap;
   font-weight: 500;  
@@ -141,7 +172,6 @@
 .contentsContainerActive .aItem {
   /*opacity: 0;*/
   display: none;
-
 }
 
 .ulStudent {
@@ -164,11 +194,7 @@
   width: 100%;
   border-radius: 1rem;
   cursor: pointer;
-}
-
-.sidebarIcon {
-  width: 25px;
-  height: 25px;
+  position: relative;
 }
 
 .aItem {
@@ -223,13 +249,11 @@
   padding: 2px;
 }
 
-
 .sidebar .sidebarContactInfo {
   padding: 10px 0px;
   border-top: 2.5px solid #f2f2f2;
   margin-top: auto;
 }
-
 
 .sidebar .sidebarContactInfo h3 {
   color: 0064B1;
@@ -237,13 +261,11 @@
   margin-bottom: 15px;
 }
 
-
 .sidebar .contactDetails {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-
 
 .sidebar .contactItem {
   display: flex;
@@ -253,12 +275,10 @@
   font-size: 0.9rem;
 }
 
-
 .sidebar .contactIcon {
   font-size: 1rem;
   min-width: 20px;
 }
-
 
 /* Make long text wrap properly */
 .sidebar .contactItem span {

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import styles from "../../styles/MySessions.module.css";
 import StudentSidebar from "../../components/Sidebar/StudentSidebar";
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
 // Get config from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
@@ -11,6 +12,7 @@ const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
 const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 
 function MySessions() {
+  const { isCollapsed } = useSidebar();
   const [userData, setUserData] = useState(null);
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -76,7 +78,7 @@ function MySessions() {
   return (
     <div className={styles.container}>
       <StudentSidebar selected="my-sessions" />
-      <div className={styles.mainContent}>
+      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "270px" , transition: "margin-left 0.5s ease"}}>
         <h1 className={styles.heading}>My Sessions</h1>
 
         {loading ? (

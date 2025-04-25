@@ -2,9 +2,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminSidebar from '../../components/Sidebar/AdminSidebar';
 import styles from '../../styles/AdminHome.module.css';
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
 function AdminHome() {
   const navigate = useNavigate();
+  const { isCollapsed } = useSidebar();
   
   return (
     <div className={styles.container}>
@@ -12,7 +14,10 @@ function AdminHome() {
       <AdminSidebar selected="home" />
       
       {/* Main Content */}
-      <div className={styles.content}>
+      <div 
+        className={styles.content} 
+        style={{ marginLeft: isCollapsed ? "100px" : "220px" , transition: "margin-left 0.5s ease"}}
+      >
         <div className={styles.pageHeader}>
           <h1>Admin Dashboard</h1>
           <p>Welcome to the administration panel. Manage your educational platform from here.</p>

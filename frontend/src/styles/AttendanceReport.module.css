@@ -106,6 +106,14 @@
   border-bottom: 1px solid #e9ecef;
 }
 
+.sessionsTable tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+.sessionsTable tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
 .sessionsTable th {
   font-weight: 600;
   color: #2c3e50;

@@ -1,104 +1,112 @@
-import React, { useState } from "react";
-import { useNavigate, useLocation} from "react-router-dom";
+import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import styles from "../../styles/component/SideBar.module.css";
 import { handleLogout } from "../../utils/authUtils";
 import BaseSidebar from "./BaseSidebar";
-//import * as FaIcons from "react-icons/fa";
+import { useSidebar } from "./SidebarContext";
 import { FaSearch } from "react-icons/fa";
-//import * as AiIcons from "react-icons/ai";
 import { AiOutlineSchedule } from "react-icons/ai";
 import { RiCalendarScheduleLine } from "react-icons/ri";
 import { CgProfile } from "react-icons/cg";
-import { MdOutlineSpaceDashboard, MdOutlineFeedback, MdLogout, MdOutlineSchedule} from "react-icons/md";
+import {
+  MdOutlineSpaceDashboard,
+  MdOutlineFeedback,
+  MdLogout,
+  MdOutlineSchedule
+} from "react-icons/md";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { SlCalender } from "react-icons/sl";
 
-function TutorSidebar() {
+const TutorSidebar = ({ selected }) => {
   const location = useLocation();
-
-
-  const[closeMenu, setCloseMenu] = useState(true);
-
-
-  const handleCloseMenu = () => {
-  setCloseMenu(!closeMenu);
+  const navigate = useNavigate();
+  const { isCollapsed, toggleSidebar } = useSidebar();
+  
+  const goTo = (path) => {
+    if (location.pathname !== path) {
+      navigate(path);
+    }
   };
-
-  //const navigate = useNavigate();
-    return (
-      <div className={`${styles.sidebar} ${closeMenu ? styles.sidebarActive : ""}`}>
-      <BaseSidebar isCollapsed={closeMenu}>
-      <div className={`${styles.burgerContainer} ${closeMenu ? styles.burgerContainerActive : ""}`}>
-        <div className={styles.burgerTrigger} onClick={() => {handleCloseMenu();}}></div> {/*CHECK HERE*/}
-          <div className = {styles.burgerMenu}></div>
+  
+  return (
+    <div className={`${styles.sidebar} ${isCollapsed ? styles.sidebarActive : ""}`}>
+      <BaseSidebar isCollapsed={isCollapsed}>
+        <div
+          className={`${styles.burgerContainer} ${isCollapsed ? styles.burgerContainerActive : ""}`}
+        >
+          <div className={styles.burgerTrigger} onClick={toggleSidebar}></div>
+          <div className={styles.burgerMenu}></div>
         </div>
-        <div>
-          {/*<img src></img>Should contain profile image
-          <p className = "name">Hello, User</p> */} {/*Change this so that it gets the users name*/}
-          <div className={`${styles.contentsContainer} ${closeMenu ? styles.contentsContainerActive : ""}`}>
-            <ul className = {styles.ulStudent}>
-              <li
-                className={styles.liStudent}
-                onClick={() => (window.location.href = "/home")}
-              >
+        <div className={`${styles.contentsContainer} ${isCollapsed ? styles.contentsContainerActive : ""}`}>
+          <ul className={styles.ulStudent}>
+            <li 
+              className={`${styles.liStudent} ${selected === "home" ? styles.active : ""}`} 
+              onClick={() => goTo("/home")}
+            >
+              <div className={styles.iconContainer}>
                 <MdOutlineSpaceDashboard className={styles.sidebarIcon} />
-                <span className={styles.aItem}>Dashboard</span>
-              </li>
-  
-              <li
-                className={styles.liStudent}
-                onClick={() => (window.location.href = "/tutor-profile")}
-              >
+              </div>
+              <span className={styles.aItem}>Dashboard</span>
+            </li>
+            <li 
+              className={`${styles.liStudent} ${selected === "tutor-profile" ? styles.active : ""}`} 
+              onClick={() => goTo("/tutor-profile")}
+            >
+              <div className={styles.iconContainer}>
                 <CgProfile className={styles.sidebarIcon} />
-                <span className={styles.aItem}>My Profile</span>
-              </li>
-  
-              <li
-                className={styles.liStudent}
-                onClick={() => (window.location.href = "/availability")}
-              >
+              </div>
+              <span className={styles.aItem}>My Profile</span>
+            </li>
+            <li 
+              className={`${styles.liStudent} ${selected === "availability" ? styles.active : ""}`} 
+              onClick={() => goTo("/availability")}
+            >
+              <div className={styles.iconContainer}>
                 <MdOutlineSchedule className={styles.sidebarIcon} />
-                <span className={styles.aItem}>Set Availability</span>
-              </li>
-  
-              <li
-                className={styles.liStudent}
-                onClick={() => (window.location.href = "/schedule")}
-              >
+              </div>
+              <span className={styles.aItem}>Set Availability</span>
+            </li>
+            <li 
+              className={`${styles.liStudent} ${selected === "schedule" ? styles.active : ""}`} 
+              onClick={() => goTo("/schedule")}
+            >
+              <div className={styles.iconContainer}>
                 <SlCalender className={styles.sidebarIcon} />
-                <span className={styles.aItem}>View Calender</span>
-              </li>
-  
-              <li
-                className={styles.liStudent}
-                onClick={() => (window.location.href = "/sessions")}
-              >
+              </div>
+              <span className={styles.aItem}>View Calendar</span>
+            </li>
+            <li 
+              className={`${styles.liStudent} ${selected === "sessions" ? styles.active : ""}`} 
+              onClick={() => goTo("/sessions")}
+            >
+              <div className={styles.iconContainer}>
                 <RiCalendarScheduleLine className={styles.sidebarIcon} />
-                <span className={styles.aItem}>Sessions</span>
-              </li>
-  
-              <li
-                className={styles.liStudent}
-                onClick={() => (window.location.href ="/TutorNotifications")}
-              >
+              </div>
+              <span className={styles.aItem}>Sessions</span>
+            </li>
+            <li 
+              className={`${styles.liStudent} ${selected === "tutor-notifications" ? styles.active : ""}`} 
+              onClick={() => goTo("/TutorNotifications")}
+            >
+              <div className={styles.iconContainer}>
                 <IoMdNotificationsOutline className={styles.sidebarIcon} />
-                <span className={styles.aItem}>Notifications</span>
-              </li>
-  
-              <li
-                className={styles.liStudent}
-                onClick={handleLogout}
-              >
+              </div>
+              <span className={styles.aItem}>Notifications</span>
+            </li>
+            <li 
+              className={styles.liStudent} 
+              onClick={handleLogout}
+            >
+              <div className={styles.iconContainer}>
                 <MdLogout className={styles.sidebarIcon} />
-                <span className={styles.aItem}>Log Out</span>
-              </li>
-            </ul>
-  
-          </div>
+              </div>
+              <span className={styles.aItem}>Log Out</span>
+            </li>
+          </ul>
         </div>
       </BaseSidebar>
-      </div>
+    </div>
   );
-};
+}
 
 export default TutorSidebar;

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import styles from "../../styles/TutorSessions.module.css";
 import TutorSideBar from "../../components/Sidebar/TutorSidebar";
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
@@ -12,6 +13,7 @@ const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
 const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 
 function TutorSessions() {
+  const { isCollapsed } = useSidebar();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sessionLoading, setSessionLoading] = useState(true);
@@ -114,7 +116,7 @@ function TutorSessions() {
     return (
       <div className={styles.container}>
         <TutorSideBar selected="sessions" />
-        <div className={styles.mainContent}>
+        <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "90px" : "280px" }}>
           <div className={styles.spinnerContainer}>
             <div className={styles.spinner}></div>
             <p>Loading sessions...</p>
@@ -129,7 +131,7 @@ function TutorSessions() {
     return (
       <div className={styles.container}>
         <TutorSideBar selected="sessions" />
-        <div className={styles.mainContent}>
+        <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "90px" : "280px" }}>
           <div className={styles.error}>
             Session expired or not found. Please log in again.
           </div>
@@ -141,7 +143,7 @@ function TutorSessions() {
   return (
     <div className={styles.container}>
       <TutorSideBar selected="sessions" />
-      <div className={styles.mainContent}>
+      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "90px" : "280px" , transition: "margin-left 0.5s ease"}}>
         <h1 className={styles.heading}>Tutor Sessions</h1>
         {error && <div className={styles.error}>{error}</div>}
 

@@ -2,6 +2,7 @@
 // import axios from "axios";
 import styles from "../../styles/Notifications.module.css";
 import StudentSidebar from "../../components/Sidebar/StudentSidebar";
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
 import { useEffect, useState } from "react";
 import axios from "axios";
 // Get configuration from environment variables
@@ -12,6 +13,7 @@ const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
 // Construct the backend URL dynamically
 const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 function Notifications() {
+  const { isCollapsed } = useSidebar();
   const [sessionLoading, setSessionLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState('');
@@ -60,7 +62,7 @@ useEffect(() => {
   return (
     <div className={styles.container}>
       <StudentSidebar selected="notifications"></StudentSidebar>
-      <div className={styles.mainContent}>
+      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "100px" : "290px" , transition: "margin-left 0.5s ease"}}>
         <h1 className={styles.heading}>Notifications</h1>
         {loading && <div className={styles.spinnerContainer}>
           <div className={styles.spinner}></div>

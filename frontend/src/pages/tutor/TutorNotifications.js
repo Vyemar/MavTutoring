@@ -4,6 +4,8 @@ import styles from "../../styles/Notifications.module.css";
 import TutorSidebar from "../../components/Sidebar/TutorSidebar";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
+
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
 const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
@@ -11,6 +13,7 @@ const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || '4000';
 
 const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 function TutorNotifications() {
+  const { isCollapsed } = useSidebar();
   const [sessionLoading, setSessionLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState('');
@@ -58,8 +61,8 @@ useEffect(() => {
   }, [userData]);
   return (
     <div className={styles.container}>
-      <TutorSidebar selected="notifications"></TutorSidebar>
-      <div className={styles.mainContent}>
+      <TutorSidebar selected="tutor-notifications"></TutorSidebar>
+      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "110px" : "290px" , transition: "margin-left 0.5s ease"}}>
         <h1 className={styles.heading}>Tutor Notifications</h1>
         {loading && <div className={styles.spinnerContainer}>
           <div className={styles.spinner}></div>
