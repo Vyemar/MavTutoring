@@ -46,6 +46,9 @@ const userSchema = new Schema({
   rating: {
     type: Number,
   },
+  numberOfRating: {
+    type: Number,
+  },
   availability: [availabilitySchema],
   cardID: {
     type: String,

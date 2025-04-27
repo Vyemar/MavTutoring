@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import styles from "../styles/ViewTutors.module.css";
-import TutorCard from "./Sidebar/TutorCard";
+import TutorCard from "./TutorCard";
 
-export const SearchResultsTutorProfiles = ({ results /*, setResults, allTutors, search*/ }) => {
+export const SearchResultsTutorProfiles = ({
+  results /*, setResults, allTutors, search*/,
+}) => {
   const [users, setUsers] = useState([]);
   //const [loading, setLoading] = useState(true);
 
@@ -41,13 +43,10 @@ export const SearchResultsTutorProfiles = ({ results /*, setResults, allTutors, 
               <TutorCard user={user} key={user._id}></TutorCard>
             ))
           ) : (
-            <p className = {styles.noTutors} >No tutors found.</p>
+            <p className={styles.noTutors}>No tutors found.</p>
           )}
         </div>
       </div>
     </div>
   );
 };
-
-
-
