@@ -1,9 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
-import Feedback from "../../pages/student/Feedback";
-import FindMyTutorProfile from "../../pages/student/FindmyTutorProfile";
-import styles from "../../styles/component/TutorCard.module.css";
+import Feedback from "../pages/student/Feedback";
+import FindMyTutorProfile from "../pages/student/FindmyTutorProfile";
+import styles from "../styles/component/TutorCard.module.css";
 import { v4 as uuidv4 } from "uuid";
 
 const TutorCard = ({ user }) => {
@@ -87,7 +87,14 @@ const TutorCard = ({ user }) => {
                   : `fa-regular fa-star ${styles.color}`
               }
             ></i>
-            <span className={styles.ratingNum}>{user.rating}</span>
+            {user.rating != null && (
+              <>
+                <span className={styles.ratingNum}>
+                  {user.rating.toFixed(1)}
+                </span>
+                <span> ({user.numberOfRating})</span>
+              </>
+            )}
           </div>
         </div>
       </div>

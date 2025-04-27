@@ -44,6 +44,22 @@ router.post('/', async (req, res) => {
 
         await newFeedback.save();
 
+        // Find the tutor user
+        const tutorRecord = await User.findById(tutorUniqueId);
+
+        // Update tutor's rating
+        const currentRating = tutorRecord.rating || 0; // fallback to 0 if undefined
+        const currentNumberOfRatings = tutorRecord.numberOfRating || 0;
+
+        const newNumberOfRatings = currentNumberOfRatings + 1;
+        const newAverageRating = ((currentRating * currentNumberOfRatings) + rating) / newNumberOfRatings;
+
+        tutorRecord.rating = newAverageRating;
+        tutorRecord.numberOfRating = newNumberOfRatings;
+
+        // Save tutor's updated profile
+        await tutorRecord.save();
+
         res.status(201).json({
             message: 'Feedback submitted successfully',
             feedback: newFeedback
