@@ -242,11 +242,17 @@ router.put('/:sessionId/status', async (req, res) => {
       return res.status(404).json({ message: 'Session not found' });
     }
 
-    const studentID = session.studentID._id;
+    if (!session.studentID || !session.studentID._id) {
+      console.error('Session missing studentID. Session ID:', session._id);
+      return res.status(400).json({ message: 'Session has no associated student.' });
+    }
+    
+    const studentID = session.studentID._id; 
     const existingAttendance = await Attendance.findOne({
       sessionID: session._id,
       studentID
     });
+
 
     if (status === 'Completed' && !existingAttendance) {
       const checkInTime = new Date(session.sessionTime);

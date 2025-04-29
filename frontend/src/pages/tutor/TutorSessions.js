@@ -150,15 +150,15 @@ function TutorSessions() {
         <div className={styles.sessionsContainer}>
           <div className={styles.upcomingSessions}>
             <h2>Upcoming Sessions</h2>
-            {sessions.filter(session => session.status === 'Scheduled').length > 0 ? (
+            {sessions.filter(session => session.status === 'Scheduled' && session.studentID).length > 0 ? ( /*Checks if session status is "scheduled" and that the student actually exists in the database*/
               <div className={styles.sessionsList}>
                 {sessions
-                  .filter(session => session.status === 'Scheduled')
+                  .filter(session => session.status === 'Scheduled' && session.studentID) /*Checks if session status is "scheduled" and that the student actually exists in the database*/
                   .sort((a, b) => new Date(a.sessionTime) - new Date(b.sessionTime))
                   .map((session) => (
                     <div key={session._id} className={styles.sessionCard}>
                       <div className={styles.sessionInfo}>
-                        <p><strong>Student:</strong> {session.studentID.firstName} {session.studentID.lastName}</p>
+                        <p><strong>Student:</strong> {session.studentID ? `${session.studentID.firstName} ${session.studentID.lastName}` : 'Unknown Student'}</p>
                         <p><strong>Date & Time:</strong> {formatDateTime(session.sessionTime)}</p>
                         <p><strong>Duration:</strong> {session.duration} minutes</p>
                         <p><strong>Status:</strong> {session.status}</p>
@@ -190,15 +190,15 @@ function TutorSessions() {
 
           <div className={styles.completedSessions}>
             <h2>Completed Sessions</h2>
-            {sessions.filter(session => session.status === 'Completed').length > 0 ? (
+            {sessions.filter(session => session.status === 'Completed' && session.studentID).length > 0 ? ( /*Checks if session status is "Completed" and that the student actually exists in the database*/
               <div className={styles.sessionsList}>
                 {sessions
-                  .filter(session => session.status === 'Completed')
+                  .filter(session => session.status === 'Completed' && session.studentID) /*Checks if session status is "Completed" and that the student actually exists in the database*/
                   .sort((a, b) => new Date(b.sessionTime) - new Date(a.sessionTime))
                   .map((session) => (
                     <div key={session._id} className={styles.sessionCard}>
                       <div className={styles.sessionInfo}>
-                        <p><strong>Student:</strong> {session.studentID.firstName} {session.studentID.lastName}</p>
+                        <p><strong>Student:</strong> {session.studentID ? `${session.studentID.firstName} ${session.studentID.lastName}` : 'Unknown Student'}</p>
                         <p><strong>Date & Time:</strong> {formatDateTime(session.sessionTime)}</p>
                         <p><strong>Duration:</strong> {session.duration} minutes</p>
                         <p><strong>Status:</strong> {session.status}</p>
@@ -216,15 +216,15 @@ function TutorSessions() {
 
           <div className={styles.cancelledSessions}>
             <h2>Cancelled Sessions</h2>
-            {sessions.filter(session => session.status === 'Cancelled').length > 0 ? (
+            {sessions.filter(session => session.status === 'Cancelled' && session.studentID).length > 0 ? ( /*Checks if session status is "Cancelled" and that the student actually exists in the database*/
               <div className={styles.sessionsList}>
                 {sessions
-                  .filter(session => session.status === 'Cancelled')
+                  .filter(session => session.status === 'Cancelled' && session.studentID) /*Checks if session status is "Cancelled" and that the student actually exists in the database*/
                   .sort((a, b) => new Date(b.sessionTime) - new Date(a.sessionTime))
                   .map((session) => (
                     <div key={session._id} className={`${styles.sessionCard} ${styles.cancelledCard}`}>
                       <div className={styles.sessionInfo}>
-                        <p><strong>Student:</strong> {session.studentID.firstName} {session.studentID.lastName}</p>
+                        <p><strong>Student:</strong> {session.studentID ? `${session.studentID.firstName} ${session.studentID.lastName}` : 'Unknown Student'}</p> {/*Checks if student is null first*/}
                         <p><strong>Date & Time:</strong> {formatDateTime(session.sessionTime)}</p>
                         <p><strong>Duration:</strong> {session.duration} minutes</p>
                         <p><strong>Status:</strong> {session.status}</p>
