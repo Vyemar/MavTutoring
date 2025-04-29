@@ -1,15 +1,18 @@
 .container {
   display: flex;
+  justify-content: center;   /* horizontally center child */
+  align-items: flex-start;   /* keep content near top */
   min-height: 100vh;
-  background-color: linear-gradient(135deg, #007bff, #6f42c1);
+  background: linear-gradient(135deg, #007bff, #6f42c1);
   margin-left :80px;/*accounts for sidebar when its minimized*/
 }
 
 .content {
   flex: 1;
   padding: 2rem;
+  padding-left:0;
   max-width: 1200px;
-  margin: 0 auto;
+  margin-left:80px;
 }
 
 .pageHeader {
