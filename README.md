@@ -6,7 +6,7 @@ The bugHouse project is a web application designed to manage student-tutor inter
 
 ## Tech Stack
 
-- **Frontend**: React.js, React-Big-Calendar, DayPilot Lite
+- **Frontend**: React.js
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB
 - **Authentication**: JWT (JSON Web Tokens)
@@ -101,9 +101,8 @@ backend/
 ### 1. **User Authentication**
 
 - **Sign Up**: Users can create an account with their email, password, and basic profile information (name and contact info).
-- **Sign In with ID Card**: Students sign in using their ID card (RFID, barcode, or QR code).
-- **Sign Out**: Students sign out using their ID card, with accurate session tracking and attendance logging.
-- **Password Management**: Users can reset their password via email if forgotten.
+- **Sign In with credentials**: Users can sign in using their account email and password.
+- **Sign in with SSO**: Users can use Single-Sign-On (SSO) to sign in using their UTA account.
 - **Role-Based Access**: Defined roles for Admins, Tutors, and Students, each with appropriate access levels.
 
 ### 2. **Tutor Scheduling**
@@ -111,7 +110,7 @@ backend/
 - **Availability Management**: Tutors submit their preferred availability.
 - **Admin Scheduling**: Admins review tutor availability and finalize the schedule.
 - **Notifications**: Tutors and students receive notifications regarding schedules and session bookings.
-- **Calendar Integration**: Optionally sync finalized schedules with external calendars like Google Calendar.
+- **Calendar Integration**: Sync finalized schedules with calendar.
 
 ### 3. **Session Management**
 
@@ -126,14 +125,11 @@ backend/
 
 - **Tutor Performance Reports**: Track the number of sessions, ratings, and feedback for tutors.
 - **Student Attendance Reports**: Monitor attendance patterns and engagement.
-- **Custom Reports**: Admins can generate reports based on specific criteria.
 
 ### 6. **User Management**
 
-- **Profile Management**: Admins can manage user profiles for both tutors and students.
-- **Account Verification**: Admins verify tutor profiles before activation.
+- **Account Management**: Admins can manage user accounts for both tutors and students.
 - **Role Assignment**: Admins can assign or modify roles (Admin, Tutor, Student).
-- **ID Card Management**: Admins can issue and manage ID cards for users.
 
 ### 7. **Additional Features**
 
@@ -144,7 +140,6 @@ backend/
 ### 8. **Security and Compliance**
 
 - **Data Protection**: Ensures compliance with relevant data protection regulations.
-- **Secure Authentication**: Utilizes encrypted ID card data and secure session management.
 - **Access Control**: Role-based access ensures appropriate permissions for different user roles.
 
 ### 9. **User Interface**
@@ -164,7 +159,7 @@ backend/
 
 - Node.js (v14 or higher)
 - MongoDB
-- npm or yarn
+- npm
 
 ### Installation Steps
 
@@ -204,11 +199,23 @@ backend/
    This will start the backend server on port 4000 as configured in your .env file.
 
 2. In a separate terminal, start the frontend development server:
+
    ```bash
    cd bugHouse/frontend
    npm start
    ```
+
    This will launch the React development server on port 3000, and open the application in your default web browser.
+
+3. (Optional) Create an admin user:
+
+   If your application requires an initial admin account, run the createAdmin.js script after the backend server is running:
+
+   ```bash
+   node .\createAdmin.js
+   ```
+
+   This script is in the bugHouse/backend directory and will create an admin account with email: 'admin@example.com', password: 'adminpassword'. Make sure MongoDB is accessible before running this script.
 
 ### Environment Variables
 
