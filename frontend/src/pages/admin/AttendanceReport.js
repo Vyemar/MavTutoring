@@ -762,8 +762,14 @@ function AttendanceReport() {
                       <td style={{ fontWeight: '500', paddingLeft: '40px', paddingRight: '50px' }}>{record.studentName}</td>
                       <td style={{ fontWeight: '500', paddingRight: '50px' }}>{record.tutorName}</td>
                       <td style={{ paddingRight: '50px', whiteSpace: 'normal' }}>
-                        <div>{record.date.split(',')[0]},</div>
-                        <div>{record.date.split(',')[1].trim()}</div>
+                        {record.date?.includes(',') ? ( /*Checks that the date has a comma before trying to split and trim it*/
+                          <>
+                            <div>{record.date.split(',')[0]},</div>
+                            <div>{record.date.split(',')[1].trim()}</div>
+                          </>
+                        ) : (
+                          <div>{record.date}</div>
+                        )}
                       </td>
                       <td style={{ paddingRight: '50px', whiteSpace: 'nowrap' }}>
                         <span>{record.startTime} to {record.endTime}</span>
