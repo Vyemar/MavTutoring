@@ -5,6 +5,7 @@
 The bugHouse project is a web application designed to manage student-tutor interactions at the CSE Student Success Center. The application handles user authentication, tutor scheduling, session management, and attendance tracking, with a role-based access system for students, tutors, and administrators.
 
 ## Tech Stack
+
 - **Frontend**: React.js, React-Big-Calendar, DayPilot Lite
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB
@@ -13,15 +14,16 @@ The bugHouse project is a web application designed to manage student-tutor inter
 ## Project Structure
 
 ### Frontend (`/frontend`)
+
 The frontend is a React application with the following structure:
 
 ```
 frontend/
 ├── src/
-│   ├── components/     
+│   ├── components/
 │   │   ├── Sidebar/    # Navigation sidebar component
 │   │   └── ...         # Other reusable UI components
-│   ├── pages/         
+│   ├── pages/
 │   │   ├── admin/      # Admin-specific pages and components
 │   │   ├── student/    # Student-specific pages and components
 │   │   ├── tutor/      # Tutor-specific pages and components
@@ -33,6 +35,7 @@ frontend/
 ```
 
 ### Backend (`/backend`)
+
 The backend is a Node.js/Express application with the following structure:
 
 ```
@@ -46,50 +49,52 @@ backend/
 ## API Endpoints
 
 ### Authentication (`/routes/auth.js`)
+
 - User registration and login
 - Password management
 - JWT token handling
 
 ### User Management (`/routes/users.js`)
+
 - User CRUD operations
 - Role management
 - Profile updates
 
 ### Session Management (`/routes/sessions.js`)
+
 - Session creation and management
 - Session scheduling
 - Session status tracking
 
 ### Profile Management (`/routes/profile.js`)
+
 - Student and tutor profile management
 - Profile updates
 - Profile verification
 
 ### Attendance (`/routes/attendance.js`)
+
 - Attendance tracking
 - Attendance reports
 - Session check-in/out
 
 ### Feedback System (`/routes/feedback.js`)
+
 - Feedback submission
 - Feedback review
 - Rating system
 
 ### Analytics (`/routes/analytics.js`)
+
 - System statistics
 - Performance metrics
 - Usage reports
 
 ### Availability (`/routes/availability.js`)
+
 - Tutor availability management
 - Schedule conflicts
 - Time slot management
-
-### BugHouse Configuration (`/routes/bugHouse.js`)
-- System settings
-- Configuration management
-- System parameters
-
 
 ## Features
 
@@ -156,6 +161,7 @@ backend/
 ## Installation
 
 ### Prerequisites
+
 - Node.js (v14 or higher)
 - MongoDB
 - npm or yarn
