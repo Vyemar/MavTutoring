@@ -231,6 +231,12 @@ Make sure to set up the required environment variables before running the applic
    BACKEND_HOST=localhost
    FRONTEND_HOST=localhost
    SESSION_SECRET=your_session_secret_here
+
+   SMTP_SERVER=<your-smtp-server>
+   SMTP_PORT=<your-smtp-port>
+   SMTP_USERNAME=<your-smtp-username>
+   SMTP_PASSWORD=<your-smtp-password>
+   SMTP_PROXY_EMAIL=<your-proxy-sender-email>
    ```
 
 2. Create a `.env` file in the frontend directory:
