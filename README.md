@@ -4,6 +4,93 @@
 
 The bugHouse project is a web application designed to manage student-tutor interactions at the CSE Student Success Center. The application handles user authentication, tutor scheduling, session management, and attendance tracking, with a role-based access system for students, tutors, and administrators.
 
+## Tech Stack
+- **Frontend**: React.js, React-Big-Calendar, DayPilot Lite
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB
+- **Authentication**: JWT (JSON Web Tokens)
+
+## Project Structure
+
+### Frontend (`/frontend`)
+The frontend is a React application with the following structure:
+
+```
+frontend/
+├── src/
+│   ├── components/     
+│   │   ├── Sidebar/    # Navigation sidebar component
+│   │   └── ...         # Other reusable UI components
+│   ├── pages/         
+│   │   ├── admin/      # Admin-specific pages and components
+│   │   ├── student/    # Student-specific pages and components
+│   │   ├── tutor/      # Tutor-specific pages and components
+│   │   └── ...         # Other shared pages
+│   ├── styles/        # CSS and styling files
+│   ├── utils/         # Utility functions and helpers
+│   ├── App.js         # Main application component
+│   └── index.js       # Application entry point
+```
+
+### Backend (`/backend`)
+The backend is a Node.js/Express application with the following structure:
+
+```
+backend/
+├── models/          # MongoDB models and schemas
+├── routes/          # API endpoints and route handlers
+├── ssl/             # SSL certificates
+└── server.js        # Main server file
+```
+
+## API Endpoints
+
+### Authentication (`/routes/auth.js`)
+- User registration and login
+- Password management
+- JWT token handling
+
+### User Management (`/routes/users.js`)
+- User CRUD operations
+- Role management
+- Profile updates
+
+### Session Management (`/routes/sessions.js`)
+- Session creation and management
+- Session scheduling
+- Session status tracking
+
+### Profile Management (`/routes/profile.js`)
+- Student and tutor profile management
+- Profile updates
+- Profile verification
+
+### Attendance (`/routes/attendance.js`)
+- Attendance tracking
+- Attendance reports
+- Session check-in/out
+
+### Feedback System (`/routes/feedback.js`)
+- Feedback submission
+- Feedback review
+- Rating system
+
+### Analytics (`/routes/analytics.js`)
+- System statistics
+- Performance metrics
+- Usage reports
+
+### Availability (`/routes/availability.js`)
+- Tutor availability management
+- Schedule conflicts
+- Time slot management
+
+### BugHouse Configuration (`/routes/bugHouse.js`)
+- System settings
+- Configuration management
+- System parameters
+
+
 ## Features
 
 ### 1. **User Authentication**
@@ -67,6 +154,13 @@ The bugHouse project is a web application designed to manage student-tutor inter
 - **Performance**: Ensures fast load times and minimal latency.
 
 ## Installation
+
+### Prerequisites
+- Node.js (v14 or higher)
+- MongoDB
+- npm or yarn
+
+### Installation Steps
 
 1. Clone the repository:
 
