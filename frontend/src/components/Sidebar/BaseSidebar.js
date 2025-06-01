@@ -22,7 +22,10 @@ function BaseSidebar({ children, isCollapsed }) {
     const fetchBugHouseInfo = async () => {
       try {
         const response = await axios.get(`${BACKEND_URL}/api/bughouse`);
-        setBugHouseInfo(response.data);
+        setBugHouseInfo(response.data || {
+          logo: "",
+          contactInfo: { email: "", phone: "", address: "" }
+        });
       } catch (error) {
         console.error("Error fetching logo:", error);
       }

@@ -224,14 +224,22 @@ Make sure to set up the required environment variables before running the applic
 1. Create a `.env` file in the backend directory with the following variables:
 
    ```
-   DB=mongodb+srv://username:password@bughouse.qllqm.mongodb.net/bugHouse_db?retryWrites=true&w=majority
-   BACKEND_PORT=4000
-   FRONTEND_PORT=3000
-   PROTOCOL=http
-   BACKEND_HOST=localhost
-   FRONTEND_HOST=localhost
-   SESSION_SECRET=your_session_secret_here
+   # MongoDB Connection URI
+   DB=mongodb+srv://<username>:<password>@<cluster-url>/<database-name>?retryWrites=true&w=majority
 
+   # Backend Configuration
+   BACKEND_PORT=4000
+   BACKEND_HOST=localhost
+   PROTOCOL=http
+
+   # Frontend Configuration
+   FRONTEND_PORT=3000
+   FRONTEND_HOST=localhost
+
+   # Session Secret for Cookies or JWT
+   SESSION_SECRET=<your-secure-random-session-secret>
+
+   # SMTP Configuration (Email Service)
    SMTP_SERVER=<your-smtp-server>
    SMTP_PORT=<your-smtp-port>
    SMTP_USERNAME=<your-smtp-username>
