@@ -266,3 +266,40 @@ module.exports.samlConfig = {
 };
 
 module.exports.router = router;
+
+// Handles MSAL Login POST requests
+router.post('/microsoft-login', async (req, res) => {
+   
+    //  Find user by email from DB
+    const { email } = req.body;
+
+  try {
+        // Check if user exists within the DB
+        const user = await User.findOne({ email });
+
+        if (!user) {
+        console.log('User not found for email:', email);
+        return res.status(400).json({ error: "Invalid email or password" });
+        }
+
+        // Create a Microsoft user session
+        if (req.session) {
+            req.session.user = {
+                    id: user._id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email,
+                    phone: user.phone,
+                    role: user.role,
+                    studentID: user.studentID || null
+            }
+        };
+
+        console.log("Microsoft user session created:", req.session.user);
+
+        res.json({ success: true, message: "Microsoft login successful", user: req.session.user });
+  } catch (err) {
+    console.error("Error during Microsoft login:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+});

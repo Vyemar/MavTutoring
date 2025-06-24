@@ -5,12 +5,23 @@ import App from './App';
 import reportWebVitals from './pages/admin/reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
+// MSAL Configuration
+import { PublicClientApplication } from '@azure/msal-browser';
+import { MsalProvider } from '@azure/msal-react';
+import { msalConfig } from './authConfig';
+
+const msalInstance = new PublicClientApplication(msalConfig);
+
+msalInstance.initialize().then(() => {
+  const root = ReactDOM.createRoot(document.getElementById('root'));
+  root.render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+      <MsalProvider instance={msalInstance}>
+        <App />
+      </MsalProvider>
+    </React.StrictMode>
+  );
+});
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

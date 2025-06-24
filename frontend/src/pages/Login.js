@@ -5,6 +5,8 @@ import { validateLogin } from "../utils/LoginValidation";
 import { axiosPostData, axiosGetData } from "../utils/api";
 import axios from "axios";
 
+import MicrosoftLogin from "../components/MicrosoftLogin";
+
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || "https";
 const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || "localhost";
@@ -201,6 +203,9 @@ function Login() {
           >
             Login with SSO
           </button>
+
+          {/* Microsoft Login Button */}
+          < MicrosoftLogin />
 
           <p className="mt-3 text-center">
             Don't have an account?{" "}
