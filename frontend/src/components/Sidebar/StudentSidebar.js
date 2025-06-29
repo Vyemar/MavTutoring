@@ -107,6 +107,15 @@ const StudentSidebar = ({ selected }) => {
               </div>
               <span className={styles.aItem}>Log Out</span>
             </li>
+            <li 
+              className={`${styles.liStudent} ${selected === "student-card-swipe" ? styles.active : ""}`} 
+              onClick={() => goTo("/student/card-swipe")}
+            >
+              <div className={styles.iconContainer}>
+                <RiCalendarScheduleLine className={styles.sidebarIcon} />
+              </div>
+              <span className={styles.aItem}>Session Check-In</span>
+            </li>
           </ul>
         </div>
       </BaseSidebar>
