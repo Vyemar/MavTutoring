@@ -82,6 +82,15 @@ const StudentSidebar = ({ selected }) => {
               <span className={styles.aItem}>My Sessions</span>
             </li>
             <li 
+              className={`${styles.liStudent} ${selected === "student-card-swipe" ? styles.active : ""}`} 
+              onClick={() => goTo("/student/card-swipe")}
+            >
+              <div className={styles.iconContainer}>
+                <FaRegAddressCard className={styles.sidebarIcon} />
+              </div>
+              <span className={styles.aItem}>Session Check-In</span>
+            </li>
+            <li 
               className={`${styles.liStudent} ${selected === "feedback" ? styles.active : ""}`} 
               onClick={() => goTo("/feedback")}
             >
@@ -107,15 +116,6 @@ const StudentSidebar = ({ selected }) => {
                 <MdLogout className={styles.sidebarIcon} />
               </div>
               <span className={styles.aItem}>Log Out</span>
-            </li>
-            <li 
-              className={`${styles.liStudent} ${selected === "student-card-swipe" ? styles.active : ""}`} 
-              onClick={() => goTo("/student/card-swipe")}
-            >
-              <div className={styles.iconContainer}>
-                <FaRegAddressCard className={styles.sidebarIcon} />
-              </div>
-              <span className={styles.aItem}>Session Check-In</span>
             </li>
           </ul>
         </div>
