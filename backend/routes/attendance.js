@@ -7,29 +7,27 @@ const User = require('../models/User');
 // GET all attendance records with student, session, and tutor info
 router.get('/all', async (req, res) => {
     try {
-      const attendanceRecords = await Attendance.find()
-        .populate('studentID', 'firstName lastName')
-        .populate({
-          path: 'sessionID',
-          populate: { path: 'tutorID', select: 'firstName lastName' }
-        });
-  
-      res.json(attendanceRecords);
+        const attendanceRecords = await Attendance.find()
+            .populate('studentID', 'firstName lastName')
+            .populate({
+                path: 'sessionID',
+                populate: { path: 'tutorID', select: 'firstName lastName' }
+            });
+        res.json(attendanceRecords);
     } catch (error) {
-      console.error("Error fetching attendance records:", error);
-      res.status(500).json({ 
-        message: 'Error fetching attendance records', 
-        error: error.message 
-      });
+        console.error("Error fetching attendance records:", error);
+        res.status(500).json({ 
+            message: 'Error fetching attendance records', 
+            error: error.message 
+        });
     }
 });
-  
+
 router.post("/check", async (req, res) => {
     const { cardID, firstName, lastName, studentID } = req.body;
 
     try {
         let user = null;
-
         if (cardID) user = await User.findOne({ cardID });
         if (!user && studentID) user = await User.findOne({ studentID });
         if (!user && firstName && lastName) {
@@ -48,6 +46,7 @@ router.post("/check", async (req, res) => {
             return res.status(404).json({ success: false, message: "User not found." });
         }
 
+        const now = new Date();
         const startOfDay = new Date(); startOfDay.setHours(0, 0, 0, 0);
         const endOfDay = new Date(); endOfDay.setHours(23, 59, 59, 999);
 
@@ -61,7 +60,6 @@ router.post("/check", async (req, res) => {
             return res.status(404).json({ success: false, message: "No scheduled session found for today." });
         }
 
-        const now = new Date();
         let closestSession = sessionsToday.reduce((prev, curr) => {
             return Math.abs(new Date(curr.sessionTime) - now) < Math.abs(new Date(prev.sessionTime) - now)
                 ? curr : prev;
@@ -93,7 +91,7 @@ router.post("/check", async (req, res) => {
 
             return res.status(201).json({
                 success: true,
-                message: `Checked in for session with ${closestSession.tutorID.firstName} for student ${user.firstName}. Session is still in progress.`,
+                message: `Checked in for session with ${closestSession.tutorID.firstName} for student ${user.firstName}.`,
                 session: {
                     tutorName: `${closestSession.tutorID.firstName} ${closestSession.tutorID.lastName}`,
                     studentName: `${user.firstName} ${user.lastName}`,
@@ -101,11 +99,9 @@ router.post("/check", async (req, res) => {
                     duration: closestSession.duration
                 }
             });
-        }
-
         // Case 2: Already checked in, not yet checked out — MANUAL CHECK OUT
-        if (attendance && !attendance.checkOutTime) {
-            const duration = Math.max(1, Math.round((now - attendance.checkInTime) / 60000)); // Ensure minimum 1 minute
+        } else if (!attendance.checkOutTime) {
+            const duration = Math.max(1, Math.round((now - attendance.checkInTime) / 60000));
             let checkOutStatus = 'On Time';
             if (now < sessionEnd) checkOutStatus = 'Early';
             else if (now > sessionEnd.getTime() + 5 * 60000) checkOutStatus = 'Late';
@@ -131,19 +127,19 @@ router.post("/check", async (req, res) => {
                     duration
                 }
             });
+        } else {
+            // Case 3: Already fully checked in and out
+            return res.status(200).json({
+                success: true,
+                message: "Already checked in and out for this session.",
+                session: {
+                    tutorName: `${closestSession.tutorID.firstName} ${closestSession.tutorID.lastName}`,
+                    studentName: `${user.firstName} ${user.lastName}`,
+                    sessionTime: closestSession.sessionTime,
+                    duration: closestSession.duration
+                }
+            });
         }
-
-        // Case 3: Already fully checked in and out
-        return res.status(200).json({
-            success: true,
-            message: "Already checked in and out for this session.",
-            session: {
-                tutorName: `${closestSession.tutorID.firstName} ${closestSession.tutorID.lastName}`,
-                studentName: `${user.firstName} ${user.lastName}`,
-                sessionTime: closestSession.sessionTime,
-                duration: closestSession.duration
-            }
-        });
 
     } catch (error) {
         console.error("Error checking card:", error);
@@ -152,3 +148,4 @@ router.post("/check", async (req, res) => {
 });
 
 module.exports = router;
+
