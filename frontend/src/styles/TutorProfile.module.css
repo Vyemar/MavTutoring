@@ -138,6 +138,11 @@
   max-width: 300px;
 }
 
+.courseList {
+  padding-left: 20px;
+  margin-top: 8px;
+}
+
 .buttonGroup {
   margin-top: 20px;
   display: flex;

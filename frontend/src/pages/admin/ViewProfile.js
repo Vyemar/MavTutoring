@@ -579,7 +579,11 @@ function ViewProfile() {
               {user.role === 'Tutor' && profile && (
                 <>
                   <p><strong>Bio:</strong> {profile.bio || 'Not provided'}</p>
-                  <p><strong>Courses:</strong> {profile.courses || 'Not provided'}</p>
+                  <p><strong>Courses:</strong> 
+                    {profile.courses && profile.courses.length > 0    //this is updated
+                      ? profile.courses.map(course => course.name || course).join(', ') 
+                      : 'Not provided'}
+                  </p> 
                   <p><strong>Skills:</strong> {profile.skills || 'Not provided'}</p>
                   <p><strong>Major:</strong> {profile.major || 'Not Specified'}</p>
                   <p><strong>Year:</strong> {profile.currentYear || 'Not Specified'}</p>

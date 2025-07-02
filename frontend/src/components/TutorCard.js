@@ -1,13 +1,40 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import Feedback from "../pages/student/Feedback";
 import FindMyTutorProfile from "../pages/student/FindmyTutorProfile";
 import styles from "../styles/component/TutorCard.module.css";
 import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
+
+const PROTOCOL = process.env.REACT_APP_PROTOCOL || "https";
+const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || "localhost";
+const BACKEND_PORT = process.env.REACT_APP_BACKEND_PORT || "4000";
+const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
+
 
 const TutorCard = ({ user }) => {
   const navigate = useNavigate(); //Define navigate
+  const [courseMap, setCourseMap] = useState({});
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const res = await axios.get(`${BACKEND_URL}/api/courses`, {
+          withCredentials: true,
+        });
+        const map = {};
+        res.data.forEach((course) => {
+          map[course._id] = course.name;
+        });
+        setCourseMap(map);
+      } catch (err) {
+        console.error("Failed to load course list:", err);
+      }
+    };
+
+    fetchCourses();
+  }, []);
 
   // Get profile picture URL, fallback to default avatar if not available
   const getProfilePicture = () => {
@@ -19,10 +46,7 @@ const TutorCard = ({ user }) => {
 
   // Get courses from profile if available
   const getCourses = () => {
-    if (user.profile && user.profile.courses) {
-      return user.profile.courses.split(",").map((course) => course.trim());
-    }
-    return ["None"]; //Emptyr Array
+    return user.profile?.courses?.map((id) => courseMap[id]) || ["None"];
   };
 
   return (

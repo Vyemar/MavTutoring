@@ -25,6 +25,7 @@ import Attendance from "./pages/admin/AttendanceReport";
 import SessionCardSwipe from "./pages/admin/SessionCardSwipe";
 import { SidebarProvider } from "./components/Sidebar/SidebarContext";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import CourseManager from "./pages/admin/CourseManager";
 
 import { useEffect, useState } from "react";
 import { axiosGetData } from "./utils/api";
@@ -123,6 +124,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Feedback />
+              </ProtectedRoute>
+            }
+          />
+          <Route //i added this
+            path="/manage-courses"
+            element={
+              <ProtectedRoute>
+                <CourseManager />
               </ProtectedRoute>
             }
           />

@@ -63,6 +63,15 @@ const AdminSidebar = ({ selected }) => {
               <span className={styles.aItem}>Manage Users</span>
             </li>
             <li 
+              className={`${styles.liStudent} ${selected === "manage-courses" ? styles.active : ""}`} 
+              onClick={() => goTo("/manage-courses")}
+            >
+              <div className={styles.iconContainer}>
+                <MdOutlineAnalytics className={styles.sidebarIcon} />
+              </div>
+              <span className={styles.aItem}>Manage Courses</span>
+            </li>
+            <li 
               className={`${styles.liStudent} ${selected === "analytics" ? styles.active : ""}`} 
               onClick={() => goTo("/analytics")}
             >
