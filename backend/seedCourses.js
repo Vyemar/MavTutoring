@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-require('dotenv').config(); //like loading varaibles from .env
-const Course = require('./models/Course'); //adjust if your path is different
+require('dotenv').config(); // like loading varaibles from .env
+const Course = require('./models/Course'); // schema path
 
 const courses = [
   { code: 'CSE1000', title: 'Freshman Udergraduate Research' },
@@ -124,7 +124,7 @@ const courses = [
   { code: 'CSE5355', title: 'Electromechanical Systems and Sensors' },
   { code: 'CSE5356', title: 'System on Chip (SoC) Design' },
   { code: 'CSE5357', title: 'Advanced Digital Logic Design' },
-  { code: 'CSE5359', title: 'Microprocessor Systems' },
+  { code: 'CSE5358', title: 'Microprocessor Systems' },
   { code: 'CSE5359', title: 'Special Topics in Systems and Architecture' },
   { code: 'CSE5360', title: 'Artificial Intelligence I' },
   { code: 'CSE5361', title: 'Artificial Intelligence II' },
@@ -197,7 +197,6 @@ const courses = [
   { code: 'CSE6997', title: 'Research in Computer Science' },
   { code: 'CSE6999', title: 'Dissertation' },
   { code: 'CSE7399', title: 'Doctoral Degree Completion' }
-
 ];
 
 const seed = async () => {
