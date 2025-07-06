@@ -111,6 +111,16 @@
   color: white;
 }
 
+.noShowButton{
+  background-color: #ffc107;
+  color: white;
+}
+
+.noShowButton
+:hover {
+  background-color: #e0a800;
+}
+
 .cancelButton:hover {
   background-color: #c82333;
 }
