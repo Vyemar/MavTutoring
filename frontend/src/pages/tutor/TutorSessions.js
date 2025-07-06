@@ -173,6 +173,13 @@ function TutorSessions() {
                         >
                           Mark as Completed
                         </button>
+                           <button
+                           /* handles it as a cancelled session for now */
+                          className={`${styles.actionButton} ${styles.noShowButton}`}
+                          onClick={() => handleStatusChange(session._id, 'Cancelled') /* Mark as No Show */}
+                          >
+                          Mark as No Show
+                        </button>
                         <button
                           className={`${styles.actionButton} ${styles.cancelButton}`}
                           onClick={() => handleStatusChange(session._id, 'Cancelled')}
