@@ -12,6 +12,7 @@ import {
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaRegAddressCard } from "react-icons/fa";
 import { FaUsers } from "react-icons/fa6";
+import { FaInbox } from 'react-icons/fa';
 
 const AdminSidebar = ({ selected }) => {
   const location = useLocation();
@@ -70,6 +71,15 @@ const AdminSidebar = ({ selected }) => {
                 <MdOutlineAnalytics className={styles.sidebarIcon} />
               </div>
               <span className={styles.aItem}>System Analytics</span>
+            </li>
+            <li 
+              className={`${styles.liStudent} ${selected === "tutor-requests" ? styles.active : ""}`} 
+              onClick={() => goTo("/tutor-requests")}
+            >
+              <div className={styles.iconContainer}>
+                <FaInbox className={styles.sidebarIcon} />
+              </div>
+              <span className={styles.aItem}>Tutor Requests</span>
             </li>
             <li 
               className={`${styles.liStudent} ${selected === "admin-settings" ? styles.active : ""}`} 

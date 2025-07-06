@@ -395,6 +395,19 @@ function ViewProfile() {
     }
   });
 
+  const handleResetTutorRequest = async () => {
+    try {
+      await axios.put(`${BACKEND_URL}/api/tutor-request/reset/${userId}`, {}, {
+        withCredentials: true,
+      });
+      setSuccessMessage("Tutor Request has successfully been reset.")
+      window.location.reload();
+    } catch (err) {
+      console.error("Error resetting tutor request:", err);
+      setError("Failed to reset tutor request")
+    }
+  };
+
   if (loading) {
     return (
       <div className={styles.spinnerContainer}>
@@ -546,12 +559,25 @@ function ViewProfile() {
                       </button>
                     </div>
                   ) : (
-                    <button 
-                      onClick={() => setIsChangingRole(true)}
-                      className={styles.changeRoleButton}
-                    >
-                      Change Role
-                    </button>
+                    <>
+                      <button 
+                        onClick={() => setIsChangingRole(true)}
+                        className={styles.changeRoleButton}
+                      >
+                        Change Role
+                      </button>
+
+                      {/* Show Reset Tutor Request button ONLY if student was rejected */}
+                      {user.role === "Student" && profile?.tutorRequestStatus === "rejected" && (
+                        <button
+                          onClick={handleResetTutorRequest}
+                          className={styles.resetButton}
+                          style={{ marginLeft: "8px" }}
+                        >
+                          Reset Tutor Request
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               )}
