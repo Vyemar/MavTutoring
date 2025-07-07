@@ -241,12 +241,13 @@ function TutorProfile() {
                             )}</p>
 
                             
-                            <p><strong>Courses:</strong> {isEditing ? ( //this is updated for courses updating
+                            <p><strong>Courses:</strong> {isEditing ? ( // this is updated for courses updating
                             <Select
                                 isMulti
                                 name="courses"
-                                value={courseList
-                                    .filter(course => profile.courses.includes(course._id))
+                                value={courseList    // this will work if course are array of objectID string or an array of popluated objects
+                                    .filter(course => profile.courses.some(c => 
+                                        typeof c === "string" ? c === course._id : c._id === course._id))
                                     .map(course => ({
                                     value: course._id,
                                     label: `${course.title} (${course.code})`
@@ -269,8 +270,11 @@ function TutorProfile() {
                             ) : (
                                 profile.courses.length > 0 ? (
                                     <ul className={styles.courseList}>
-                                        {profile.courses.map((id) => (
-                                            <li key={id}>{courseMap[id] || 'Unknown Course'}</li>
+                                        {profile.courses.map((course) => (
+                                            <li key={course.id}>
+                                                {course.title && course.code
+                                                   ? `${course.title} (${course.code})`
+                                                   : courseMap[course._id] || 'Unknown Course'}</li>
                                         ))}
                                     </ul>
                                 ) : (

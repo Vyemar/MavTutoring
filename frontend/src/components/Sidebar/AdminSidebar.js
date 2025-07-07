@@ -12,6 +12,7 @@ import {
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaRegAddressCard } from "react-icons/fa";
 import { FaUsers } from "react-icons/fa6";
+import { FaBookOpen } from "react-icons/fa";
 
 const AdminSidebar = ({ selected }) => {
   const location = useLocation();
@@ -67,7 +68,7 @@ const AdminSidebar = ({ selected }) => {
               onClick={() => goTo("/manage-courses")}
             >
               <div className={styles.iconContainer}>
-                <MdOutlineAnalytics className={styles.sidebarIcon} />
+                <FaBookOpen className={styles.sidebarIcon} />
               </div>
               <span className={styles.aItem}>Manage Courses</span>
             </li>
