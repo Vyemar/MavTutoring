@@ -114,9 +114,18 @@ function MySessions() {
           <div className={styles.sessionsGrid}>
             {sessions.map((session) => {
               const attendanceForSession = attendance.find(
-                (record) =>
-                  (record.sessionID?._id || record.sessionID) === session._id
+                (record) => record.sessionID._id === session._id
               );
+
+              let displayStatus = session.status;
+
+              if (session.status === 'Scheduled') {
+                if (attendanceForSession?.checkInTime && !attendanceForSession?.checkOutTime) {
+                  displayStatus = 'Ongoing';
+                } else if (attendanceForSession?.checkInTime && attendanceForSession?.checkOutTime) {
+                  displayStatus = 'Completed';
+                }
+              }
 
               return (
                 <div key={session._id} className={styles.sessionCard}>
@@ -124,8 +133,8 @@ function MySessions() {
                     {session.tutorID?.firstName} {session.tutorID?.lastName}
                   </p>
                     <p className={styles.sessionStatus}>
-                  Status: {session.status}
-                </p>
+                    Status: {displayStatus}
+                  </p>
                 {attendanceForSession?.checkInTime && (
                   <p className={styles.checkInTime}>
                     Checked in: {formatDateTime(attendanceForSession.checkInTime)}
