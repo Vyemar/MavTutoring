@@ -222,7 +222,7 @@ function TutorSessions() {
                   .filter(session => session.status === 'Cancelled' && session.studentID) /*Checks if session status is "Cancelled" and that the student actually exists in the database*/
                   .sort((a, b) => new Date(b.sessionTime) - new Date(a.sessionTime))
                   .map((session) => (
-                    <div key={session._id} className={`${styles.sessionCard} ${styles.cancelledCard}`}>
+                    <div key={session._id} className={`${styles.sessionCard}`}>
                       <div className={styles.sessionInfo}>
                         <p><strong>Student:</strong> {session.studentID ? `${session.studentID.firstName} ${session.studentID.lastName}` : 'Unknown Student'}</p> {/*Checks if student is null first*/}
                         <p><strong>Date & Time:</strong> {formatDateTime(session.sessionTime)}</p>
