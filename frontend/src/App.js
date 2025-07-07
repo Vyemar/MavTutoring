@@ -24,6 +24,7 @@ import AnalyticsOptions from "./pages/admin/AnalyticsOptions";
 import Attendance from "./pages/admin/AttendanceReport";
 import SessionCardSwipe from "./pages/admin/SessionCardSwipe";
 import StudentSessionCardSwipe from "./pages/student/SessionCardSwipe";
+import TutorSessionCardSwipe from "./pages/tutor/SessionCardSwipe";
 import { SidebarProvider } from "./components/Sidebar/SidebarContext";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
@@ -163,6 +164,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <StudentSessionCardSwipe />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tutor/card-swipe"
+            element={
+              <ProtectedRoute>
+                <TutorSessionCardSwipe />
               </ProtectedRoute>
             }
           />

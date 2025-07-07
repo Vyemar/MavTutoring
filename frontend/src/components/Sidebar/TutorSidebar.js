@@ -8,6 +8,7 @@ import { FaSearch } from "react-icons/fa";
 import { AiOutlineSchedule } from "react-icons/ai";
 import { RiCalendarScheduleLine } from "react-icons/ri";
 import { CgProfile } from "react-icons/cg";
+import { FaRegAddressCard } from "react-icons/fa";
 import {
   MdOutlineSpaceDashboard,
   MdOutlineFeedback,
@@ -82,7 +83,16 @@ const TutorSidebar = ({ selected }) => {
               <div className={styles.iconContainer}>
                 <RiCalendarScheduleLine className={styles.sidebarIcon} />
               </div>
-              <span className={styles.aItem}>Sessions</span>
+              <span className={styles.aItem}>My Sessions</span>
+            </li>
+            <li  
+              className={`${styles.liTutor} ${selected === "tutor-card-swipe" ? styles.active : ""}`} 
+              onClick={() => goTo("/tutor/card-swipe")}
+            >
+              <div className={styles.iconContainer}>
+                <FaRegAddressCard className={styles.sidebarIcon} />
+              </div>
+              <span className={styles.aItem}>Session Check-In</span>
             </li>
             <li 
               className={`${styles.liStudent} ${selected === "tutor-notifications" ? styles.active : ""}`} 
