@@ -76,7 +76,7 @@ router.get('/student/:userId', async (req, res) => {
 router.get('/:userId', async (req, res) => {
     try {
         // First try to find a tutor profile
-        let profile = await TutorProfile.findOne({ userId: req.params.userId });
+        let profile = await TutorProfile.findOne({ userId: req.params.userId }).populate('courses', 'code title');
         
         // If no tutor profile exists, try student profile
         if (!profile) {
@@ -383,7 +383,7 @@ router.put('/update-role/:userId', async (req, res) => {
                     studentID: user.studentID,
                     name: fullName,
                     bio: "",
-                    courses: "",
+                    courses: [],
                     skills: "",
                     major: "Not Specified",
                     currentYear: "Not Specified",

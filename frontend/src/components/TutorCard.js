@@ -46,7 +46,11 @@ const TutorCard = ({ user }) => {
 
   // Get courses from profile if available
   const getCourses = () => {
-    return user.profile?.courses?.map((id) => courseMap[id]) || ["None"];
+    if (Array.isArray(user.courseNames) && user.courseNames.length > 0 ){
+      console.log("user.courseName for", user.firstName, user.courseNames);
+      return user.courseNames;
+    }
+    return ["None"];
   };
 
   return (
@@ -149,7 +153,7 @@ TutorCard.propTypes = {
     rating: PropTypes.number,
     profile: PropTypes.shape({
       profilePicture: PropTypes.string,
-      courses: PropTypes.string,
+      courses: PropTypes.arrayOf(PropTypes.string),
     }),
   }).isRequired,
 };

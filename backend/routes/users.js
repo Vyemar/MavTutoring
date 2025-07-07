@@ -16,6 +16,7 @@ router.get('/', async (req, res) => {
 router.get('/tutors/:search', async (req, res) => {
   try {
     const searchValue = req.params.search;
+    //console.log("Search value:", searchValue);
     const tutors = await User.aggregate([
       {
         $lookup: {
@@ -31,22 +32,53 @@ router.get('/tutors/:search', async (req, res) => {
           preserveNullAndEmptyArrays: true,
         },
       },
+      // for course names from the course collection
+      {
+        $lookup: {
+          from: 'courses',
+          localField: 'profile.courses',
+          foreignField: '_id',
+          as: 'courseDetails',
+        },
+      },
       {
         $addFields:{
           fullName:{
-            $concat:[
-              '$firstName',
-              '$lastName',
-            ]
+            $concat:['$firstName', '$lastName'],
           },
+          /*
           courseNS:{ //Will store the courses with no spaces
             $replaceAll: {
               input: "$profile.courses",
               find: " ",
               replacement: ""
             }
-          }
-        }
+          }*/
+          courseStr: {
+            $reduce: {
+              input: {
+                $cond: {
+                  if: { $isArray: "$profile.courses" },
+                  then: "$profile.courses",
+                  else: [],
+                },
+              },
+              initialValue: "",
+              in: {
+                $concat: ["$$value", " ", { $toString: "$$this" }]
+              },
+            },
+          },
+          courseNames: {
+            $map: {
+              input: '$courseDetails',
+              as: 'course',
+              in: {
+                $concat: ["$$course.code", " - ", "$$course.title"]
+              },
+            },
+          },
+        },
       },
       {
         $match:
@@ -58,12 +90,13 @@ router.get('/tutors/:search', async (req, res) => {
                   {
                     $or: [
                       { fullName: { $regex: searchValue, $options: 'ix' } },
-                      {
+                      /*{
                         courseNS: {
                           $regex: searchValue,
                           $options: 'ix',
                         },
-                      },
+                      },*/
+                      { courseStr: { $regex: searchValue, $options: 'ix' } },
                     ],
                   },
                 ],
@@ -76,6 +109,8 @@ router.get('/tutors/:search', async (req, res) => {
     res.status(500).json({ message: 'Failed to search tutors' });
   }
 });
+
+
 
 // Fetch only tutors
 router.get('/tutors', async (req, res) => {
