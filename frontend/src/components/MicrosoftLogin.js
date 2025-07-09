@@ -29,8 +29,24 @@ function MicrosoftLogin() {
             prompt: "select_account", // Forces user to select an account to log into
             redirectUri: "http://localhost:3000/blank.html", 
         });
-
+        
         instance.setActiveAccount(msalResponse.account); // Set active account of what user chose
+
+        // const graphResponse = await instance.acquireTokenSilent({
+        //     scopes: ["Calendars.ReadWrite"],
+        //     account: msalResponse.account
+        // });
+
+        // const token = graphResponse.accessToken;
+
+        // console.log(token)
+
+        // const events = await axios.get("https://graph.microsoft.com/v1.0/me/calendar/events", {
+        //     headers: {
+        //         Authorization: `Bearer ${token}`
+        //     }
+        // });
+
 
         const email = msalResponse.account.username; // Username is the email
 
