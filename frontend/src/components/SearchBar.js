@@ -23,7 +23,7 @@ export const SearchBar = ({ allTutors, setResults, /*setResultsList,*/ setSearch
     if (value) {
       //console.log(`${BACKEND_URL}/api/users/tutors/${value}`);
       const response = await axios.get(
-        `${BACKEND_URL}/findingTutor/search`,{params: {q: value}}
+        `${BACKEND_URL}/api/users/tutors/${value}`
       );
       console.log(response.data);
       setResults(response.data);
