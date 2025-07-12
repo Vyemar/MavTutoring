@@ -105,6 +105,10 @@ router.post('/review', async (req, res) => {
 
                 await newTutorProfile.save()
             }
+            
+            // Removes their student profile
+            await StudentProfile.deleteOne({ userId });
+
         } else if (decision === 'reset') {
             studentProfile.tutorRequestPending = false;
             studentProfile.tutorRequestStatus = null;
