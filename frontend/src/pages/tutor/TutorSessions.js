@@ -110,7 +110,7 @@ function TutorSessions() {
       });
   };
 
-  const handleStatusChange = async (sessionId, newStatus, noShow = false) => {
+  const handleStatusChange = async (sessionId, newStatus, noShow = false) => { //add noShow parameter
     if (!userData || !userData.id) {
       setError("User session expired. Please log in again.");
       return;
@@ -154,7 +154,7 @@ function TutorSessions() {
         }
       ];
     });
-    await handleStatusChange(sessionId, 'Cancelled', true);
+    await handleStatusChange(sessionId, 'Cancelled', true); // Mark no-show = true
     // After backend update, fetch fresh data to ensure sync
     fetchAttendanceRecords();
     fetchSessions();
@@ -284,6 +284,7 @@ function TutorSessions() {
                         <div className={styles.sessionInfo}>
                           <p>
                             <strong>Student:</strong> {session.studentID ? `${session.studentID.firstName} ${session.studentID.lastName}` : 'Unknown Student'}
+                            {/*less strict check to detect No Show */}
                             {attendanceForSession?.checkInStatus === 'No Show' && (
                                 <span className={styles.noShowTag}>No Show</span>
                               )}
