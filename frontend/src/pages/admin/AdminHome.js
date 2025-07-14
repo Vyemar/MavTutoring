@@ -66,6 +66,29 @@ function AdminHome() {
             </div>
           </div>
 
+          {/* Tutor Reviews Card */}
+          {user?.role === 'admin' && (
+            <div className={styles.adminCard} onClick={() => navigate("/admin-reviews")}>
+              <div className={styles.cardIcon}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2"
+                  strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                  <path d="M21 11.5a8.38 8.38 0 01-6.2 8.1 8.5 8.5 0 01-9.6-12.1A8.38 8.38 0 0112 3v1.5"></path>
+                  <path d="M12 12l-4-4m0 0l4-4m-4 4h12"></path>
+                </svg>
+              </div>
+              <h2>Tutor Reviews</h2>
+              <p>View feedback and ratings students left for tutors.</p>
+              <div className={styles.cardAction}>
+                <span>View Reviews</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2"
+                  strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                  <path d="M5 12h14"></path>
+                  <path d="M12 5l7 7-7 7"></path>
+                </svg>
+              </div>
+            </div>
+          )}
+
           {/* Settings Card */}
           <div className={styles.adminCard} onClick={() => navigate("/admin-settings")}>
             <div className={styles.cardIcon}>
