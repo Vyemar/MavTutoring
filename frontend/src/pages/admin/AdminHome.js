@@ -4,10 +4,10 @@ import AdminSidebar from '../../components/Sidebar/AdminSidebar';
 import styles from '../../styles/AdminHome.module.css';
 import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
-function AdminHome() {
+
+function AdminHome({ user }) {
   const navigate = useNavigate();
   const { isCollapsed } = useSidebar();
-  
   return (
     <div className={styles.container}>
       {/* Sidebar */}
