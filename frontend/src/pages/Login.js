@@ -203,10 +203,6 @@ function Login() {
           >
             Login with SSO
           </button>
-
-          {/* Microsoft Login Button */}
-          < MicrosoftLogin />
-
           <p className="mt-3 text-center">
             Don't have an account?{" "}
             <Link to="/signup" className={styles.link}>

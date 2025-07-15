@@ -15,7 +15,7 @@ const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 const FRONTEND_URL = `${PROTOCOL}://${FRONTEND_HOST}:${FRONTEND_PORT}`;
 
 // === SAML Configuration ===
-const SAML_ENTRY_POINT = "https://login.microsoftonline.com/3d3ccb0e-386a-4644-a386-8c6e0f969126/saml2"; // TUTOR TECH TENANT
+const SAML_ENTRY_POINT = "https://login.microsoftonline.com/3d3ccb0e-386a-4644-a386-8c6e0f969126/saml2";
 const SAML_ISSUER = "CSESDTutorTechApp";
 const SAML_CALLBACK_URL = `${BACKEND_URL}/api/auth/saml/callback`;
 const SAML_LOGOUT_URL = "https://login.microsoftonline.com/3d3ccb0e-386a-4644-a386-8c6e0f969126/saml2";
@@ -266,40 +266,3 @@ module.exports.samlConfig = {
 };
 
 module.exports.router = router;
-
-// Handles MSAL Login POST requests
-router.post('/microsoft-login', async (req, res) => {
-   
-    //  Find user by email from DB
-    const { email } = req.body;
-
-  try {
-        // Check if user exists within the DB
-        const user = await User.findOne({ email });
-
-        if (!user) {
-        console.log('User not found for email:', email);
-        return res.status(400).json({ error: "Invalid email or password" });
-        }
-
-        // Create a Microsoft user session
-        if (req.session) {
-            req.session.user = {
-                    id: user._id,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    email: user.email,
-                    phone: user.phone,
-                    role: user.role,
-                    studentID: user.studentID || null
-            }
-        };
-
-        console.log("Microsoft user session created:", req.session.user);
-
-        res.json({ success: true, message: "Microsoft login successful", user: req.session.user });
-  } catch (err) {
-    console.error("Error during Microsoft login:", err);
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
-});
