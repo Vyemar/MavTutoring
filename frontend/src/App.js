@@ -25,6 +25,7 @@ import Attendance from "./pages/admin/AttendanceReport";
 import SessionCardSwipe from "./pages/admin/SessionCardSwipe";
 import { SidebarProvider } from "./components/Sidebar/SidebarContext";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import TutorRequests from "./pages/admin/TutorRequests"; 
 
 import { useEffect, useState } from "react";
 import { axiosGetData } from "./utils/api";
@@ -166,6 +167,9 @@ function App() {
           <Route path="/tutor/:tutorId" element={<TutorDetails />} />
           <Route path="/ViewProfile/:userId" element={<ViewProfile />} />
           <Route path="/admin-settings" element={<Settings />} />
+
+          <Route path="/tutor-requests" element={<TutorRequests />} />
+          
         </Routes>
       </BrowserRouter>`
     </SidebarProvider>

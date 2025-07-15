@@ -51,6 +51,27 @@ const studentProfileSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+
+    // Student requesting to be a tutor
+    tutorRequestPending: {
+        type: Boolean,
+        default: false
+    },
+
+    // Status updates for requesting to be a tutor
+    tutorRequestStatus: {
+        type: String,
+        enum: ['pending', 'approved', 'rejected', null],
+        default: null
+    },
+
+    // Upload resume when requesting to be a tutor
+    resume: {
+        type: String, 
+        default: null
+    },
+
+
     createdAt: {
         type: Date,
         default: Date.now
