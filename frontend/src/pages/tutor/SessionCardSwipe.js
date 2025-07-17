@@ -10,6 +10,8 @@ function SessionCardSwipe() {
   const [isLoading, setIsLoading] = useState(false);
   const [lastSwipeTime, setLastSwipeTime] = useState(0);
   const inputRef = useRef(null);
+  const [showManualInput, setShowManualInput] = useState(false);
+  const [manualID, setManualID] = useState("");
 
   const { isCollapsed, toggleSidebar } = useSidebar();
   const BACKEND_URL = 'http://localhost:4000';
@@ -83,18 +85,20 @@ function SessionCardSwipe() {
   };
 
   useEffect(() => {
-    const keepFocus = () => {
-      if (inputRef.current) inputRef.current.focus();
-    };
+  const keepFocus = () => {
+    if (!showManualInput && inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
 
-    keepFocus();
+  keepFocus();
     window.addEventListener("click", keepFocus);
     window.addEventListener("keydown", keepFocus);
     return () => {
       window.removeEventListener("click", keepFocus);
       window.removeEventListener("keydown", keepFocus);
     };
-  }, []);
+  }, [showManualInput]);
 
   const handleInputChange = (e) => {
     const value = e.target.value.trim();
@@ -109,6 +113,43 @@ function SessionCardSwipe() {
     setLastSwipeTime(now);
     e.target.value = "";
     processCardData(value);
+  };
+
+  const handleManualCheckIn = async () => {
+    console.log("Manual Check-In Clicked");
+    console.log("manualID:", manualID);
+
+    if (!manualID.trim()) {
+      console.log("Manual ID is empty");
+      return;
+    }
+
+    setIsLoading(true);
+    setStatusMessage("Processing manual check-in...");
+    setSessionDetails(null);
+
+    try {
+      console.log("Sending POST to:", `${BACKEND_URL}/api/attendance/manual-checkin`);
+      const response = await axiosPostData(`${BACKEND_URL}/api/attendance/manual-checkin`, {
+        idInput: manualID.trim(),
+      });
+      console.log("Response:", response.data);
+      setStatusMessage(response.data.message || "Success");
+
+      if (response.data.session) {
+        setSessionDetails(response.data.session);
+      }
+    } catch (error) {
+      console.error("Manual check-in error:", error);
+      setStatusMessage(error.response?.data?.message || "Error occurred during manual check-in.");
+    } finally {
+      setIsLoading(false);
+      setManualID("");
+      setTimeout(() => {
+        setStatusMessage("Awaiting card swipe...");
+        setSessionDetails(null);
+      }, 10000);
+    }
   };
 
   return (
@@ -162,6 +203,28 @@ function SessionCardSwipe() {
             <p>
               <strong>Duration:</strong> {sessionDetails.duration} minutes
             </p>
+          </div>
+        )}
+        {!showManualInput ? (
+          <button onClick={() => setShowManualInput(true)}>
+            Manual Check-In
+          </button>
+        ) : (
+          <div className={styles.manualCheckIn}>
+            <input
+              type="text"
+              placeholder="Enter ID number"
+              value={manualID}
+              onChange={(e) => setManualID(e.target.value)}
+              className={styles.manualInput}
+              disabled={isLoading} // ← only disable when loading (optional)
+            />
+            <button
+              onClick={handleManualCheckIn}
+              disabled={isLoading || !manualID.trim()}
+            >
+              Submit
+            </button>
           </div>
         )}
       </div>
