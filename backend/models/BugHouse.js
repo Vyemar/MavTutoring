@@ -20,6 +20,12 @@ const bugHouseSchema = new mongoose.Schema(
         required: true,
       },
     },
+    
+    tutorRequestsEnabled: {
+      type: Boolean,
+      default: true,
+    },
+
     updatedAt: {
       type: Date,
       default: Date.now,

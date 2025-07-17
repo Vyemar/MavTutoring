@@ -433,3 +433,9 @@ body {
     }
   }
   
+  .tutorRequestWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* space between file input and button */
+  margin-top: 20px;
+}
