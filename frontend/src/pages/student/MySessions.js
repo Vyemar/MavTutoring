@@ -114,7 +114,7 @@ function MySessions() {
           <div className={styles.sessionsGrid}>
             {sessions.map((session) => {
               const attendanceForSession = attendance.find(
-                (record) => record.sessionID._id === session._id
+                (record) => record.sessionID?._id === session._id
               );
 
               let displayStatus = session.status;

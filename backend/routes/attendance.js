@@ -50,11 +50,28 @@ router.post("/check", async (req, res) => {
         const startOfDay = new Date(); startOfDay.setHours(0, 0, 0, 0);
         const endOfDay = new Date(); endOfDay.setHours(23, 59, 59, 999);
 
-        const sessionsToday = await Session.find({
-            studentID: user._id,
-            sessionTime: { $gte: startOfDay, $lte: endOfDay },
-            status: 'Scheduled'
-        }).populate('tutorID', 'firstName lastName');
+        let sessionsToday = [];
+
+        if (user.role === 'Tutor') {
+            sessionsToday = await Session.find({
+                tutorID: user._id,
+                sessionTime: { $gte: startOfDay, $lte: endOfDay },
+                status: 'Scheduled'
+            })
+            .populate('studentID', 'firstName lastName')
+            .populate('tutorID', 'firstName lastName');
+        } else if (user.role === 'Student') {
+            sessionsToday = await Session.find({
+                studentID: user._id,
+                sessionTime: { $gte: startOfDay, $lte: endOfDay },
+                status: 'Scheduled'
+            })
+            .populate('studentID', 'firstName lastName')
+            .populate('tutorID', 'firstName lastName');
+
+        } else {
+            return res.status(400).json({ success: false, message: 'Unsupported user role.' });
+        }
 
         if (!sessionsToday.length) {
             return res.status(404).json({ success: false, message: "No scheduled session found for today." });
@@ -67,10 +84,12 @@ router.post("/check", async (req, res) => {
 
         const sessionEnd = new Date(closestSession.sessionTime.getTime() + closestSession.duration * 60000);
 
-        let attendance = await Attendance.findOne({
-            sessionID: closestSession._id,
-            studentID: user._id
-        });
+        let attendance;
+        if (user.role === 'Tutor') {
+            attendance = await Attendance.findOne({ sessionID: closestSession._id, tutorID: user._id });
+        } else if (user.role === 'Student') {
+            attendance = await Attendance.findOne({ sessionID: closestSession._id, studentID: user._id });
+        }
 
         // Case 1: No attendance yet — CHECK IN
         if (!attendance || attendance.wasNoShow === true) {
@@ -79,28 +98,41 @@ router.post("/check", async (req, res) => {
             if (diffInMinutes < -5) checkInStatus = 'Early';
             else if (diffInMinutes > 5) checkInStatus = 'Late';
 
-            attendance = new Attendance({
-                sessionID: closestSession._id,
-                studentID: user._id,
-                checkInTime: now,
-                checkInStatus,
-                wasNoShow: false
-            });
-
-            await attendance.save();
+            if (user.role === 'Tutor') {
+                attendance = new Attendance({
+                    sessionID: closestSession._id,
+                    tutorID: user._id,
+                    checkInTime: now,
+                    checkInStatus,
+                    wasNoShow: false
+                });
+                await attendance.save();
+                message = `Tutor ${user.firstName} checked in for their session with student ${closestSession.studentID.firstName}.`;
+            } else if (user.role === 'Student') {
+                attendance = new Attendance({
+                    sessionID: closestSession._id,
+                    studentID: user._id,
+                    checkInTime: now,
+                    checkInStatus,
+                    wasNoShow: false
+                });
+                await attendance.save();
+                message = `Checked in for session with tutor ${closestSession.tutorID.firstName}.`;
+            }
 
             return res.status(201).json({
                 success: true,
-                message: `Checked in for session with ${closestSession.tutorID.firstName} for student ${user.firstName}.`,
+                message,
                 session: {
                     tutorName: `${closestSession.tutorID.firstName} ${closestSession.tutorID.lastName}`,
-                    studentName: `${user.firstName} ${user.lastName}`,
+                    studentName: `${closestSession.studentID.firstName} ${closestSession.studentID.lastName}`,
                     sessionTime: closestSession.sessionTime,
                     duration: closestSession.duration
                 }
             });
-        // Case 2: Already checked in, not yet checked out — MANUAL CHECK OUT
-        } else if (!attendance.checkOutTime) {
+        }
+        // Case 2: Already checked in, not yet checked out — CHECK OUT
+        else if (!attendance.checkOutTime) {
             const duration = Math.max(1, Math.round((now - attendance.checkInTime) / 60000));
             let checkOutStatus = 'On Time';
             if (now < sessionEnd) checkOutStatus = 'Early';
@@ -110,31 +142,32 @@ router.post("/check", async (req, res) => {
             attendance.duration = duration;
             attendance.checkOutStatus = checkOutStatus;
             attendance.updatedAt = new Date();
-
             await attendance.save();
 
-            closestSession.status = 'Completed';
-            closestSession.updatedAt = new Date();
-            await closestSession.save();
+            // you can also optionally update session status
+            message = user.role === 'Tutor'
+                ? `Tutor ${user.firstName} checked out from their session with student ${closestSession.studentID.firstName}. Duration: ${duration} minutes.`
+                : `Checked out from session with tutor ${closestSession.tutorID.firstName}. Duration: ${duration} minutes.`;
 
             return res.status(200).json({
                 success: true,
-                message: `Checked out from session with ${closestSession.tutorID.firstName} for student ${user.firstName}. Duration: ${duration} minutes.`,
+                message,
                 session: {
                     tutorName: `${closestSession.tutorID.firstName} ${closestSession.tutorID.lastName}`,
-                    studentName: `${user.firstName} ${user.lastName}`,
+                    studentName: `${closestSession.studentID.firstName} ${closestSession.studentID.lastName}`,
                     sessionTime: closestSession.sessionTime,
                     duration
                 }
             });
-        } else {
-            // Case 3: Already fully checked in and out
+        }
+        // Case 3: Already fully checked in and out
+        else {
             return res.status(200).json({
                 success: true,
                 message: "Already checked in and out for this session.",
                 session: {
                     tutorName: `${closestSession.tutorID.firstName} ${closestSession.tutorID.lastName}`,
-                    studentName: `${user.firstName} ${user.lastName}`,
+                    studentName: `${closestSession.studentID.firstName} ${closestSession.studentID.lastName}`,
                     sessionTime: closestSession.sessionTime,
                     duration: closestSession.duration
                 }

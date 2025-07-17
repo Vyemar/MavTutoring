@@ -78,7 +78,7 @@ function SessionCardSwipe() {
       setTimeout(() => {
         setStatusMessage("Awaiting card swipe...");
         setSessionDetails(null);
-      }, 5000);
+      }, 10000);
     }
   };
 
