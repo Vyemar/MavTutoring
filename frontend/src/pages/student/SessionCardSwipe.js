@@ -132,7 +132,6 @@ function SessionCardSwipe() {
       setManualID("");
       setShowManualInput(false);
 
-      // Optional: Refocus on swipe input after manual check-in
       if (inputRef.current) inputRef.current.focus();
     } catch (error) {
       console.error("Manual check-in error:", error);
@@ -182,7 +181,6 @@ function SessionCardSwipe() {
 
           <div className={styles.status}>{statusMessage}</div>
 
-          {/* Move manual check-in button here below status message */}
           {!showManualInput ? (
             <button
               onClick={() => {
