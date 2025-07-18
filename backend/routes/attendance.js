@@ -197,12 +197,16 @@ router.post('/manual-checkin', async (req, res) => {
   try {
     let user = await User.findOne({ cardID: idInput });
 
-    if (!user) {
-      if (mongoose.Types.ObjectId.isValid(idInput)) {
-        user = await User.findById(idInput);
-      }
+    if (!user && mongoose.Types.ObjectId.isValid(idInput)) {
+      user = await User.findById(idInput);
     }
 
+    // Try finding by studentID field (if separate)
+    if (!user) {
+      user = await User.findOne({ studentID: idInput });
+    }
+
+    // If still not found, try tutor profile fallback
     if (!user) {
       const profile = await TutorProfile.findOne({ studentID: idInput });
       if (profile) {
