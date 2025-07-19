@@ -19,6 +19,7 @@ function TutorSessions() {
   const [sessionLoading, setSessionLoading] = useState(true);
   const [error, setError] = useState("");
   const [userData, setUserData] = useState(null);
+  const [attendance, setAttendance] = useState([]);
 
   // Fetch the user session data
   useEffect(() => {
@@ -111,6 +112,29 @@ function TutorSessions() {
     }
   };
 
+  const fetchAttendance = useCallback(async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/attendance/all`, {
+        withCredentials: true
+      });
+
+      const myAttendance = response.data.filter(
+        record => record.sessionID?.tutorID?._id === userData?.id
+      );
+
+      setAttendance(myAttendance);
+    } catch (err) {
+      console.error("Error fetching attendance:", err);
+    }
+  }, [userData]);
+
+  useEffect(() => {
+    if (userData) {
+      fetchSessions();  
+      fetchAttendance(); 
+    }
+  }, [userData, fetchSessions, fetchAttendance]);
+
   // Show loading spinner while either session or data is loading
   if (sessionLoading || loading) {
     return (
@@ -189,30 +213,44 @@ function TutorSessions() {
           </div>
 
           <div className={styles.completedSessions}>
-            <h2>Completed Sessions</h2>
-            {sessions.filter(session => session.status === 'Completed' && session.studentID).length > 0 ? ( /*Checks if session status is "Completed" and that the student actually exists in the database*/
-              <div className={styles.sessionsList}>
-                {sessions
-                  .filter(session => session.status === 'Completed' && session.studentID) /*Checks if session status is "Completed" and that the student actually exists in the database*/
-                  .sort((a, b) => new Date(b.sessionTime) - new Date(a.sessionTime))
-                  .map((session) => (
-                    <div key={session._id} className={styles.sessionCard}>
-                      <div className={styles.sessionInfo}>
-                        <p><strong>Student:</strong> {session.studentID ? `${session.studentID.firstName} ${session.studentID.lastName}` : 'Unknown Student'}</p>
-                        <p><strong>Date & Time:</strong> {formatDateTime(session.sessionTime)}</p>
-                        <p><strong>Duration:</strong> {session.duration} minutes</p>
-                        <p><strong>Status:</strong> {session.status}</p>
-                        {session.specialRequest && (
-                          <p><strong>Special Request:</strong> {session.specialRequest}</p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+  <h2>Completed Sessions</h2>
+    {sessions.filter(session => session.status === 'Completed' && session.studentID).length > 0 ? (
+      <div className={styles.sessionsList}>
+        {sessions
+          .filter(session => session.status === 'Completed' && session.studentID)
+          .sort((a, b) => new Date(b.sessionTime) - new Date(a.sessionTime))
+          .map((session) => {
+            const attendanceRecord = attendance.find(
+              (record) =>
+                record.sessionID?._id === session._id &&
+                record.userID?._id === userData?._id 
+            );
+
+            return (
+              <div key={session._id} className={styles.sessionCard}>
+                <div className={styles.sessionInfo}>
+                  <p><strong>Student:</strong> {session.studentID ? `${session.studentID.firstName} ${session.studentID.lastName}` : 'Unknown Student'}</p>
+                  <p><strong>Date & Time:</strong> {formatDateTime(session.sessionTime)}</p>
+                  <p><strong>Duration:</strong> {session.duration} minutes</p>
+                  <p><strong>Status:</strong> {session.status}</p>
+                  {attendanceRecord?.checkInTime && (
+                    <p><strong>Check-in Time:</strong> {formatDateTime(attendanceRecord.checkInTime)}</p>
+                  )}
+                  {attendanceRecord?.checkOutTime && (
+                    <p><strong>Check-out Time:</strong> {formatDateTime(attendanceRecord.checkOutTime)}</p>
+                  )}
+                  {session.specialRequest && (
+                    <p><strong>Special Request:</strong> {session.specialRequest}</p>
+                  )}
+                </div>
               </div>
-            ) : (
-              <p className={styles.noSessions}>No completed sessions</p>
-            )}
-          </div>
+            );
+          })}
+      </div>
+    ) : (
+      <p>No completed sessions found.</p>
+    )}
+  </div>
 
           <div className={styles.cancelledSessions}>
             <h2>Cancelled Sessions</h2>
