@@ -111,6 +111,7 @@ app.use('/api/sessions', sessionRoutes);
 app.use('/api/analytics', analyticsRoutes); //analytics routes
 app.use('/api/bugHouse', bugHouse); //Bug House settings information
 app.use('/api/tutor-request', tutorRequestRoutes); // Requesting tutor functionalities
+app.use('/api/analytics', require('./routes/analytics'));
 
 
 app.use("/api/notifications", notificationRoutes); // Notification routes

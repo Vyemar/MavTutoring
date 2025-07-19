@@ -26,6 +26,7 @@ import SessionCardSwipe from "./pages/admin/SessionCardSwipe";
 import { SidebarProvider } from "./components/Sidebar/SidebarContext";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import TutorRequests from "./pages/admin/TutorRequests"; 
+import AdvancedReports from "./pages/admin/AdvancedReports";
 
 import { useEffect, useState } from "react";
 import { axiosGetData } from "./utils/api";
@@ -169,6 +170,7 @@ function App() {
           <Route path="/admin-settings" element={<Settings />} />
 
           <Route path="/tutor-requests" element={<TutorRequests />} />
+          <Route path="/advanced-reports" element={<AdvancedReports />} />
           
         </Routes>
       </BrowserRouter>`

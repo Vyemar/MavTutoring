@@ -1,0 +1,42 @@
+.container {
+  padding: 2rem;
+}
+
+.mainContent {
+  margin-left: 290px;
+}
+
+.heading {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.tabBar {
+  margin-bottom: 25px;
+}
+
+.tabBar button {
+  margin-right: 10px;
+  padding: 8px 16px;
+  border: none;
+  background: #eee;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.tabBar .active {
+  background-color: #025ba3;
+  color: white;
+}
+
+.tabContent .reportList {
+  list-style: none;
+  padding: 0;
+}
+
+.tabContent .reportCard {
+  margin-bottom: 10px;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}

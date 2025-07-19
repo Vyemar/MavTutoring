@@ -102,4 +102,44 @@ router.get('/tutors', async (req, res) => {
   }
 });
 
+// GET /api/analytics/students
+router.get('/students', async (req, res) => {
+  try {
+
+    // Step 1: Get all students
+    const students = await User.find({ role: 'Student' }).select('_id firstName lastName');
+
+    // Step 2: Get session count and sum it all up 
+    const sessionCounts = await Session.aggregate([
+      {
+        $group: {
+          _id: '$studentID',
+          totalSessions: { $sum: 1 }
+        }
+      }
+    ]);
+
+    // Step 3: Create a lookup map to quickly access totalSessions for a given student ID
+    const sessionMap = {};
+    sessionCounts.forEach(session => {
+      if (session._id) {
+        sessionMap[session._id.toString()] = session.totalSessions;
+      }
+    });
+
+    // Step 4: Combine results
+    const result = students.map(student => ({
+      id: student._id,
+      name: `${student.firstName} ${student.lastName}`,
+      totalSessions: sessionMap[student._id.toString()] || 0
+    }));
+
+    res.json(result);
+
+  } catch (error) {
+    console.error("Error in /students route:", error);
+    res.status(500).json({ message: "Failed to get student data" });
+  }
+});
+
 module.exports = router;
