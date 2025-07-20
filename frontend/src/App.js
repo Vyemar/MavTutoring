@@ -22,7 +22,6 @@ import ViewProfile from "./pages/admin/ViewProfile";
 import TutorDetails from "./pages/admin/TutorDetails";
 import AnalyticsOptions from "./pages/admin/AnalyticsOptions";
 import Attendance from "./pages/admin/AttendanceReport";
-import SessionCardSwipe from "./pages/admin/SessionCardSwipe";
 import StudentSessionCardSwipe from "./pages/student/SessionCardSwipe";
 import TutorSessionCardSwipe from "./pages/tutor/SessionCardSwipe";
 import { SidebarProvider } from "./components/Sidebar/SidebarContext";
@@ -151,14 +150,6 @@ function App() {
                 <TutorProfile />
               </ProtectedRoute>
             } 
-          />
-          <Route
-            path="/card-swipe"
-            element={
-              <ProtectedRoute>
-                <SessionCardSwipe />
-              </ProtectedRoute>
-            }
           />
           <Route
             path="/student/card-swipe"

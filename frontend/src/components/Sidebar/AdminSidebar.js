@@ -10,7 +10,6 @@ import {
   MdLogout,
 } from "react-icons/md";
 import { IoSettingsOutline } from "react-icons/io5";
-import { FaRegAddressCard } from "react-icons/fa";
 import { FaUsers } from "react-icons/fa6";
 import { FaInbox } from 'react-icons/fa';
 
@@ -44,15 +43,6 @@ const AdminSidebar = ({ selected }) => {
                 <MdOutlineSpaceDashboard className={styles.sidebarIcon} />
               </div>
               <span className={styles.aItem}>Dashboard</span>
-            </li>
-            <li 
-              className={`${styles.liStudent} ${selected === "card-swipe" ? styles.active : ""}`} 
-              onClick={() => goTo("/card-swipe")}
-            >
-              <div className={styles.iconContainer}>
-                <FaRegAddressCard className={styles.sidebarIcon} />
-              </div>
-              <span className={styles.aItem}>ID Card Session</span>
             </li>
             <li 
               className={`${styles.liStudent} ${selected === "manage-users" ? styles.active : ""}`} 
