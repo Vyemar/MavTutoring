@@ -78,6 +78,13 @@
   margin-top: 0.5rem;
 }
 
+.checkInTime,
+.checkOutTime {
+  font-size: 0.8rem;
+  color: #000000; 
+  margin: 0;
+}
+
 .noSessions {
   color: #f3f3f3;
   text-align: center;

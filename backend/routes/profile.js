@@ -314,8 +314,12 @@ router.put('/update-role/:userId', async (req, res) => {
             const tutorProfile = await TutorProfile.findOne({ userId });
             
             if (tutorProfile) {
+
+                // Check if a student profile already exists
+                const existingStudentProfile = await StudentProfile.findOne({ userId });
+
                 // Create new student profile using data from tutor profile
-                const studentProfile = new StudentProfile({
+                const studentProfile = {
                     userId: userId,
                     studentID: tutorProfile.studentID, 
                     name: tutorProfile.name,
@@ -326,16 +330,24 @@ router.put('/update-role/:userId', async (req, res) => {
                     areasOfInterest: [],
                     preferredLearningStyle: "Not Specified",
                     academicGoals: "",
-                    profilePicture: tutorProfile.profilePicture
-                });
-                
-                // Save the new student profile
-                await studentProfile.save();
+                    profilePicture: tutorProfile.profilePicture,
+                    tutorRequestPending: false,
+                    tutorRequestStatus: null
+                };
+
+                // Fixes duplicate student profiles
+                if (existingStudentProfile) {
+                    await StudentProfile.findOneAndUpdate({ userId }, studentProfile);
+                } else {
+                    const newStudentProfile = new StudentProfile({ userId, ...studentProfile });
+                    await newStudentProfile.save();
+                }
                 
                 // Remove the old tutor profile
                 await TutorProfile.findOneAndDelete({ userId });
                 
                 console.log(`Profile transitioned from Tutor to Student for user: ${userId}`);
+
             } else {
                 // Create a default student profile if no tutor profile exists
                 const fullName = `${user.firstName} ${user.lastName}`;

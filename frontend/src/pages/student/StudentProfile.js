@@ -32,6 +32,11 @@ function StudentProfile() {
     const [courseList, setCourseList] = useState([]); //these state for course list and map
     const [courseMap, setCourseMap] = useState({});
 
+    const [tutorRequestStatus, setTutorRequestStatus] = useState(null);
+    const [tutorRequestPending, setTutorRequestPending] = useState(false);
+    const [resumeFile, setResumeFile] = useState(null);
+    const [tutorRequestsEnabled, setTutorRequestsEnabled] = useState(true);
+
     useEffect(() => {
         const fetchUserSession = async () => {
             try {
@@ -75,6 +80,19 @@ function StudentProfile() {
         };
 
         fetchCourses();
+      
+        const fetchTutorSetting = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/api/bughouse`);
+                setTutorRequestsEnabled(response.data?.tutorRequestsEnabled ?? true);
+
+            } catch (err) {
+                console.error("Failed to fetch tutorRequestsEnabled:", err);
+                setTutorRequestsEnabled(true); // Fail open if error
+            }
+        };
+
+        fetchTutorSetting();
     }, []);
 
     const fetchProfile = useCallback(async () => {
@@ -85,6 +103,10 @@ function StudentProfile() {
                 withCredentials: true
             });
             setProfile(response.data);
+
+            setTutorRequestStatus(response.data.tutorRequestStatus || null);
+            setTutorRequestPending(response.data.tutorRequestPending || false);
+
         } catch (profileError) {
             if (profileError.response && profileError.response.status === 404) {
                 const defaultProfile = {
@@ -184,6 +206,50 @@ function StudentProfile() {
         } catch (error) {
             console.error("Error saving profile:", error);
             setError("Error saving profile. Please try again.");
+        }
+    };
+
+    const handleTutorRequest = async () => {
+
+        try {
+            const formData = new FormData();
+            formData.append("userId", userData.id);
+            formData.append("resume", resumeFile);
+            
+            await axios.post(`${BACKEND_URL}/api/tutor-request/request`, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+                withCredentials: true
+            });
+
+            // Changes the status in Database
+            setTutorRequestPending(true);
+            setTutorRequestStatus("pending");
+
+            setError("")
+            setSuccessMessage("Request has been sent!")
+
+        } catch (err) {
+            // Error within the web console
+            console.error("Failed to request tutor role:", err); 
+
+            // Puts the error on the page
+            setError("Error submitting request. Try again later.");
+        }
+    };
+
+    
+    const handleResumeUpload = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            // PDF files only
+            if (file.type !== "application/pdf") {
+                setError("PDF Uploads only!")
+                return;
+            }
+            setResumeFile(file);
+            setSuccessMessage("Resume selected successfully.");
+        } else {
+            setError("Error submitting resume. Try again later.");
         }
     };
 
@@ -383,7 +449,7 @@ function StudentProfile() {
                             )}</p>
                         </div>
     
-                        <div className={styles.roleButtons}>
+
                             <button
                                 className={styles.saveButton}
                                 onClick={() => {
@@ -408,6 +474,49 @@ function StudentProfile() {
                                     Cancel
                                 </button>
                             )}
+
+                        <div className={styles.roleButtons}>
+                            <div className={styles.tutorRequestSection}>
+                                {!tutorRequestPending && tutorRequestStatus !== "approved" && tutorRequestStatus !== "rejected" && (
+                                    <>
+                                        {tutorRequestsEnabled ? (
+                                            <div className="tutorRequestWrapper">
+                                                <input
+                                                type="file"
+                                                name="resume"
+                                                accept="application/pdf"
+                                                onChange={handleResumeUpload}
+                                                />
+
+                                                {resumeFile ? (
+                                                <button
+                                                    className={styles.saveButton}
+                                                    onClick={handleTutorRequest}
+                                                >
+                                                    Request to Become a Tutor
+                                                </button>
+                                                ) : (
+                                                <button
+                                                    className={styles.disabledButton}
+                                                    disabled
+                                                    title="Please upload a PDF before requesting"
+                                                >
+                                                    Upload PDF to Enable Tutor Request
+                                                </button>
+                                                )}
+                                            </div>
+                                            ) : (
+                                                <p className={styles.disabledMessage}>
+                                                    Tutor requests are currently disabled by the admin.
+                                                </p>
+                                            )}
+                                        </>
+                                    )}
+                                {tutorRequestStatus === "approved" && <p>Your tutor request has been approved.</p>}
+                                {tutorRequestStatus === "rejected" && <p>Your request to become a tutor was rejected. Please contact Admin to retry.</p>}
+                                {tutorRequestStatus === "pending" && <p>Your request is pending review.</p>}
+
+                            </div>
                         </div>
                     </div>
                 </div>

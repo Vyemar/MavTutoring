@@ -7,7 +7,20 @@ const upload = multer();
 // Get BugHouse settings
 router.get("/", async (req, res) => {
   try {
-    const settings = await BugHouse.findOne();
+    let settings = await BugHouse.findOne();
+
+    // Return a default object if nothing is in DB yet, fixes Logo bug
+    if (!settings) {
+      settings = new BugHouse({
+        logo: "",
+        contactInfo: {
+          email: "",
+          phone: "",
+          address: "",
+        },
+      });
+      await settings.save();
+    }
     res.json(settings);
   } catch (error) {
     console.error("Error fetching BugHouse settings:", error);
@@ -18,8 +31,10 @@ router.get("/", async (req, res) => {
 // Update BugHouse settings (admin only)
 router.put("/", upload.single('logo'), async (req, res) => {
   try {
-    // Get contact info from body (it was sent as JSON string)
+    // Get contact info and the request boolean from body (it was sent as JSON string)
     const contactInfo = JSON.parse(req.body.contactInfo);
+    const tutorRequestsEnabled = JSON.parse(req.body.tutorRequestsEnabled);
+
     
     // Get logo file from multer
     let logo = null;
@@ -40,6 +55,7 @@ router.put("/", upload.single('logo'), async (req, res) => {
         settings.logo = logo;
       }
       settings.contactInfo = contactInfo;
+      settings.tutorRequestsEnabled = tutorRequestsEnabled;
     }
 
     await settings.save();
