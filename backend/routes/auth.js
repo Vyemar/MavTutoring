@@ -130,7 +130,10 @@ router.post('/login', async (req, res) => {
             user: {
                 id: user._id,
                 role: user.role,
-                email: user.email
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                name: `${user.firstName} ${user.lastName}`
             },
             message: `Login successful as ${user.role}`
         });

@@ -18,6 +18,7 @@ function ManageUsers() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedRole, setSelectedRole] = useState("All");
+    const [searchTerm, setSearchTerm] = useState("");
     const { isCollapsed } = useSidebar();
     const sidebarWidth = isCollapsed ? "80px" : "270px";
 
@@ -29,6 +30,10 @@ function ManageUsers() {
                 const response = await axios.get(`${BACKEND_URL}/api/users`);
                 const filteredUsers = response.data
                     .filter(user => selectedRole === "All" ? true : user.role === selectedRole)
+                    .filter(user =>
+                        `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        user.email.toLowerCase().includes(searchTerm.toLowerCase())
+                    )
                     .sort((a, b) => a.lastName.localeCompare(b.lastName));
                 setUsers(filteredUsers);
             } catch (error) {
@@ -39,7 +44,7 @@ function ManageUsers() {
         };
 
         fetchUsers();
-    }, [selectedRole]);
+    }, [selectedRole, searchTerm]);
 
     return (
         <div className={styles.container}>
@@ -47,23 +52,33 @@ function ManageUsers() {
             <AdminSidebar selected="manage-users"/>
 
             {/* Main Content */}
-            <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "260px", transition: "margin-left 0.5s ease", "--sidebar-width": sidebarWidth}}
->
+            <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "260px", transition: "margin-left 0.5s ease", "--sidebar-width": sidebarWidth}}>
                 <div className={styles.headerSection}>
                     <h1 className={styles.heading}>Manage Users</h1>
-                    <div className={styles.roleSelector}>
-                        <label htmlFor="role">Select Role:</label>
-                        <select id="role" value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
-                            <option value="All">All Users</option>
-                            <option value="Tutor">Tutors</option>
-                            <option value="Student">Students</option>
-                            <option value="Admin">Admins</option>
-                        </select>
-                    </div>
                 </div>
+
 
                 {/* Table Container for Independent Scrolling */}
                 <div className={styles.tableContainer}>
+                    <div className={styles.toolbar}>
+                        <input
+                            type="text"
+                            placeholder="Search by name or email"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className={styles.searchBar}
+                        />
+                        <div className={styles.roleSelector}>
+                            <label htmlFor="role">Select Role:</label>
+                            <select id="role" value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
+                                <option value="All">All Users</option>
+                                <option value="Tutor">Tutors</option>
+                                <option value="Student">Students</option>
+                                <option value="Admin">Admins</option>
+                            </select>
+                        </div>
+                    </div>
+
                     {loading ? (
                         <div className={styles.spinnerContainer}>
                             <div className={styles.spinner}></div>

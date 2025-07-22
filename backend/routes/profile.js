@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const upload = multer();
+const mongoose = require('mongoose');
 
 const User = require('../models/User');
 const StudentProfile = require('../models/StudentProfile');
@@ -20,6 +21,36 @@ router.get('/tutor/:userId', async (req, res) => {
     } catch (error) {
         console.error('Error fetching tutor profile:', error);
         res.status(500).json({ message: 'Error fetching tutor profile', error: error.message });
+    }
+});
+
+// PUT - To update tutor courses only with objectID ref
+router.put('/tutor/:userID/courses', async (req, res) => {
+    const { userId } = req.params;
+    const { courseIds } = req.body;
+
+    if (!Array.isArray(courseIds)) {
+        return res.status(400).json({ message: 'courseIds must be an array' });
+    }
+
+    try {
+        const updatedProfile = await TutorProfile.findOneAndUpdate(
+            { userId },
+            { $set: { courses: courseIds } },
+            { new: true }
+        ).populate('courses');
+
+        if (!updatedProfile) {
+            return res.status(404).json({ message: 'Tutor profile not found'});
+        }
+
+        res.status(200).json({ 
+            message: 'Courses updated successfully',
+            profile: updatedProfile
+        });
+    } catch (err) {
+        console.err('Error updating tutor courses:', err);
+        res.status(500).json({ message: 'Failed to udpate courses', error: err.message });
     }
 });
 
@@ -45,7 +76,7 @@ router.get('/student/:userId', async (req, res) => {
 router.get('/:userId', async (req, res) => {
     try {
         // First try to find a tutor profile
-        let profile = await TutorProfile.findOne({ userId: req.params.userId });
+        let profile = await TutorProfile.findOne({ userId: req.params.userId }).populate('courses', 'code title');
         
         // If no tutor profile exists, try student profile
         if (!profile) {
@@ -66,7 +97,7 @@ router.get('/:userId', async (req, res) => {
 // Create or update tutor profile
 router.post('/tutor', upload.single('profilePicture'), async (req, res) => {
     try {
-        const { userId, name, bio, courses, skills, major, currentYear } = req.body;
+        let { userId, name, bio, courses, skills, major, currentYear } = req.body;
         
         if (!userId || !name) {
             return res.status(400).json({ message: 'Missing required fields' });
@@ -78,11 +109,31 @@ router.post('/tutor', upload.single('profilePicture'), async (req, res) => {
             profilePicture = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
         }
 
+        // Parse courses if it's a JSON string
+        
+        if (typeof courses === 'string') {
+            try {
+                courses = JSON.parse(courses);
+            } catch (e) {
+                return res.status(400).json({ message: 'Invalid JSON in courses field' });
+            }
+        }
+        
+        // this convert each course ID to MongoDB objectID which we expected by our Course Model
+        if (Array.isArray(courses)) {
+            courses = courses.map(c => 
+                new mongoose.Types.ObjectId(
+                    typeof c === 'string' ? c : c._id
+                )
+            );
+        }
+
+
         const profileData = {
             userId,
             name,
             bio: bio || "",
-            courses: courses || "",
+            courses,
             skills: skills || "",
             major: major || "Not Specified",
             currentYear: currentYear || "Not Specified",
@@ -226,7 +277,7 @@ router.put('/update-role/:userId', async (req, res) => {
                     studentID: studentProfile.studentID,
                     name: studentProfile.name,
                     bio: studentProfile.bio || "",
-                    courses: "",
+                    courses: [],
                     skills: "",
                     major: studentProfile.major || "Not Specified",
                     currentYear: studentProfile.currentYear || "Not Specified",
@@ -349,7 +400,7 @@ router.put('/update-role/:userId', async (req, res) => {
                     studentID: user.studentID,
                     name: fullName,
                     bio: "",
-                    courses: "",
+                    courses: [],
                     skills: "",
                     major: "Not Specified",
                     currentYear: "Not Specified",

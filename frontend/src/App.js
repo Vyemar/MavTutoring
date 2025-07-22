@@ -26,6 +26,7 @@ import StudentSessionCardSwipe from "./pages/student/SessionCardSwipe";
 import TutorSessionCardSwipe from "./pages/tutor/SessionCardSwipe";
 import { SidebarProvider } from "./components/Sidebar/SidebarContext";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import CourseManager from "./pages/admin/CourseManager";
 import TutorRequests from "./pages/admin/TutorRequests"; 
 
 import { useEffect, useState } from "react";
@@ -125,6 +126,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Feedback />
+              </ProtectedRoute>
+            }
+          />
+          <Route //i added this
+            path="/manage-courses"
+            element={
+              <ProtectedRoute>
+                <CourseManager />
               </ProtectedRoute>
             }
           />

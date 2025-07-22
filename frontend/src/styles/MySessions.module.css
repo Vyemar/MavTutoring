@@ -55,6 +55,12 @@
   margin-bottom: 0.5rem;
 }
 
+.sessionCourse {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0.25rem;
+}
+
 .sessionTime {
   color: #4b5563;
   margin-bottom: 0.25rem;
@@ -80,7 +86,7 @@
 }
 
 .noSessions {
-  color: #6b7280;
+  color: #f3f3f3;
   text-align: center;
   padding: 1rem;
 }

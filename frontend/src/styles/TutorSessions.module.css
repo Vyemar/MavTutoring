@@ -52,7 +52,8 @@
 }
 
 .upcomingSessions,
-.completedSessions {
+.completedSessions,
+.cancelledSessions {
   background-color: white;
   padding: 1.5rem;
   border-radius: 8px;

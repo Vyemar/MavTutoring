@@ -5,6 +5,7 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #007bff, #6f42c1);
   margin-left :80px;/*accounts for sidebar when its minimized*/
+  overflow-x: hidden;
 }
 
 .content {

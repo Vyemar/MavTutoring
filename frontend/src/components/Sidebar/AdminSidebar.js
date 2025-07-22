@@ -11,7 +11,9 @@ import {
 } from "react-icons/md";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaUsers } from "react-icons/fa6";
+import { FaBookOpen } from "react-icons/fa";
 import { FaInbox } from 'react-icons/fa';
+
 
 const AdminSidebar = ({ selected }) => {
   const location = useLocation();
@@ -52,6 +54,15 @@ const AdminSidebar = ({ selected }) => {
                 <FaUsers className={styles.sidebarIcon} />
               </div>
               <span className={styles.aItem}>Manage Users</span>
+            </li>
+            <li 
+              className={`${styles.liStudent} ${selected === "manage-courses" ? styles.active : ""}`} 
+              onClick={() => goTo("/manage-courses")}
+            >
+              <div className={styles.iconContainer}>
+                <FaBookOpen className={styles.sidebarIcon} />
+              </div>
+              <span className={styles.aItem}>Manage Courses</span>
             </li>
             <li 
               className={`${styles.liStudent} ${selected === "analytics" ? styles.active : ""}`} 
