@@ -183,6 +183,9 @@ function TutorSessions() {
                     <div key={session._id} className={styles.sessionCard}>
                       <div className={styles.sessionInfo}>
                         <p><strong>Student:</strong> {session.studentID ? `${session.studentID.firstName} ${session.studentID.lastName}` : 'Unknown Student'}</p>
+                        {session.courseID &&(
+                          <p><strong>Course:</strong> {session.courseID.code} - {session.courseID.title}</p>
+                        )}
                         <p><strong>Date & Time:</strong> {formatDateTime(session.sessionTime)}</p>
                         <p><strong>Duration:</strong> {session.duration} minutes</p>
                         <p><strong>Status:</strong> {session.status}</p>
@@ -230,6 +233,9 @@ function TutorSessions() {
               <div key={session._id} className={styles.sessionCard}>
                 <div className={styles.sessionInfo}>
                   <p><strong>Student:</strong> {session.studentID ? `${session.studentID.firstName} ${session.studentID.lastName}` : 'Unknown Student'}</p>
+                  {session.courseID &&(
+                    <p><strong>Course:</strong> {session.courseID.code} - {session.courseID.title}</p>
+                  )}
                   <p><strong>Date & Time:</strong> {formatDateTime(session.sessionTime)}</p>
                   <p><strong>Duration:</strong> {session.duration} minutes</p>
                   <p><strong>Status:</strong> {session.status}</p>
@@ -263,6 +269,9 @@ function TutorSessions() {
                     <div key={session._id} className={`${styles.sessionCard}`}>
                       <div className={styles.sessionInfo}>
                         <p><strong>Student:</strong> {session.studentID ? `${session.studentID.firstName} ${session.studentID.lastName}` : 'Unknown Student'}</p> {/*Checks if student is null first*/}
+                        {session.courseID &&(
+                          <p><strong>Course:</strong> {session.courseID.code} - {session.courseID.title}</p>
+                        )}
                         <p><strong>Date & Time:</strong> {formatDateTime(session.sessionTime)}</p>
                         <p><strong>Duration:</strong> {session.duration} minutes</p>
                         <p><strong>Status:</strong> {session.status}</p>

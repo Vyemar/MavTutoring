@@ -265,6 +265,7 @@ router.put('/:sessionId/status', async (req, res) => {
       const attendance = new Attendance({
         sessionID: session._id,
         studentID,
+        courseID,
         checkInTime,
         checkOutTime,
         duration: session.duration,

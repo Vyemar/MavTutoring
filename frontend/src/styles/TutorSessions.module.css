@@ -32,11 +32,6 @@
   animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 .error {
   color: #dc3545;
   padding: 1rem;
@@ -126,4 +121,9 @@ h2 {
   color: #444;
   margin-bottom: 1rem;
   font-size: 1.5rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

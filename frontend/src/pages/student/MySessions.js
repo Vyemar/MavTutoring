@@ -112,29 +112,6 @@ function MySessions() {
           <p className={styles.noSessions}>You have no sessions booked.</p>
         ) : (
           <div className={styles.sessionsGrid}>
-
-            {sessions.map((session) => (
-              <div key={session._id} className={styles.sessionCard}>
-                <p className={styles.tutorName}>
-                  {session.tutorID?.firstName} {session.tutorID?.lastName}
-                </p>
-                {session.courseID && (
-                  <p className={styles.sessionCourse}>
-                    Course: {session.courseID.code} - {session.courseID.title}
-                  </p>
-                )}
-                <p className={styles.sessionTime}>
-                  {formatDateTime(session.sessionTime)}
-                </p>
-                <p className={styles.sessionDuration}>
-                  Duration: {session.duration} minutes
-                </p>
-                <p className={styles.sessionStatus}>
-                  Status: {session.status}
-                </p>
-              </div>
-            ))}
-
             {sessions.map((session) => {
               const attendanceForSession = attendance.find(
                 (record) => record.sessionID?._id === session._id
@@ -155,9 +132,25 @@ function MySessions() {
                   <p className={styles.tutorName}>
                     {session.tutorID?.firstName} {session.tutorID?.lastName}
                   </p>
-                    <p className={styles.sessionStatus}>
+
+                  {session.courseID && (
+                    <p className={styles.sessionCourse}>
+                      Course: {session.courseID.code} - {session.courseID.title}
+                    </p>
+                  )}
+
+                  <p className={styles.sessionTime}>
+                    {formatDateTime(session.sessionTime)}
+                  </p>
+
+                  <p className={styles.sessionDuration}>
+                    Duration: {session.duration} minutes
+                  </p>
+
+                  <p className={styles.sessionStatus}>
                     Status: {displayStatus}
                   </p>
+
                 {attendanceForSession?.checkInTime && (
                   <p className={styles.checkInTime}>
                     Checked in: {formatDateTime(attendanceForSession.checkInTime)}
