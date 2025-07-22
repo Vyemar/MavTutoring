@@ -110,17 +110,22 @@ router.post('/tutor', upload.single('profilePicture'), async (req, res) => {
         }
 
         // Parse courses if it's a JSON string
-        try {
-            if (typeof courses === 'string') {
+        
+        if (typeof courses === 'string') {
+            try {
                 courses = JSON.parse(courses);
+            } catch (e) {
+                return res.status(400).json({ message: 'Invalid JSON in courses field' });
             }
-        } catch (e) {
-            return res.status(400).json({ message: 'Invalid JSON in courses field' });
         }
         
         // this convert each course ID to MongoDB objectID which we expected by our Course Model
         if (Array.isArray(courses)) {
-            courses = courses.map(id => new mongoose.Types.ObjectId(id));
+            courses = courses.map(c => 
+                new mongoose.Types.ObjectId(
+                    typeof c === 'string' ? c : c._id
+                )
+            );
         }
 
 

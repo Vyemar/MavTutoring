@@ -123,6 +123,7 @@ function StudentProfile() {
                 setProfile((prevProfile) => ({
                     ...prevProfile,
                     profilePicture: reader.result,
+                    hasNewImage: true
                 }));
             };
             reader.readAsDataURL(file);
@@ -237,12 +238,13 @@ function StudentProfile() {
     
                         {isEditing && (
                             <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleImageUpload}
-                                className={styles.inputField}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className={styles.inputField}
                             />
                         )}
+
     
                         <div className={styles.profileInfo}>
                             <p><strong>Name:</strong> {isEditing ? (

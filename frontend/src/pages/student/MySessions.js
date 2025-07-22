@@ -97,6 +97,11 @@ function MySessions() {
                 <p className={styles.tutorName}>
                   {session.tutorID?.firstName} {session.tutorID?.lastName}
                 </p>
+                {session.courseID && (
+                  <p className={styles.sessionCourse}>
+                    Course: {session.courseID.code} - {session.courseID.title}
+                  </p>
+                )}
                 <p className={styles.sessionTime}>
                   {formatDateTime(session.sessionTime)}
                 </p>

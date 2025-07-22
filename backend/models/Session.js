@@ -12,6 +12,10 @@ const SessionSchema = new mongoose.Schema({
         ref: 'User', // Refers to the User model
         required: true,
     },
+    courseID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course'
+    },
     sessionTime: {
         type: Date,
         required: true, // The time of the session

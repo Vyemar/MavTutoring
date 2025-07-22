@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
+const TutorProfile = require('../models/TutorProfile');
+const Course = require('../models/Course');
 const User = require('../models/User'); // Import User model
+const { MdEmail } = require('react-icons/md');
 
 // Fetch all users (for reference)
 router.get('/', async (req, res) => {
@@ -46,14 +50,7 @@ router.get('/tutors/:search', async (req, res) => {
           fullName:{
             $concat:['$firstName', '$lastName'],
           },
-          /*
-          courseNS:{ //Will store the courses with no spaces
-            $replaceAll: {
-              input: "$profile.courses",
-              find: " ",
-              replacement: ""
-            }
-          }*/
+          
           courseStr: {
             $reduce: {
               input: {
@@ -90,12 +87,6 @@ router.get('/tutors/:search', async (req, res) => {
                   {
                     $or: [
                       { fullName: { $regex: searchValue, $options: 'ix' } },
-                      /*{
-                        courseNS: {
-                          $regex: searchValue,
-                          $options: 'ix',
-                        },
-                      },*/
                       { courseStr: { $regex: searchValue, $options: 'ix' } },
                     ],
                   },
@@ -110,12 +101,108 @@ router.get('/tutors/:search', async (req, res) => {
   }
 });
 
+// Search tutors by course code or course name
+router.get('/tutors/by-course/:search', async (req, res) => {
+  try{
+    const searchValue = req.params.search;
 
+    const tutors = await User.aggregate([
+      {
+        $match: { role: 'Tutor'}
+      },
+      {
+        $lookup: {
+          from: 'tutorprofiles',
+          localField: '_id',
+          foreignField: 'userId',
+          as: 'profile',
+        },
+      },
+      { $unwind : "$profile" },
+      {
+        $lookup: {
+          from: 'courses',
+          localField: 'profile.courses',
+          foreignField: '_id',
+          as: 'courseDetails',
+        },
+      },
+      {
+        $match: {
+          courseDetails: {
+            $elemMatch: {
+              $or: [
+                { code: { $regex: searchValue, $options: 'i'} },
+                { title: { $regex: searchValue, $options: 'i'} },
+              ]
+            }
+          }
+        }
+      },
+      {
+        $addFields: {
+          courseNames: {
+            $map: {
+              input: '$courseDetails',
+              as: 'course',
+              in: {
+                $concat: ['$$course.code', '-', '$$course.title']
+              },
+            },
+          }
+        }
+      }
+    ]);
+    res.status(200).json(tutors);
+  } catch (err) {
+    console.error('Error searching tutors by course:', err);
+    res.status(500).json({ message: 'Failed to search tutors by course'});
+  }
+});
 
-// Fetch only tutors
+// GET /api/users/tutors
 router.get('/tutors', async (req, res) => {
   try {
-    const tutors = await User.find({ role: 'Tutor' }); // Fetch users with role "Tutor"
+    const tutors = await User.aggregate([
+      { $match: { role: 'Tutor' } },
+      {
+        $lookup: {
+          from: 'tutorprofiles',
+          localField: '_id',
+          foreignField: 'userId',
+          as: 'profile',
+        },
+      },
+      { $unwind: { path: '$profile', preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: 'courses',
+          localField: 'profile.courses',
+          foreignField: '_id',
+          as: 'courseDetails',
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          firstName: 1,
+          lastName: 1,
+          profilePicture: '$profile.profilePicture',
+          courses: {
+            $map: {
+              input: '$courseDetails',
+              as: 'course',
+              in: {
+                _id: '$$course._id',
+                code: '$$course.code',
+                name: '$$course.title',
+              },
+            },
+          },
+        },
+      },
+    ]);
+
     res.status(200).json(tutors);
   } catch (err) {
     console.error('Error fetching tutors:', err);

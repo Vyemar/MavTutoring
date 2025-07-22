@@ -222,8 +222,14 @@ function TutorProfile() {
                         )}
 
                         {isEditing && (
-                            <input type="file" accept="image/*" onChange={handleImageUpload} className={styles.inputField} />
+                            <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className={styles.inputField}
+                            />
                         )}
+
 
                         <div className={styles.profileInfo}>
                             <p><strong>Name:</strong> {isEditing ? (
