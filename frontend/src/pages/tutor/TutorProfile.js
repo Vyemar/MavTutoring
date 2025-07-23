@@ -3,6 +3,7 @@ import axios from "axios";
 import styles from "../../styles/TutorProfile.module.css";
 import TutorSidebar from "../../components/Sidebar/TutorSidebar";
 import Select from 'react-select';
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
 const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
@@ -29,6 +30,8 @@ function TutorProfile() {
     const [userData, setUserData] = useState(null);
     const [courseList, setCourseList] = useState([]); //these state for course list and map
     const [courseMap, setCourseMap] = useState({});
+    const { isCollapsed } = useSidebar();
+    const sidebarWidth = isCollapsed ? "80px" : "270px";
 
     useEffect(() => {
         const fetchUserSession = async () => {
@@ -200,7 +203,7 @@ function TutorProfile() {
     return (
         <div className={styles.container}>
             <TutorSidebar selected="tutor-profile" />
-            <div className={styles.mainContent}>
+            <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "260px", transition: "margin-left 0.5s ease", "--sidebar-width": sidebarWidth}}>
                 <div className={styles.profileContainer}>
                     <h1 className={styles.heading}>Profile</h1>
                     <hr className={styles.profileDivider} />
