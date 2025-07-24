@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import AdminSidebar from "../../components/Sidebar/AdminSidebar";
 import styles from "../../styles/AdvancedReports.module.css";
@@ -58,7 +59,10 @@ function AdvancedReports() {
             <ul className={styles.reportList}>
               {tutors.map(tutor => (
                 <li key={tutor.id} className={styles.reportCard}>
-                  {tutor.name}: Total sessions {tutor.totalSessions}
+                  <Link to={`/admin/report/${tutor.id}`} className={styles.nameLink}>
+                    {tutor.name}
+                  </Link>
+                  : Total sessions {tutor.totalSessions}
                 </li>
               ))}
             </ul>
@@ -66,7 +70,10 @@ function AdvancedReports() {
             <ul className={styles.reportList}>
               {students.map(student => (
                 <li key={student.id} className={styles.reportCard}>
-                  {student.name}: Total sessions {student.totalSessions}
+                  <Link to={`/admin/report/${student.id}`} className={styles.nameLink}>
+                    {student.name}
+                  </Link>
+                  : Total sessions {student.totalSessions}
                 </li>
               ))}
             </ul>

@@ -1,0 +1,81 @@
+.mainContent {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.heading {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: #191818;
+}
+
+.reportSection {
+  width: 80%;
+  max-width: 900px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.reportSection h2 {
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+  color: #191818;
+}
+
+.sessionList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sessionItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #fefefe;
+  border-radius: 4px;
+  border: 1px solid #eee;
+  margin-bottom: 8px;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+
+.sessionItem:hover {
+  background-color: #f8f9fa;
+}
+
+.backContainer {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+}
+
+.topBar {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+}
+
+.backButton {
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.backButton:hover {
+  background-color: #f5f5f5;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}

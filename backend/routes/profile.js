@@ -360,7 +360,41 @@ router.put('/update-role/:userId', async (req, res) => {
                 console.log(`Default tutor profile created for former Admin: ${userId}`);
             }
         }
-        
+
+        router.get('/report/:userId', async (req, res) => {
+            try {
+                const { userId } = req.params;
+
+                const user = await User.findById(userId);
+                if (!user) return res.status(404).json({ message: 'User not found' });
+
+                const isTutor = user.role === 'Tutor';
+                const profile = isTutor
+                    ? await TutorProfile.findOne({ userId })
+                    : await StudentProfile.findOne({ userId });
+
+                if (!profile) return res.status(404).json({ message: 'Profile not found' });
+
+                const Session = require('../models/Session');
+                const sessions = await Session.find({
+                    $or: [{ tutorID: userId }, { studentID: userId }]
+                })
+                    .sort({ sessionTime: -1 })
+                    .populate('courseID');  
+
+                res.json({
+                    user,
+                    profile,
+                    totalSessions: sessions.length,
+                    recentSessions: sessions.slice(0, 5)
+                });
+
+            } catch (err) {
+                console.error('Error generating report:', err);
+                res.status(500).json({ message: 'Error generating report', error: err.message });
+            }
+        });
+
         // Update the user's role
         user.role = newRole;
         await user.save();
