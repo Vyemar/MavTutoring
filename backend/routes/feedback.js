@@ -74,4 +74,20 @@ router.post('/', async (req, res) => {
     }
 });
 
+// GET /feedback - Get all feedbacks with student and tutor info
+router.get('/', async (req, res) => {
+    try {
+      const feedbacks = await Feedback.find()
+        .populate('studentUniqueId', 'name email')  
+        .populate('tutorUniqueId', 'name email')
+        .sort({ createdAt: -1 }); // newest first
+  
+      res.json(feedbacks);
+    } catch (error) {
+      console.error('Error fetching feedback:', error);
+      res.status(500).json({ message: 'Error fetching feedback' });
+    }
+  });
+  
+
 module.exports = router;

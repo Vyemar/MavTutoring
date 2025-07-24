@@ -23,6 +23,7 @@ import TutorDetails from "./pages/admin/TutorDetails";
 import AnalyticsOptions from "./pages/admin/AnalyticsOptions";
 import Attendance from "./pages/admin/AttendanceReport";
 import SessionCardSwipe from "./pages/admin/SessionCardSwipe";
+import AdminReviews from "./pages/admin/AdminReviews";
 import { SidebarProvider } from "./components/Sidebar/SidebarContext";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
@@ -123,6 +124,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Feedback />
+              </ProtectedRoute>
+            }
+          />
+           <Route
+            path="/admin-reviews"
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminReviews /> 
               </ProtectedRoute>
             }
           />
