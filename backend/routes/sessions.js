@@ -5,6 +5,8 @@ const mongoose = require('mongoose'); // Add this importS
 const Session = require('../models/Session');
 const Attendance = require('../models/Attendance');
 
+const {sendNotification} = require('../routes/notifications/confirmation');
+
 // Get available time slots for a tutor on a specific date
 router.get('/availability/:tutorId/:date', async (req, res) => {
   try {
@@ -227,6 +229,25 @@ router.get('/all', async (req, res) => {
   }
 });
 
+// Get upcoming sessions for a student
+router.get('/student/upcoming/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const now = new Date();
+    const sessions = await Session.find({
+      studentID: userId,
+      sessionTime: { $gte: now },
+      status: 'Scheduled',
+    })
+    .populate('tutorID', 'firstName lastName')
+    .sort({ sessionTime: 1 });    
+    res.status(200).json(sessions);
+  } catch (error) { 
+    console.error('Error fetching upcoming sessions:', error);
+    res.status(500).json({ message: 'Error fetching upcoming sessions' });
+  }
+});
+
 
 // Update session status
 router.put('/:sessionId/status', async (req, res) => {
@@ -296,6 +317,9 @@ router.put('/:sessionId/status', async (req, res) => {
 
     session.status = status;
     await session.save();
+
+    //send notification
+    await sendNotification(session._id);
 
     res.json(session);
   } catch (error) {
