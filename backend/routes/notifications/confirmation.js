@@ -31,7 +31,7 @@ async function sendNotification(sessionId) {
         message = `Your session has been scheduled on ${(new Date(session.sessionTime)).toLocaleString()}.`;
         break;
       case "Completed":
-        message = `Your session completed. Notes: ${session.notes || "N/A"}`;
+        message = `Your session on ${(new Date(session.sessionTime)).toLocaleString()} is completed. Notes: ${session.notes || "N/A"}`;
         break;
       case "Cancelled":
         message = `Your session for ${(new Date(session.sessionTime)).toLocaleString()} was cancelled.`;
