@@ -243,7 +243,9 @@ router.get('/student/upcoming/:userId', async (req, res) => {
       sessionTime: { $gte: now },
       status: 'Scheduled',
     })
+    .populate('studentID', 'firstName lastName')
     .populate('tutorID', 'firstName lastName')
+    .populate('courseID', 'code title')
     .sort({ sessionTime: 1 });
     
     // Ensure consistent time format in response
@@ -278,6 +280,9 @@ router.put('/:sessionId/status', async (req, res) => {
       console.error('Session missing studentID. Session ID:', session._id);
       return res.status(400).json({ message: 'Session has no associated student.' });
     }
+
+    // Ensured courseID is declared
+    const courseID = session.courseID ? session.courseID._id : undefined;
     
     const studentID = session.studentID._id; 
     const existingAttendance = await Attendance.findOne({
