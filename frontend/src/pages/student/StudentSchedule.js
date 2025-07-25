@@ -190,28 +190,34 @@ function StudentSchedule() {
     }
   };
 
-  // const handleCancelSession = async (sessionId) => {
-  //   if (!window.confirm('Are you sure you want to cancel this session?')) return;
-  //   try {
-  //     const response = await axios.put(`${BACKEND_URL}/api/sessions/${sessionId}/status`, {
-  //       status: 'Cancelled'
-  //     }, {withCredentials: true});
+  // Function to handle session cancellation
+  const handleCancelSession = async (sessionId, newstatus) => {
+    if (!window.confirm('Are you sure you want to cancel this session?')) return;
+    setError('');
 
-  //     if (response.data.success) {
-  //       setSuccessMessage('Session deleted successfully!');
-  //       fetchUpcomingSessions();
-  //       fetchAvailableTimeSlots();
-  //       setTimeout(() => {
-  //         setSuccessMessage('');
-  //       }, 3000);
-  //     } else {
-  //       setError('Failed to cancel session');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error cancelling session:', error);
-  //     setError(error.response?.data?.message || 'Error cancelling session');
-  //   }
-  // };
+    try {
+      const response = await axios.put(
+        `${BACKEND_URL}/api/sessions/${sessionId}/status`, 
+        { status: newstatus },
+        { withCredentials: true }
+      );
+
+      // Check for success
+      if (response.data.success) {
+        // Update the upcoming sessions list
+        fetchUpcomingSessions();
+        setSuccessMessage('Session cancelled successfully!');
+        setTimeout(() => {
+          setSuccessMessage('');
+        }, 3000);
+      } else {
+        setError('Failed to cancel session');
+      }
+    } catch (error) {
+      console.error('Error cancelling session:', error);
+      setError(error.response?.data?.message || 'Error cancelling session');
+    }
+  };
 
   const formatDateTime = (dateTime) => {
     const date = new Date(dateTime);
@@ -400,10 +406,10 @@ function StudentSchedule() {
                         <button
                           className={styles.cancelButton}
                           onClick={() => {
-                            handleCancelSession(session._id);
+                            handleCancelSession(session._id, 'Cancelled');
                           }}
                         >
-                          Cancel
+                          x
                         </button>
                       </div>
                     ))
