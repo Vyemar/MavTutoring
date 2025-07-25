@@ -136,3 +136,4 @@ router.patch("/mark-as-read/:id", async (req, res) => {
 });
 
 module.exports = router;
+module.exports.sendNotification = sendNotification; // Export the sendNotification function
