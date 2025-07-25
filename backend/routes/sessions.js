@@ -329,7 +329,11 @@ router.put('/:sessionId/status', async (req, res) => {
     //send notification
     await sendNotification(session._id);
 
-    res.json(session);
+    res.json({ 
+      success: true, 
+      session,
+      message: 'Session status updated successfully'
+    });
   } catch (error) {
     console.error('Error updating session status:', error);
     res.status(500).json({ message: 'Error updating session status', error: error.message });

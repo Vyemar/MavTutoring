@@ -190,6 +190,29 @@ function StudentSchedule() {
     }
   };
 
+  // const handleCancelSession = async (sessionId) => {
+  //   if (!window.confirm('Are you sure you want to cancel this session?')) return;
+  //   try {
+  //     const response = await axios.put(`${BACKEND_URL}/api/sessions/${sessionId}/status`, {
+  //       status: 'Cancelled'
+  //     }, {withCredentials: true});
+
+  //     if (response.data.success) {
+  //       setSuccessMessage('Session deleted successfully!');
+  //       fetchUpcomingSessions();
+  //       fetchAvailableTimeSlots();
+  //       setTimeout(() => {
+  //         setSuccessMessage('');
+  //       }, 3000);
+  //     } else {
+  //       setError('Failed to cancel session');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error cancelling session:', error);
+  //     setError(error.response?.data?.message || 'Error cancelling session');
+  //   }
+  // };
+
   const formatDateTime = (dateTime) => {
     const date = new Date(dateTime);
     return date.toLocaleString('en-US', {
@@ -374,6 +397,14 @@ function StudentSchedule() {
                         <p className={styles.sessionStatus}>
                           Status: {session.status}
                         </p>
+                        <button
+                          className={styles.cancelButton}
+                          onClick={() => {
+                            handleCancelSession(session._id);
+                          }}
+                        >
+                          Cancel
+                        </button>
                       </div>
                     ))
                   ) : (
