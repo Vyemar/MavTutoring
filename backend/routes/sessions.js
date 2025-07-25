@@ -240,15 +240,8 @@ router.get('/student/upcoming/:userId', async (req, res) => {
       status: 'Scheduled',
     })
     .populate('tutorID', 'firstName lastName')
-    .sort({ sessionTime: 1 });
-    
-    // Ensure consistent time format in response
-    const formattedSessions = sessions.map(session => ({
-      ...session.toObject(),
-      sessionTime: new Date(session.sessionTime).toISOString()
-    }));
-    
-    res.json(formattedSessions);
+    .sort({ sessionTime: 1 });    
+    res.status(200).json(sessions);
   } catch (error) { 
     console.error('Error fetching upcoming sessions:', error);
     res.status(500).json({ message: 'Error fetching upcoming sessions' });
