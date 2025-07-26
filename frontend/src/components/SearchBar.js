@@ -21,12 +21,23 @@ export const SearchBar = ({ allTutors, setResults, /*setResultsList,*/ setSearch
   //Fetch relevant tutors from database
   const fetchFilteredTutors = async (value) => {
     if (value) {
-      //console.log(`${BACKEND_URL}/api/users/tutors/${value}`);
-      const response = await axios.get(
-        `${BACKEND_URL}/api/users/tutors/${value}`
-      );
-      console.log(response.data);
+      try {
+      let response;
+
+      // Use a simple heuristic: if value contains a digit or space, treat as course
+      const isCourseQuery = /\d/.test(value) || value.trim().includes(" ");
+
+      if (isCourseQuery) {
+        response = await axios.get(`${BACKEND_URL}/api/users/tutors/by-course/${value}`);
+      } else {
+        response = await axios.get(`${BACKEND_URL}/api/users/tutors/${value}`);
+      }
+
       setResults(response.data);
+    } catch (error) {
+      console.error("Error fetching tutors:", error);
+      setResults([]); // fallback to empty
+    }
     } else {
       //console.log("All Tutors");
       setResults(allTutors);

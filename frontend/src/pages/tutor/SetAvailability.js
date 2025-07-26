@@ -5,6 +5,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import styles from "../../styles/SetAvailability.module.css";
 import TutorSidebar from '../../components/Sidebar/TutorSidebar';
 import { axiosGetData } from '../../utils/api'; // Import the API utility
+import { useSidebar } from "../../components/Sidebar/SidebarContext"; //this is for responsive sidebar which was not in Tutor and Student
 
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
@@ -47,6 +48,8 @@ const SetAvailability = () => {
     const [events, setEvents] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [userData, setUserData] = useState(null);
+    const { isCollapsed } = useSidebar();
+    const sidebarWidth = isCollapsed ? "80px" : "270px";
     
     // Fetch the user session data
     useEffect(() => {
@@ -230,7 +233,7 @@ const SetAvailability = () => {
     return (
         <div className={styles.container}>
             <TutorSidebar selected="availability" />
-            <div className={styles.mainContent}>
+            <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "260px", transition: "margin-left 0.5s ease", "--sidebar-width": sidebarWidth}}>
                 <h1 className={styles.heading}>Set Availability</h1>
                 {isLoading ? (
                     <div className={styles.spinnerContainer}>

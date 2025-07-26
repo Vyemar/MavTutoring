@@ -66,4 +66,9 @@ router.post("/:id/submit", async (req, res) => {
     }
 });
 
+// For weekly availability for all tutors
+router.get("/week/:startDate", async (req, res) => {
+
+
+});
 module.exports = router;

@@ -30,9 +30,12 @@ html, body {
 }
 
 .heading {
-  font-size: 2.5rem;
+  font-size: 2.4rem;
   margin-bottom: 20px;
   color:white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .schedule {

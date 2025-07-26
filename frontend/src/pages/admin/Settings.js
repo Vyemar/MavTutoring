@@ -32,7 +32,21 @@ function Settings() {
   const fetchSettings = async () => {
     try {
       const response = await axios.get(`${BACKEND_URL}/api/bughouse`);
-      setSettings(response.data);
+
+      // Fixes the logo error
+      if (!response.data || !response.data.contactInfo) {
+        setSettings({
+          logo: "",
+          contactInfo: {
+            email: "",
+            phone: "",
+            address: "",
+          },
+          tutorRequestsEnabled: true
+        });
+      } else {
+        setSettings(response.data);
+    }
     } catch (error) {
       console.error("Error fetching settings:", error);
     }
@@ -68,6 +82,7 @@ function Settings() {
       }
       // Add contact info as JSON string
       formData.append("contactInfo", JSON.stringify(settings.contactInfo));
+      formData.append("tutorRequestsEnabled", JSON.stringify(settings.tutorRequestsEnabled));
 
       await axios.put(`${BACKEND_URL}/api/bughouse`, formData, {
         headers: {
@@ -85,6 +100,10 @@ function Settings() {
       setLoading(false);
     }
   };
+
+
+
+  // if (!settings || !settings.contactInfo) return <div>Loading settings...</div>;
   return (
     <div className={styles.container}>
       <AdminSideBar selected="admin-settings"></AdminSideBar>
@@ -94,7 +113,7 @@ function Settings() {
           <form onSubmit={handleSubmit}>
             <div className={styles.settingsSection}>
               <h3>Current Logo</h3>
-              {settings.logo && (
+              {settings?.logo && (
                 <div className={styles.currentLogo}>
                   <img
                     src={settings.logo}
@@ -143,7 +162,22 @@ function Settings() {
                 />
               </div>
             </div>
-
+            <div className={styles.settingsSection}>
+            <h3>Allow Tutor Requests</h3>
+            <label className={styles.switchLabel}>
+              <input
+                type="checkbox"
+                checked={settings.tutorRequestsEnabled}
+                onChange={(e) =>
+                  setSettings((prev) => ({
+                    ...prev,
+                    tutorRequestsEnabled: e.target.checked,
+                  }))
+                }
+              />
+              {settings.tutorRequestsEnabled ? "Enabled" : "Disabled"}
+            </label>
+          </div>
             <button type="submit" disabled={loading} className={styles.submitButton}>
               {loading ? "Submitting..." : "Submit"}
             </button>

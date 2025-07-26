@@ -22,9 +22,12 @@ import ViewProfile from "./pages/admin/ViewProfile";
 import TutorDetails from "./pages/admin/TutorDetails";
 import AnalyticsOptions from "./pages/admin/AnalyticsOptions";
 import Attendance from "./pages/admin/AttendanceReport";
-import SessionCardSwipe from "./pages/admin/SessionCardSwipe";
+import StudentSessionCardSwipe from "./pages/student/SessionCardSwipe";
+import TutorSessionCardSwipe from "./pages/tutor/SessionCardSwipe";
 import { SidebarProvider } from "./components/Sidebar/SidebarContext";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import CourseManager from "./pages/admin/CourseManager";
+import TutorRequests from "./pages/admin/TutorRequests"; 
 
 import { useEffect, useState } from "react";
 import { axiosGetData } from "./utils/api";
@@ -126,6 +129,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route //i added this
+            path="/manage-courses"
+            element={
+              <ProtectedRoute>
+                <CourseManager />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/Notifications" element={<Notifications />} />
           <Route path="/StudentSchedule" element={<StudentSchedule />} />
           <Route path="/FindMyTutorProfile/:tutorId" element={<FindMyTutorProfile />} />
@@ -150,10 +161,18 @@ function App() {
             } 
           />
           <Route
-            path="/card-swipe"
+            path="/student/card-swipe"
             element={
               <ProtectedRoute>
-                <SessionCardSwipe />
+                <StudentSessionCardSwipe />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tutor/card-swipe"
+            element={
+              <ProtectedRoute>
+                <TutorSessionCardSwipe />
               </ProtectedRoute>
             }
           />
@@ -166,6 +185,9 @@ function App() {
           <Route path="/tutor/:tutorId" element={<TutorDetails />} />
           <Route path="/ViewProfile/:userId" element={<ViewProfile />} />
           <Route path="/admin-settings" element={<Settings />} />
+
+          <Route path="/tutor-requests" element={<TutorRequests />} />
+          
         </Routes>
       </BrowserRouter>`
     </SidebarProvider>

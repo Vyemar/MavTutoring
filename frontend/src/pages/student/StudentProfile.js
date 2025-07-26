@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import styles from "../../styles/StudentProfile.module.css";
 import StudentSidebar from "../../components/Sidebar/StudentSidebar";
+import Select from 'react-select';
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
 const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
@@ -28,6 +30,15 @@ function StudentProfile() {
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     const [userData, setUserData] = useState(null);
+    const [courseList, setCourseList] = useState([]); //these state for course list and map
+    const [courseMap, setCourseMap] = useState({});
+
+    const [tutorRequestStatus, setTutorRequestStatus] = useState(null);
+    const [tutorRequestPending, setTutorRequestPending] = useState(false);
+    const [resumeFile, setResumeFile] = useState(null);
+    const [tutorRequestsEnabled, setTutorRequestsEnabled] = useState(true);
+    const { isCollapsed } = useSidebar();
+    const sidebarWidth = isCollapsed ? "80px" : "270px";
 
     useEffect(() => {
         const fetchUserSession = async () => {
@@ -52,6 +63,41 @@ function StudentProfile() {
         fetchUserSession();
     }, []);
 
+    useEffect(() => {
+    // Fetch all courses from backend
+        const fetchCourses = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/api/courses`, {
+                    withCredentials: true
+                });
+                //console.log("Fetched courses:", response.data);
+                setCourseList(response.data);
+                const map = {};
+                response.data.forEach(course => {
+                    map[course._id] = `${course.title} (${course.code})`;
+                });
+                setCourseMap(map);
+            } catch (err) {
+                console.error("Failed to fetch courses", err);
+            }
+        };
+
+        fetchCourses();
+      
+        const fetchTutorSetting = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/api/bughouse`);
+                setTutorRequestsEnabled(response.data?.tutorRequestsEnabled ?? true);
+
+            } catch (err) {
+                console.error("Failed to fetch tutorRequestsEnabled:", err);
+                setTutorRequestsEnabled(true); // Fail open if error
+            }
+        };
+
+        fetchTutorSetting();
+    }, []);
+
     const fetchProfile = useCallback(async () => {
         if (!userData || !userData.id) return;
 
@@ -60,6 +106,10 @@ function StudentProfile() {
                 withCredentials: true
             });
             setProfile(response.data);
+
+            setTutorRequestStatus(response.data.tutorRequestStatus || null);
+            setTutorRequestPending(response.data.tutorRequestPending || false);
+
         } catch (profileError) {
             if (profileError.response && profileError.response.status === 404) {
                 const defaultProfile = {
@@ -98,6 +148,7 @@ function StudentProfile() {
                 setProfile((prevProfile) => ({
                     ...prevProfile,
                     profilePicture: reader.result,
+                    hasNewImage: true
                 }));
             };
             reader.readAsDataURL(file);
@@ -161,6 +212,50 @@ function StudentProfile() {
         }
     };
 
+    const handleTutorRequest = async () => {
+
+        try {
+            const formData = new FormData();
+            formData.append("userId", userData.id);
+            formData.append("resume", resumeFile);
+            
+            await axios.post(`${BACKEND_URL}/api/tutor-request/request`, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+                withCredentials: true
+            });
+
+            // Changes the status in Database
+            setTutorRequestPending(true);
+            setTutorRequestStatus("pending");
+
+            setError("")
+            setSuccessMessage("Request has been sent!")
+
+        } catch (err) {
+            // Error within the web console
+            console.error("Failed to request tutor role:", err); 
+
+            // Puts the error on the page
+            setError("Error submitting request. Try again later.");
+        }
+    };
+
+    
+    const handleResumeUpload = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            // PDF files only
+            if (file.type !== "application/pdf") {
+                setError("PDF Uploads only!")
+                return;
+            }
+            setResumeFile(file);
+            setSuccessMessage("Resume selected successfully.");
+        } else {
+            setError("Error submitting resume. Try again later.");
+        }
+    };
+
     if (sessionLoading || loading) {
         return (
             <div className={styles.container}>
@@ -193,7 +288,7 @@ function StudentProfile() {
     return (
         <div className={styles.container}>
             <StudentSidebar selected="student-profile"/>
-            <div className={styles.mainContent}>
+            <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "260px", transition: "margin-left 0.5s ease", "--sidebar-width": sidebarWidth}}>
                 <div className={styles.profileContainer}>
                     <h1 className={styles.heading}>Profile</h1>
                     <hr className={styles.profileDivider} />
@@ -212,12 +307,13 @@ function StudentProfile() {
     
                         {isEditing && (
                             <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleImageUpload}
-                                className={styles.inputField}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className={styles.inputField}
                             />
                         )}
+
     
                         <div className={styles.profileInfo}>
                             <p><strong>Name:</strong> {isEditing ? (
@@ -278,15 +374,41 @@ function StudentProfile() {
                                 profile.currentYear || "Not provided"
                             )}</p>
     
-                            <p><strong>Courses Enrolled:</strong> {isEditing ? (
-                                <input
-                                    type="text"
-                                    value={profile.coursesEnrolled.join(', ')}
-                                    onChange={(e) => handleArrayChange(e, 'coursesEnrolled')}
-                                    className={styles.inputField}
-                                />
+                            <p><strong>Courses:</strong> {isEditing ? ( //this is updated for courses updating
+                            <Select
+                                isMulti
+                                name="courses"
+                                value={courseList
+                                    .filter(course => profile.coursesEnrolled.includes(course._id))
+                                    .map(course => ({
+                                    value: course._id,
+                                    label: `${course.title} (${course.code})`
+                                    }))
+                                }
+                                options={courseList.map(course => ({
+                                    value: course._id,
+                                    label: `${course.title} (${course.code})`
+                                }))}
+                                onChange={(selectedOptions) =>
+                                    setProfile(prev => ({
+                                    ...prev,
+                                    coursesEnrolled: selectedOptions.map(opt => opt.value)
+                                    }))
+                                }
+                                className={styles.selectField}
+                                classNamePrefix="react-select"
+                                placeholder="Select courses..."
+                            />
                             ) : (
-                                displayArray(profile.coursesEnrolled)
+                                profile.coursesEnrolled.length > 0 ? (
+                                    <ul className={styles.courseList}>
+                                        {profile.coursesEnrolled.map((id) => (
+                                            <li key={id}>{courseMap[id] || 'Unknown Course'}</li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <span> Not provided</span>
+                                )
                             )}</p>
     
                             <p><strong>Areas of Interest:</strong> {isEditing ? (
@@ -330,7 +452,7 @@ function StudentProfile() {
                             )}</p>
                         </div>
     
-                        <div className={styles.roleButtons}>
+
                             <button
                                 className={styles.saveButton}
                                 onClick={() => {
@@ -355,6 +477,49 @@ function StudentProfile() {
                                     Cancel
                                 </button>
                             )}
+
+                        <div className={styles.roleButtons}>
+                            <div className={styles.tutorRequestSection}>
+                                {!tutorRequestPending && tutorRequestStatus !== "approved" && tutorRequestStatus !== "rejected" && (
+                                    <>
+                                        {tutorRequestsEnabled ? (
+                                            <div className="tutorRequestWrapper">
+                                                <input
+                                                type="file"
+                                                name="resume"
+                                                accept="application/pdf"
+                                                onChange={handleResumeUpload}
+                                                />
+
+                                                {resumeFile ? (
+                                                <button
+                                                    className={styles.saveButton}
+                                                    onClick={handleTutorRequest}
+                                                >
+                                                    Request to Become a Tutor
+                                                </button>
+                                                ) : (
+                                                <button
+                                                    className={styles.disabledButton}
+                                                    disabled
+                                                    title="Please upload a PDF before requesting"
+                                                >
+                                                    Upload PDF to Enable Tutor Request
+                                                </button>
+                                                )}
+                                            </div>
+                                            ) : (
+                                                <p className={styles.disabledMessage}>
+                                                    Tutor requests are currently disabled by the admin.
+                                                </p>
+                                            )}
+                                        </>
+                                    )}
+                                {tutorRequestStatus === "approved" && <p>Your tutor request has been approved.</p>}
+                                {tutorRequestStatus === "rejected" && <p>Your request to become a tutor was rejected. Please contact Admin to retry.</p>}
+                                {tutorRequestStatus === "pending" && <p>Your request is pending review.</p>}
+
+                            </div>
                         </div>
                     </div>
                 </div>

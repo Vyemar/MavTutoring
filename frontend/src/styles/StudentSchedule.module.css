@@ -138,6 +138,12 @@
   font-size: 0.875rem;
 }
 
+.sessionCourse {
+  font-size: 0.95;
+  color: #555;
+  margin-bottom: 0.25rem;
+}
+
 .sessionStatus {
   color: #2563eb;
   font-weight: 500;
@@ -165,6 +171,19 @@
   width: 40px;
   height: 40px;
   animation: spin 1s linear infinite;
+}
+
+.tutorImage {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+}
+
+.tutorCourses {
+  font-size: 0.95rem;
+  line-height: 1.4;
 }
 
 @keyframes spin {

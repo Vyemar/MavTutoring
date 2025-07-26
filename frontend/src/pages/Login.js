@@ -74,6 +74,7 @@ function Login() {
 
         // Set user state and navigate to home
         if (response.data.success) {
+          localStorage.setItem("user", JSON.stringify(response.data.user)); //once user login the user details will be saved in localstorage
           navigate("/home");
         } else {
           console.log("Login failed - response was not successful");
