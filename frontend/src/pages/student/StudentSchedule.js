@@ -17,6 +17,8 @@ function StudentSchedule() {
   const [tutors, setTutors] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTutor, setSelectedTutor] = useState('');
+  const [selectedTutorInfo, setSelectedTutorInfo] = useState(null);
+  const [selectedCourse, setSelectedCourse] = useState('')
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
   const [selectedTime, setSelectedTime] = useState('');
   const [loading, setLoading] = useState(true);
@@ -124,6 +126,10 @@ function StudentSchedule() {
     const newTutor = e.target.value;
     setSelectedTutor(newTutor);
     setSelectedTime('');
+
+    //new code
+    const tutor = tutors.find(t => t._id === newTutor);
+    setSelectedTutorInfo(tutor || null);
   };
 
   const sendNotification = async (id) => {
@@ -152,14 +158,21 @@ function StudentSchedule() {
         studentId: userData.id, 
         sessionTime: localDateTime.toISOString(),
         duration: 60,
-        specialRequest
+        specialRequest,
+        courseId: selectedCourse
       }, {
         withCredentials: true
       });
 
       if (response.data.success) {
         setSuccessMessage('Session booked successfully!');
-        const res = await sendNotification(response.data.session._id);
+
+        try {
+          await sendNotification(response.data.session._id);
+        } catch (notifErr) {
+          console.error('Notification sending failed:', notifErr);
+        }
+
         fetchUpcomingSessions();
         setSelectedDate('');
         setSelectedTutor('');
@@ -249,7 +262,7 @@ function StudentSchedule() {
                       required
                       className={styles.formSelect}
                     >
-                      <option value="">Select a tutor</option>
+                      <option value="">Select A Tutor</option>
                       {tutors.map((tutor) => (
                         <option key={tutor._id} value={tutor._id}>
                           {tutor.firstName} {tutor.lastName}
@@ -257,6 +270,29 @@ function StudentSchedule() {
                       ))}
                     </select>
                   </div>
+                  {selectedTutorInfo && (
+                    <div className={styles.tutorCourses}>
+                      <label htmlFor="courses">Select Course</label>
+                      <select
+                        className={styles.formSelect}
+                        value={selectedCourse}
+                        onChange={(e) => setSelectedCourse(e.target.value)}
+                        disabled={!selectedTutorInfo?.courses?.length}
+                      >
+                        <option value="">Select a course</option>
+                        {selectedTutorInfo.courses.map((course, idx) => (
+                          <option key={idx} value={course._id}>
+                            {course.code} - {course.name}
+                          </option>
+                        ))}
+                      </select>
+                      {!selectedTutorInfo?.courses?.length && (
+                        <p style={{ fontSize: "0.85rem", color: "gray", marginTop: "5px" }}>
+                          Tutor doesn't teach any courses as of now!
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   <div className={styles.formGroup}>
                     <label htmlFor="date">Select Date</label>
@@ -283,8 +319,8 @@ function StudentSchedule() {
                       >
                         <option value="">Select time</option>
                         {availableTimeSlots.map((slot, index) => (
-                          <option key={index} value={slot}>
-                            {formatTo12Hour(slot)}
+                          <option key={index} value={slot.start}>
+                            {formatTo12Hour(slot.start)} - {formatTo12Hour(slot.end)}
                           </option>
                         ))}
                       </select>
@@ -323,6 +359,11 @@ function StudentSchedule() {
                         <p className={styles.tutorName}>
                           {session.tutorID.firstName} {session.tutorID.lastName}
                         </p>
+                        {session.courseID && (
+                          <p className={styles.sessionCourse}>
+                            Course: {session.courseID.code} - {session.courseID.title}
+                          </p>
+                        )}
                         <p className={styles.sessionTime}>
                           {formatDateTime(session.sessionTime)}
                         </p>

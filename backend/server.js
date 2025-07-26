@@ -94,6 +94,7 @@ const notificationRoutes = require("./routes/notifications/confirmation"); // No
 const sessionRoutes = require('./routes/sessions')
 const analyticsRoutes = require('./routes/analytics');
 const bugHouse = require('./routes/bugHouse');
+const courseRoutes = require('./routes/courses'); // for all the course
 const tutorRequestRoutes = require('./routes/tutorRequests'); // Tutor request routes
 
 
@@ -110,8 +111,10 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/sessions', sessionRoutes);
 app.use('/api/analytics', analyticsRoutes); //analytics routes
 app.use('/api/bugHouse', bugHouse); //Bug House settings information
+app.use('/api/courses', courseRoutes)
 app.use('/api/tutor-request', tutorRequestRoutes); // Requesting tutor functionalities
 app.use('/api/analytics', require('./routes/analytics'));
+
 
 
 app.use("/api/notifications", notificationRoutes); // Notification routes

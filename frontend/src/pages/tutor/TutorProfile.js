@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import styles from "../../styles/TutorProfile.module.css";
 import TutorSidebar from "../../components/Sidebar/TutorSidebar";
+import Select from 'react-select';
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
 const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
@@ -14,7 +16,7 @@ function TutorProfile() {
         profilePicture: null,
         name: "",
         bio: "",
-        courses: "",
+        courses: [],  //updated
         skills: "",
         major: "",
         currentYear: ""
@@ -26,6 +28,10 @@ function TutorProfile() {
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     const [userData, setUserData] = useState(null);
+    const [courseList, setCourseList] = useState([]); //these state for course list and map
+    const [courseMap, setCourseMap] = useState({});
+    const { isCollapsed } = useSidebar();
+    const sidebarWidth = isCollapsed ? "80px" : "270px";
 
     useEffect(() => {
         const fetchUserSession = async () => {
@@ -50,6 +56,28 @@ function TutorProfile() {
         fetchUserSession();
     }, []);
 
+    useEffect(() => {
+    // Fetch all courses from backend
+        const fetchCourses = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/api/courses`, {
+                    withCredentials: true
+                });
+                //console.log("Fetched courses:", response.data);
+                setCourseList(response.data);
+                const map = {};
+                response.data.forEach(course => {
+                    map[course._id] = `${course.title} (${course.code})`;
+                });
+                setCourseMap(map);
+            } catch (err) {
+                console.error("Failed to fetch courses", err);
+            }
+        };
+
+        fetchCourses();
+    }, []);
+
     const fetchProfile = useCallback(async () => {
         if (!userData || !userData.id) return;
 
@@ -65,7 +93,7 @@ function TutorProfile() {
                     profilePicture: null,
                     name: `${userData.firstName} ${userData.lastName}`,
                     bio: "",
-                    courses: "",
+                    courses: [],
                     skills: "",
                     major: "",
                     currentYear: ""
@@ -119,7 +147,7 @@ function TutorProfile() {
             formData.append("userId", userData.id);
             formData.append("name", profile.name);
             formData.append("bio", profile.bio);
-            formData.append("courses", profile.courses);
+            formData.append("courses", JSON.stringify(profile.courses));
             formData.append("skills", profile.skills);
             formData.append("major", profile.major);
             formData.append("currentYear", profile.currentYear);
@@ -175,7 +203,7 @@ function TutorProfile() {
     return (
         <div className={styles.container}>
             <TutorSidebar selected="tutor-profile" />
-            <div className={styles.mainContent}>
+            <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "260px", transition: "margin-left 0.5s ease", "--sidebar-width": sidebarWidth}}>
                 <div className={styles.profileContainer}>
                     <h1 className={styles.heading}>Profile</h1>
                     <hr className={styles.profileDivider} />
@@ -197,8 +225,14 @@ function TutorProfile() {
                         )}
 
                         {isEditing && (
-                            <input type="file" accept="image/*" onChange={handleImageUpload} className={styles.inputField} />
+                            <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className={styles.inputField}
+                            />
                         )}
+
 
                         <div className={styles.profileInfo}>
                             <p><strong>Name:</strong> {isEditing ? (
@@ -215,10 +249,46 @@ function TutorProfile() {
                                 profile.bio || "Not provided"
                             )}</p>
 
-                            <p><strong>Courses:</strong> {isEditing ? (
-                                <input type="text" name="courses" value={profile.courses} onChange={handleChange} className={styles.inputField}/>
+                            
+                            <p><strong>Courses:</strong> {isEditing ? ( // this is updated for courses updating
+                            <Select
+                                isMulti
+                                name="courses"
+                                value={courseList    // this will work if course are array of objectID string or an array of popluated objects
+                                    .filter(course => profile.courses.some(c => 
+                                        typeof c === "string" ? c === course._id : c._id === course._id))
+                                    .map(course => ({
+                                    value: course._id,
+                                    label: `${course.title} (${course.code})`
+                                    }))
+                                }
+                                options={courseList.map(course => ({
+                                    value: course._id,
+                                    label: `${course.title} (${course.code})`
+                                }))}
+                                onChange={(selectedOptions) =>
+                                    setProfile(prev => ({
+                                    ...prev,
+                                    courses: selectedOptions.map(opt => opt.value)
+                                    }))
+                                }
+                                className={styles.selectField}
+                                classNamePrefix="react-select"
+                                placeholder="Select courses..."
+                            />
                             ) : (
-                                profile.courses || "Not provided"
+                                profile.courses.length > 0 ? (
+                                    <ul className={styles.courseList}>
+                                        {profile.courses.map((course) => (
+                                            <li key={course.id}>
+                                                {course.title && course.code
+                                                   ? `${course.title} (${course.code})`
+                                                   : courseMap[course._id] || 'Unknown Course'}</li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <span> Not provided</span>
+                                )
                             )}</p>
 
                             <p><strong>Skills:</strong> {isEditing ? (

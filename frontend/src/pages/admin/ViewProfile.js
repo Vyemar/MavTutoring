@@ -38,6 +38,7 @@ const customComponents = {
 function ViewProfile() {
   const { userId } = useParams();
   const [profile, setProfile] = useState(null);
+  const [courseList, setCourseList] = useState([]);  //added
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
@@ -48,6 +49,11 @@ function ViewProfile() {
   const [adminSession, setAdminSession] = useState(null);
   const [isEditingSchedule, setIsEditingSchedule] = useState(false);
   const [isCalendarFullscreen, setIsCalendarFullscreen] = useState(false);
+
+  const courseMap = courseList.reduce((map, course) => {
+    map[course._id] = `${course.title} (${course.code})`;
+    return map;
+  }, {});
 
   // Get admin session info
   useEffect(() => {
@@ -63,7 +69,6 @@ function ViewProfile() {
         console.error("Error fetching admin session:", error);
       }
     };
-
     fetchAdminSession();
   }, []);
 
@@ -168,6 +173,17 @@ function ViewProfile() {
           return `${BACKEND_URL}/api/profile/${id}`; // Fallback to general endpoint
       }
     };
+
+    // Fetch course List
+    const fetchCourses = async () => {
+      try {
+        const res = await axios.get(`${BACKEND_URL}/api/courses`);
+        setCourseList(res.data);
+      } catch (err) {
+        console.error("Failed to load course list", err);
+      }
+    };
+    fetchCourses();
 
     const fetchData = async () => {
       try {
@@ -605,7 +621,16 @@ function ViewProfile() {
               {user.role === 'Tutor' && profile && (
                 <>
                   <p><strong>Bio:</strong> {profile.bio || 'Not provided'}</p>
-                  <p><strong>Courses:</strong> {profile.courses || 'Not provided'}</p>
+                  <p><strong>Courses:</strong> 
+                    {profile.courses && profile.courses.length > 0    //this is updated
+                      ? profile.courses.map(course => {
+                        if (typeof course === 'string') {
+                          return courseMap[course] || course;
+                        }
+                        return course.name || `${course.title} (${course.code})`;
+                      }).join(', ') 
+                      : 'Not provided'}
+                  </p> 
                   <p><strong>Skills:</strong> {profile.skills || 'Not provided'}</p>
                   <p><strong>Major:</strong> {profile.major || 'Not Specified'}</p>
                   <p><strong>Year:</strong> {profile.currentYear || 'Not Specified'}</p>

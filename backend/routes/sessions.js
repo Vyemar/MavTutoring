@@ -61,7 +61,7 @@ router.get('/availability/:tutorId/:date', async (req, res) => {
 // Book a session
 router.post('/', async (req, res) => {
   try {
-    const { tutorId, studentId, sessionTime, duration, specialRequest } = req.body;
+    const { tutorId, studentId, sessionTime, duration, specialRequest, courseId } = req.body;
 
     // Validate required fields
     if (!tutorId || !studentId || !sessionTime || !duration) {
@@ -94,7 +94,8 @@ router.post('/', async (req, res) => {
       sessionTime: sessionDate,
       duration,
       status: 'Scheduled',
-      notes: specialRequest || '' // Save special request in notes field
+      notes: specialRequest || '', // Save special request in notes field
+      courseID: courseId
     });
 
     await session.save();
@@ -130,6 +131,7 @@ router.get('/student/:studentId', async (req, res) => {
       studentID: req.params.studentId
     })
     .populate('tutorID', 'firstName lastName')
+    .populate('courseID', 'code title')
     .sort({ sessionTime: 1 });
     
     // Ensure consistent time format in response
@@ -151,6 +153,7 @@ router.get('/tutor/:tutorId', async (req, res) => {
       tutorID: req.params.tutorId
     })
     .populate('studentID', 'firstName lastName')
+    .populate('courseID', 'code title')
     .sort({ sessionTime: 1 });
     
     // Ensure consistent time format in response
@@ -174,6 +177,7 @@ router.get('/all', async (req, res) => {
     const sessions = await Session.find()
       .populate('studentID', 'firstName lastName')
       .populate('tutorID', 'firstName lastName')
+      .populate('courseID', 'code title')
       .sort({ sessionTime: 1 });
 
     // Format sessions with basic error handling
@@ -261,6 +265,7 @@ router.put('/:sessionId/status', async (req, res) => {
       const attendance = new Attendance({
         sessionID: session._id,
         studentID,
+        courseID,
         checkInTime,
         checkOutTime,
         duration: session.duration,
@@ -311,17 +316,24 @@ function generateTimeSlots(startTime, endTime, bookedSessions, date) {
   const effectiveStartDate = isToday && now > startDate ? now : startDate;
   
   // Generate slots in 1-hour intervals
-  for (let time = effectiveStartDate; time < endDate; time = new Date(time.getTime() + 60 * 60 * 1000)) {
-    const timeString = `${time.getUTCHours().toString().padStart(2, '0')}:${time.getUTCMinutes().toString().padStart(2, '0')}`;
+  for (let time = effectiveStartDate; 
+    time < endDate; 
+    time = new Date(time.getTime() + 60 * 60 * 1000)
+  ) {
+    const sessionStart = new Date(time);
+    const sessionEnd = new Date(time.getTime() + 60 * 60 * 1000);
+
+    const start = `${sessionStart.getUTCHours().toString().padStart(2, '0')}:${sessionStart.getUTCMinutes().toString().padStart(2, '0')}`;
+    const end = `${sessionEnd.getUTCHours().toString().padStart(2, '0')}:${sessionEnd.getUTCMinutes().toString().padStart(2, '0')}`;
     
     const isBooked = bookedSessions.some(session => {
       const sessionTime = new Date(session.sessionTime);
-      return sessionTime.getUTCHours() === time.getUTCHours() && 
-             sessionTime.getUTCMinutes() === time.getUTCMinutes();
+      return sessionTime.getUTCHours() === sessionStart.getUTCHours() && 
+             sessionTime.getUTCMinutes() === sessionStart.getUTCMinutes();
     });
 
     if (!isBooked) {
-      slots.push(timeString);
+      slots.push({ start, end });   //pushing slot as object
     }
   }
   
