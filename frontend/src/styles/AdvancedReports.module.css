@@ -40,3 +40,27 @@
   background: #f9f9f9;
   border-radius: 8px;
 }
+
+.details {
+  margin-top: 10px;
+  background: #eef5ff;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.pieChart {
+  background: white;
+  padding: 20px;
+  width: 300px;
+  height: 400px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.pieChartsContainer {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}

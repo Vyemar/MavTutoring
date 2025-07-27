@@ -5,6 +5,7 @@ const User = require('../models/User');
 const Session = require('../models/Session');
 const Feedback = require('../models/Feedback');
 const TutorProfile = require('../models/TutorProfile');
+const StudentProfile = require('../models/StudentProfile');
 const mongoose = require('mongoose');
 
 // GET /api/analytics/tutors
@@ -141,5 +142,134 @@ router.get('/students', async (req, res) => {
     res.status(500).json({ message: "Failed to get student data" });
   }
 });
+
+
+// GET /api/analytics/top-courses
+// Receives the top 5 most booked courses
+router.get('/top-courses', async (req, res) => {
+  try {
+    const topCourses = await Session.aggregate([ // Filters sessions that have courseIDs
+      {
+        $match: {
+          courseID: { $exists: true, $ne: null },
+          status: "Completed" // Only count for completed sessions
+        }
+      },
+      {
+        $group: {
+          _id: '$courseID',
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { count: -1 } // Sorts courses by highest count
+      },
+      {
+        $limit: 5 // Only returns the top 5 booked courses
+      },
+      {
+        $lookup: { // Matches id from the courses collection and the Sessions collection, stores them as an array
+          from: 'courses',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'courseInfo'
+        }
+      },
+      { 
+        $unwind: '$courseInfo' // flattens array to use the fields (courseInfo.code, the course number)
+      },
+      {
+        $project: { // Shapes output
+          name: '$courseInfo.code',
+          count: 1,
+          _id: 0
+        }
+      }
+    ]);
+
+    // console.log("Top courses final output:", topCourses);
+    res.json(topCourses);
+  } catch (error) {
+    console.error("Error fetching top courses:", error);
+    res.status(500).json({ message: "Failed to get top courses" });
+  }
+});
+
+
+// /api/analytics/student-departments
+// Receives the number of students from each department (major)
+router.get('/student-majors', async (req, res) => {
+  try {
+    const result = await StudentProfile.aggregate([
+      {
+        $match: {
+          major: {
+            $nin: ["", null, "Not Specified", "Not Provided"] // Not include empty majors
+          }
+        }
+      },
+      {
+        $group: {
+          _id: '$major',
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { count: -1 }
+      }, 
+      {
+        $project: {
+          major: '$_id',
+          count: 1,
+          _id: 0
+        }
+      }
+    ]);
+
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching student department counts:', error);
+    res.status(500).json({ message: 'Failed to fetch department data' });
+  }
+});
+
+// GET /api/analytics/student-learning-styles
+// Receives the number of students for each learning style
+router.get('/student-learning-styles', async (req, res) => {
+  try {
+    const result = await StudentProfile.aggregate([
+      {
+        $match: {
+          preferredLearningStyle: {
+            $nin: ["", null, "Not Specified", "Not Provided"] // Not include empty learning styles
+          }
+        }
+      },
+      {
+        $group: {
+          _id: '$preferredLearningStyle',
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { count: -1 }
+      },
+       {
+        $project: {
+          style: '$_id',
+          count: 1,
+          _id: 0
+        }
+      }
+    ]); 
+
+    res.json(result);
+
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch preferred learning styles'})
+  }
+});
+
+
 
 module.exports = router;
