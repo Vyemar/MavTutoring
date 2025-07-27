@@ -24,6 +24,9 @@ function AdvancedReports() {
   const [topCourses, setTopCourses] = useState([]);
   const [studentMajors, setStudentMajors] = useState([]);
   const [learningStyles, setLearningStyles] = useState([]);
+  const [tutorDepartments, setTutorDepartments] = useState([]);
+  const [topTutorCourses, setTopTutorCourses] = useState([]);
+  const [tutorSessionVolume, setTutorSessionVolume] = useState([]);
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -97,6 +100,50 @@ function AdvancedReports() {
     fetchLearningStyle();
   }, []);
 
+  useEffect(() => {
+    const fetchTutorDepartments = async () => {
+      try {
+        const res = await axios.get(`${BACKEND_URL}/api/analytics/tutor-departments`, {
+          withCredentials: true
+        });
+        setTutorDepartments(res.data);
+      } catch (err) {
+        console.error("Failed to fetch tutor department data", err);
+      }
+    };
+
+    fetchTutorDepartments();
+  }, []);
+
+  useEffect(() => {
+    const fetchTopTutorCourses = async () => {
+      try {
+        const res = await axios.get(`${BACKEND_URL}/api/analytics/top-courses-by-tutors`, {
+          withCredentials: true
+        });
+        setTopTutorCourses(res.data);
+      } catch (err) {
+        console.error("Failed to fetch top tutor courses", err);
+      }
+    };
+
+    fetchTopTutorCourses();
+  }, []);
+
+  useEffect(() => {
+    const fetchTutorSessionVolume = async () => {
+      try {
+        const res = await axios.get(`${BACKEND_URL}/api/analytics/tutor-session-volume`, {
+          withCredentials: true
+        });
+        setTutorSessionVolume(res.data);
+      } catch (err) {
+        console.error("Failed to fetch tutor session volume data", err);
+      }
+    };
+
+    fetchTutorSessionVolume();
+  }, []);
 
   const toggleExpand = (id) => {
     setExpandedIds(prev =>
@@ -123,16 +170,79 @@ function AdvancedReports() {
           {loading ? (
             <p>Loading...</p>
           ) : activeTab === "tutors" ? (
-            <ul className={styles.reportList}>
-              {tutors.map(tutor => (
-                <li key={tutor.id} className={styles.reportCard}>
-                  <Link to={`/admin/report/${tutor.id}`} className={styles.nameLink}>
-                    {tutor.name}
-                  </Link>
-                  : Total sessions {tutor.totalSessions}
-                </li>
-              ))}
-            </ul>
+            <>
+              <div className={styles.pieChartsContainer}>
+                {/* Tutors by Department */}
+                {tutorDepartments.length > 0 && (
+                  <div className={styles.pieChart}>
+                    <h2>Tutors by Department</h2>
+                   <Pie
+                      data={{
+                        labels: tutorDepartments.map(dep => dep.major),
+                        datasets: [{
+                          data: tutorDepartments.map(dep => dep.count),
+                          backgroundColor: ['#36a2eb', '#ff6384', '#ffcd56', '#4bc0c0', '#9966ff']
+                        }]
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* Top 5 Courses by Tutor Count */}
+                {topTutorCourses.length > 0 && (
+                  <div className={styles.pieChart}>
+                    <h2>Top 5 Courses by Tutor Count</h2>
+                    <Pie
+                      data={{
+                        labels: topTutorCourses.map(course => course.name), // ✅ using 'name'
+                        datasets: [{
+                          data: topTutorCourses.map(course => course.count), // ✅ using 'count'
+                          backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56', '#4bc0c0', '#9966ff']
+                        }]
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* Tutors by Session Volume */}
+                {tutorSessionVolume.length > 0 && (
+                  <div className={styles.pieChart}>
+                    <h2>Tutors by Session Count</h2>
+                    <Pie
+                      data={{
+                        labels: tutorSessionVolume.map(vol => vol.range),
+                        datasets: [{
+                          data: tutorSessionVolume.map(vol => vol.count),
+                          backgroundColor: ['#4bc0c0', '#ffcd56', '#9966ff', '#ff6384', '#36a2eb']
+                        }]
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <ul className={styles.reportList}>
+                {tutors.map(tutor => (
+                  <li key={tutor.id} className={styles.reportCard}>
+                    <div onClick={() => toggleExpand(tutor.id)} style={{ cursor: 'pointer' }}>
+                      <Link to={`/admin/report/tutor/${tutor.id}`} className={styles.nameLink}>
+                        {tutor.name}
+                      </Link>
+                      : Total sessions {tutor.totalSessions}
+                    </div>
+
+                    {expandedIds.includes(tutor.id) && (
+                      <div className={styles.details}>
+                        <p>Average Rating: {tutor.avgRating || 'N/A'}</p>
+                        <p>Number of Ratings: {tutor.ratingCount || 0}</p>
+                        <p>Department (Major): {tutor.major || 'Not Specified'}</p>
+                        <p>Courses: {tutor.courses && tutor.courses.length > 0 ? tutor.courses.join(', ') : 'None'}</p>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </>
           ) : (
             <> {/* ALL PIE CHARTS */}
               <div className={styles.pieChartsContainer}>
@@ -199,8 +309,8 @@ function AdvancedReports() {
               <ul className={styles.reportList}>
                 {students.map(student => (
                   <li key={student.id} className={styles.reportCard}>
-                    <div onClick={() => toggleExpand(student.id)}>
-                      <Link to={`/admin/report/${student.id}`} className={styles.nameLink}>
+                    <div onClick={() => toggleExpand(student.id)} style={{ cursor: 'pointer' }}>
+                      <Link to={`/admin/report/student/${student.id}`} className={styles.nameLink}>
                         {student.name}
                       </Link>
                       : Total Sessions {student.totalSessions}
@@ -208,12 +318,11 @@ function AdvancedReports() {
 
                     {expandedIds.includes(student.id) && (
                       <div className={styles.details}>
-                        <p>Completed: {student.completedSessions}</p>
-                        <p>No-Shows: {student.noShowSessions}</p>
-                        <p>Last Month: {student.lastMonthSessions}</p>
-                        <p>Department: {student.department}</p>
-                        <p>Frequent Course: {student.frequentCourse}</p>
-                        {/* Add tutorsSeen list if needed */}
+                        <p>Completed: {student.completedSessions || 'N/A'}</p>
+                        <p>No-Shows: {student.noShowSessions || 'N/A'}</p>
+                        <p>Last Month: {student.lastMonthSessions || 'N/A'}</p>
+                        <p>Department: {student.department || 'Not Specified'}</p>
+                        <p>Frequent Course: {student.frequentCourse || 'N/A'}</p>
                       </div>
                     )}
                   </li>

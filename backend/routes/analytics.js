@@ -270,6 +270,148 @@ router.get('/student-learning-styles', async (req, res) => {
   }
 });
 
+// Gets the number of tutors by department
+router.get('/tutor-departments', async (req, res) => {
+  try {
+    const result = await TutorProfile.aggregate([
+      {
+        $project: {
+          major: {
+            $cond: [
+              { $in: ['$major', ['', null, 'Not Specified', 'Not Provided']] },
+              'Not Specified',
+              '$major'
+            ]
+          }
+        }
+      },
+      {
+        $group: {
+          _id: '$major',
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { count: -1 }
+      },
+      {
+        $project: {
+          major: '$_id',
+          count: 1,
+          _id: 0
+        }
+      }
+    ]);
 
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching tutor department counts:', error);
+    res.status(500).json({ message: 'Failed to fetch tutor department data' });
+  }
+});
+
+// Gets the top 5 courses by tutors
+router.get('/top-courses-by-tutors', async (req, res) => {
+  try {
+    const result = await TutorProfile.aggregate([
+      {
+        $project: {
+          courses: { $ifNull: ["$courses", []] } 
+        }
+      },
+      {
+        $unwind: {
+          path: "$courses",
+          preserveNullAndEmptyArrays: true 
+        }
+      },
+      {
+        $group: {
+          _id: { $ifNull: ["$courses", "Not Specified"] }, 
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { count: -1 }
+      },
+      {
+        $limit: 5
+      },
+      {
+        $lookup: {
+          from: "courses",
+          localField: "_id",
+          foreignField: "_id",
+          as: "courseInfo"
+        }
+      },
+      {
+        $unwind: {
+          path: "$courseInfo",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $project: {
+          name: {
+            $cond: [
+              { $eq: ["$_id", "Not Specified"] },
+              "Not Specified",
+              "$courseInfo.code"
+            ]
+          },
+          count: 1,
+          _id: 0
+        }
+      }
+    ]);
+
+    res.json(result); 
+  } catch (error) {
+    console.error('Error fetching top courses by tutors:', error);
+    res.status(500).json({ message: 'Failed to fetch top courses by tutors' });
+  }
+});
+
+// Gets the tutors by session volume
+router.get('/tutor-session-volume', async (req, res) => {
+  try {
+    const sessionsPerTutor = await Session.aggregate([
+      {
+        $group: {
+          _id: "$tutorID",
+          sessionCount: { $sum: 1 }
+        }
+      }
+    ]);
+    
+    const bins = {
+      "0-5": 0,
+      "6-10": 0,
+      "11-25": 0,
+      "26-50": 0,
+      "51+": 0
+    };
+
+    sessionsPerTutor.forEach(tutor => {
+      const count = tutor.sessionCount;
+      if (count <= 5) bins["0-5"]++;
+      else if (count <= 10) bins["6-10"]++;
+      else if (count <= 25) bins["11-25"]++;
+      else if (count <= 50) bins["26-50"]++;
+      else bins["51+"]++;
+    });
+
+    const formatted = Object.entries(bins).map(([range, count]) => ({
+      range,
+      count
+    }));
+
+    res.json(formatted);
+  } catch (error) {
+    console.error('Error fetching tutor session volume:', error);
+    res.status(500).json({ message: 'Failed to fetch tutor session volume data' });
+  }
+});
 
 module.exports = router;
