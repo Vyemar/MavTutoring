@@ -24,7 +24,9 @@ function AdvancedReports() {
   const [topCourses, setTopCourses] = useState([]);
   const [studentMajors, setStudentMajors] = useState([]);
   const [learningStyles, setLearningStyles] = useState([]);
+  const [studentStats, setStudentStats] = useState([]);
 
+  // Retrieves tutor's and student's analytics
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
@@ -49,6 +51,7 @@ function AdvancedReports() {
     fetchAnalytics();
   }, []);
 
+  // Retrieves the top 5 courses being requested
   useEffect(() => {
     const fetchTopCourses = async () => {
       try {
@@ -65,6 +68,7 @@ function AdvancedReports() {
     fetchTopCourses();
   }, []);
 
+  // Retrieves the majors of all students
   useEffect(() => {
     const fetchStudentMajors = async () => {
       try {
@@ -81,6 +85,7 @@ function AdvancedReports() {
     fetchStudentMajors();
   }, []);
 
+  // Retrieves the learning style of what students have on their profile
   useEffect(() => {
     const fetchLearningStyle = async () => {
       try {
@@ -95,6 +100,21 @@ function AdvancedReports() {
     };
 
     fetchLearningStyle();
+  }, []);
+
+  useEffect(() => {
+    const fetchStudentStats = async () => {
+      try {
+        const res = await axios.get(`${BACKEND_URL}/api/analytics/student-stats`, {
+          withCredentials: true
+        });
+        setStudentStats(res.data);
+      } catch (err) {
+        console.error("Failed to fetch student stats", err);
+      }
+    };
+
+    fetchStudentStats();
   }, []);
 
 
@@ -164,7 +184,7 @@ function AdvancedReports() {
                         datasets: [
                           {
                             data: studentMajors.map(m => m.count),
-                            backgroundColor: ['#36a2eb', '#ff6384', '#ffcd56', '#9966ff', '#4bc0c0']
+                            backgroundColor: ['#36a2eb', '#ff6384', '#ffcd56', '#9966ff']
                           }
                         ]
                       }}
@@ -203,19 +223,19 @@ function AdvancedReports() {
                       <Link to={`/admin/report/${student.id}`} className={styles.nameLink}>
                         {student.name}
                       </Link>
-                      : Total Sessions {student.totalSessions}
                     </div>
 
-                    {expandedIds.includes(student.id) && (
-                      <div className={styles.details}>
-                        <p>Completed: {student.completedSessions}</p>
-                        <p>No-Shows: {student.noShowSessions}</p>
-                        <p>Last Month: {student.lastMonthSessions}</p>
-                        <p>Department: {student.department}</p>
-                        <p>Frequent Course: {student.frequentCourse}</p>
-                        {/* Add tutorsSeen list if needed */}
-                      </div>
-                    )}
+                    {expandedIds.includes(student.id) && (() => {
+                      const stats = studentStats.find(stat => String(stat.studentId) === String(student.id));
+                      return stats ? (
+                        <div className={styles.details}>
+                          <p>Total Sessions Scheduled: {student.totalSessions}</p>
+                          <p>Completed Sessions: {stats.completedSessions}</p>
+                        </div>
+                      ) : (
+                        <p>Student has no details, schedule a session!</p>
+                      );
+                    })()}
                   </li>
                 ))}
               </ul>

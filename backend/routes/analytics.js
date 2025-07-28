@@ -204,7 +204,7 @@ router.get('/student-majors', async (req, res) => {
       {
         $match: {
           major: {
-            $nin: ["", null, "Not Specified", "Not Provided"] // Not include empty majors
+            $in: ['Computer Science', 'Computer Engineering', 'Software Engineering', 'N/A'] // Only include these majors and the N/A for the chart
           }
         }
       },
@@ -269,6 +269,45 @@ router.get('/student-learning-styles', async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch preferred learning styles'})
   }
 });
+
+// GET /api/analytics/student-stats
+// On advanced reports, only tracks COMPLETED courses, NOT cancelled courses
+router.get('/student-stats', async (req, res) => {
+  try {
+    const sessionStats = await Session.aggregate([
+      {
+        $match: {
+          studentID: { $exists: true, $ne: null }
+        }
+      },
+      {
+        $group: {
+          _id: '$studentID',
+          completedSessions: {
+            $sum: {
+              $cond: [{ $eq: ['$status', 'Completed'] }, 1, 0] // If status is Complete, add 1 to sum, else add 0
+            }
+          }
+        }
+      }
+    ]);
+
+    // Convert to lookup map
+    const statsMap = {};
+    sessionStats.forEach(stat => {
+      statsMap[stat._id.toString()] = {
+        completedSessions: stat.completedSessions
+      };
+    });
+
+    res.json(statsMap);
+  } catch (err) {
+    console.error('Error fetching student stats:', err);
+    res.status(500).json({ message: 'Failed to fetch student stats' });
+  }
+});
+
+
 
 
 
