@@ -331,7 +331,7 @@ function TutorSessions() {
                             {/*less strict check to detect No Show */}
                             {attendanceForSession?.checkInStatus === 'No Show' && (
                                 <span className={styles.noShowTag}>No Show</span>
-                              )}
+                              ))}
                           </p>
                           {session.courseID &&(
                           <p><strong>Course:</strong> {session.courseID.code} - {session.courseID.title}</p>
