@@ -204,7 +204,7 @@ router.get('/student-majors', async (req, res) => {
       {
         $match: {
           major: {
-            $nin: ["", null, "Not Specified", "Not Provided"] // Not include empty majors
+            $in: ['Computer Science', 'Computer Engineering', 'Software Engineering', 'N/A'] // Only include these majors and the N/A for the chart
           }
         }
       },

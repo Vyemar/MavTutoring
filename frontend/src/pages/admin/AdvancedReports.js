@@ -28,6 +28,7 @@ function AdvancedReports() {
   const [topTutorCourses, setTopTutorCourses] = useState([]);
   const [tutorSessionVolume, setTutorSessionVolume] = useState([]);
 
+  // Retrieves tutor's and student's analytics
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
@@ -52,6 +53,7 @@ function AdvancedReports() {
     fetchAnalytics();
   }, []);
 
+  // Retrieves the top 5 courses being requested
   useEffect(() => {
     const fetchTopCourses = async () => {
       try {
@@ -68,6 +70,7 @@ function AdvancedReports() {
     fetchTopCourses();
   }, []);
 
+  // Retrieves the majors of all students
   useEffect(() => {
     const fetchStudentMajors = async () => {
       try {
@@ -84,6 +87,7 @@ function AdvancedReports() {
     fetchStudentMajors();
   }, []);
 
+  // Retrieves the learning style of what students have on their profile
   useEffect(() => {
     const fetchLearningStyle = async () => {
       try {
@@ -274,7 +278,7 @@ function AdvancedReports() {
                         datasets: [
                           {
                             data: studentMajors.map(m => m.count),
-                            backgroundColor: ['#36a2eb', '#ff6384', '#ffcd56', '#9966ff', '#4bc0c0']
+                            backgroundColor: ['#36a2eb', '#ff6384', '#ffcd56', '#9966ff']
                           }
                         ]
                       }}
@@ -313,7 +317,6 @@ function AdvancedReports() {
                       <Link to={`/admin/report/student/${student.id}`} className={styles.nameLink}>
                         {student.name}
                       </Link>
-                      : Total Sessions {student.totalSessions}
                     </div>
 
                     {expandedIds.includes(student.id) && (
