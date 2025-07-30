@@ -27,6 +27,7 @@ function AdvancedReports() {
   const [tutorDepartments, setTutorDepartments] = useState([]);
   const [topTutorCourses, setTopTutorCourses] = useState([]);
   const [tutorSessionVolume, setTutorSessionVolume] = useState([]);
+  const [studentStats, setStudentStats] = useState([]);
 
   // Retrieves tutor's and student's analytics
   useEffect(() => {
@@ -102,6 +103,21 @@ function AdvancedReports() {
     };
 
     fetchLearningStyle();
+  }, []);
+
+  useEffect(() => {
+    const fetchStudentStats = async () => {
+      try {
+        const res = await axios.get(`${BACKEND_URL}/api/analytics/student-stats`, {
+          withCredentials: true
+        });
+        setStudentStats(res.data);
+      } catch (err) {
+        console.error("Failed to fetch student stats", err);
+      }
+    };
+
+    fetchStudentStats();
   }, []);
 
   useEffect(() => {
@@ -309,7 +325,7 @@ function AdvancedReports() {
                 )}
               </div>
 
-              {/* Student list)*/}
+              {/* Student list*/}
               <ul className={styles.reportList}>
                 {students.map(student => (
                   <li key={student.id} className={styles.reportCard}>
@@ -319,15 +335,24 @@ function AdvancedReports() {
                       </Link>
                     </div>
 
-                    {expandedIds.includes(student.id) && (
-                      <div className={styles.details}>
-                        <p>Completed: {student.completedSessions || 'N/A'}</p>
-                        <p>No-Shows: {student.noShowSessions || 'N/A'}</p>
-                        <p>Last Month: {student.lastMonthSessions || 'N/A'}</p>
-                        <p>Department: {student.department || 'Not Specified'}</p>
-                        <p>Frequent Course: {student.frequentCourse || 'N/A'}</p>
-                      </div>
-                    )}
+                    {expandedIds.includes(student.id) && (() => {
+                      const stats = studentStats[student.id];
+                      return stats ? (
+                        <div className={styles.details}>
+                          {/* Total is based on student scheduling a session, completed is based on if tutor marks session as complete */}
+                          <p>Total Sessions Scheduled: {student.totalSessions}</p>
+                          <p>Completed Sessions: {stats.completedSessions}</p>
+                          <p>Attendance Rate: {student.totalSessions > 0 
+                                              ? " " + ((stats.completedSessions / student.totalSessions) * 100).toFixed(1) + "%" 
+                                              : "0%"} </p>
+                          <p>Most Frequent Course: {stats.mostFrequentCourseCode 
+                                              ? `${stats.mostFrequentCourseCode} - ${stats.mostFrequentCourseTitle}` 
+                                              : "N/A"} </p>
+                        </div>
+                      ) : (
+                        <p>Student has no details, schedule a session!</p>
+                      );
+                    })()}
                   </li>
                 ))}
               </ul>

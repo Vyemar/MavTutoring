@@ -176,7 +176,7 @@ router.get('/top-courses', async (req, res) => {
         }
       },
       { 
-        $unwind: '$courseInfo' // flattens array to use the fields (courseInfo.code, the course number)
+        $unwind: '$courseInfo' // Flattens array to use the fields (courseInfo.code, the course number) and easy lookup
       },
       {
         $project: { // Shapes output
@@ -214,9 +214,9 @@ router.get('/student-majors', async (req, res) => {
           count: { $sum: 1 }
         }
       },
-      {
-        $sort: { count: -1 }
-      }, 
+      // {
+      //   $sort: { count: -1 }
+      // }, 
       {
         $project: {
           major: '$_id',
@@ -251,9 +251,9 @@ router.get('/student-learning-styles', async (req, res) => {
           count: { $sum: 1 }
         }
       },
-      {
-        $sort: { count: -1 }
-      },
+      // {
+      //   $sort: { count: -1 }
+      // },
        {
         $project: {
           style: '$_id',
@@ -269,6 +269,91 @@ router.get('/student-learning-styles', async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch preferred learning styles'})
   }
 });
+
+// GET /api/analytics/student-stats
+// On advanced reports, only tracks COMPLETED courses, NOT cancelled courses
+router.get('/student-stats', async (req, res) => {
+  try {
+    const sessionStats = await Session.aggregate([
+      {
+        $match: {
+          studentID: { $exists: true, $ne: null },
+          courseID: { $exists: true, $ne: null },
+        }
+      },
+      // Initial group is grouping sessions by student + course pair
+      {
+        $group: {
+          _id: { studentID: '$studentID', courseID: '$courseID' },
+          count: { $sum: 1 },
+          completedSessions: {
+            $sum: {
+              $cond: [{ $eq: ['$status', 'Completed'] }, 1, 0] // If status is Complete, add 1 to sum, else add 0
+            }
+          }
+        }
+      },
+      { 
+        $sort: { count: -1 } // Sorts in descending order, then will choose the first course from the list (since it has the most frequency)
+      },
+      {
+        // Regroup with the most frequent course to pick most frequent course and sum completedSessions
+        $group: {
+          _id: '$_id.studentID',
+          mostFrequentCourse: { $first: '$_id.courseID' },
+          completedSessions: { $sum: '$completedSessions' }
+        }
+      },
+
+       // Lookup course info from courses collection
+      {
+        $lookup: {
+          from: 'courses',
+          localField: 'mostFrequentCourse',
+          foreignField: '_id',
+          as: 'courseInfo'
+        }
+      },
+
+      // Flattens array for easy lookup
+      {
+        $unwind: 
+        { 
+          path: '$courseInfo', 
+          preserveNullAndEmptyArrays: true // If $lookup finds no matches, still includes courseInfo even if its NULL (just for safety)
+        }
+      },
+      {
+        $project: {
+          completedSessions: 1, // The aggregation result calculats only 1 completed session for a student
+          mostFrequentCourseCode: '$courseInfo.code',
+          mostFrequentCourseTitle: '$courseInfo.title'
+        }
+      }
+    ]);
+
+    // Debugging to get student objectID and using MongoDB Compass to manually verify (Sessions and courses collection)
+    // Query in Sessions Collection: { studentID: ObjectId("STUDENT_ID"), status: "Completed" }
+    // Query in courses Collection: {title: 'TITLE_OF_COURSE' }
+    // console.log("Student Stats Raw Output:", sessionStats);
+
+    // Convert to lookup map
+    const statsMap = {};
+    sessionStats.forEach(stat => {
+      statsMap[stat._id.toString()] = {
+        completedSessions: stat.completedSessions,
+        mostFrequentCourseCode: stat.mostFrequentCourseCode || 'N/A',
+        mostFrequentCourseTitle: stat.mostFrequentCourseTitle || 'N/A'
+      };
+    });
+
+    res.json(statsMap);
+  } catch (err) {
+    console.error('Error fetching student stats:', err);
+    res.status(500).json({ message: 'Failed to fetch student stats' });
+  }
+});
+
 
 // Gets the number of tutors by department
 router.get('/tutor-departments', async (req, res) => {
