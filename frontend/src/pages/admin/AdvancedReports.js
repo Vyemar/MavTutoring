@@ -412,18 +412,24 @@ function AdvancedReports() {
                                               ? `${stats.mostFrequentCourseCode} - ${stats.mostFrequentCourseTitle}` 
                                               : "N/A"} </p>
                           <p>Preferred Learning Style: {stats.preferredLearningStyle}</p>
-                          <p>Unique Courses Visited: {stats.uniqueCoursesCount} </p>
-                          <ul>
-                            {stats.uniqueCourses && stats.uniqueCourses.length > 0 ? 
-                              (stats.uniqueCourses.map((course, idx) => (
-                                <li key={idx}>
-                                  {course.code} - {course.title}
-                                </li>
-                              ))
+                          <p className={styles.uniqueCoursesLabel} > 
+                              Unique Courses Visited: {stats.uniqueCoursesCount} 
+                          </p>
+                          
+                          {stats.uniqueCourses && stats.uniqueCourses.length > 0 ? ( 
+                            <div className={styles.uniqueCoursesList}>
+                              <ul>
+                                {stats.uniqueCourses.map((course, idx) => (
+                                  <li key={idx}>
+                                    {course.code} - {course.title}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
                             ) : (
                               <li>N/A</li>
                             )}
-                          </ul>
+                          
                         </div>
                       ) : (
                         <p>Student has no details, schedule a session!</p>
