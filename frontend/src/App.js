@@ -28,6 +28,9 @@ import { SidebarProvider } from "./components/Sidebar/SidebarContext";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import CourseManager from "./pages/admin/CourseManager";
 import TutorRequests from "./pages/admin/TutorRequests"; 
+import AdvancedReports from "./pages/admin/AdvancedReports";
+import StudentUserReport from "./pages/admin/StudentUserReport";
+import TutorUserReport from "./pages/admin/TutorUserReport";
 
 import { useEffect, useState } from "react";
 import { axiosGetData } from "./utils/api";
@@ -79,6 +82,8 @@ function App() {
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/admin/report/student/:userId" element={<StudentUserReport />} />
+          <Route path="/admin/report/tutor/:userId" element={<TutorUserReport />} />
 
           {/* Protected routes */}
           <Route
@@ -187,6 +192,7 @@ function App() {
           <Route path="/admin-settings" element={<Settings />} />
 
           <Route path="/tutor-requests" element={<TutorRequests />} />
+          <Route path="/advanced-reports" element={<AdvancedReports />} />
           
         </Routes>
       </BrowserRouter>`

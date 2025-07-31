@@ -343,13 +343,19 @@ function StudentProfile() {
                             )}</p>
     
                             <p><strong>Major:</strong> {isEditing ? (
-                                <input
+                                <select // Changed from input to select for the dropdown menu
                                     type="text"
                                     name="major"
                                     value={profile.major}
                                     onChange={handleChange}
                                     className={styles.inputField}
-                                />
+                                >
+                                    <option value="">Select Major</option>
+                                    <option value="Computer Science">Computer Science</option>
+                                    <option value="Computer Engineering">Computer Engineering</option>
+                                    <option value="Software Engineering">Software Engineering</option>
+                                    <option value="N/A">N/A</option>
+                                </select>
                             ) : (
                                 profile.major || "Not provided"
                             )}</p>
@@ -480,45 +486,51 @@ function StudentProfile() {
 
                         <div className={styles.roleButtons}>
                             <div className={styles.tutorRequestSection}>
-                                {!tutorRequestPending && tutorRequestStatus !== "approved" && tutorRequestStatus !== "rejected" && (
+                                {tutorRequestsEnabled ? (
                                     <>
-                                        {tutorRequestsEnabled ? (
-                                            <div className="tutorRequestWrapper">
-                                                <input
-                                                type="file"
-                                                name="resume"
-                                                accept="application/pdf"
-                                                onChange={handleResumeUpload}
-                                                />
+                                        {!tutorRequestPending && tutorRequestStatus !== "approved" && tutorRequestStatus !== "rejected" && (
+                                            <>
+                                                <h3 className={styles.tutorRequestHeading}>Want to be a tutor?</h3>
+                                                <p className={styles.tutorRequestSubtext}>Upload your resume and apply below!</p>
 
-                                                {resumeFile ? (
-                                                <button
-                                                    className={styles.saveButton}
-                                                    onClick={handleTutorRequest}
-                                                >
-                                                    Request to Become a Tutor
-                                                </button>
-                                                ) : (
-                                                <button
-                                                    className={styles.disabledButton}
-                                                    disabled
-                                                    title="Please upload a PDF before requesting"
-                                                >
-                                                    Upload PDF to Enable Tutor Request
-                                                </button>
-                                                )}
-                                            </div>
-                                            ) : (
-                                                <p className={styles.disabledMessage}>
-                                                    Tutor requests are currently disabled by the admin.
-                                                </p>
-                                            )}
-                                        </>
-                                    )}
-                                {tutorRequestStatus === "approved" && <p>Your tutor request has been approved.</p>}
-                                {tutorRequestStatus === "rejected" && <p>Your request to become a tutor was rejected. Please contact Admin to retry.</p>}
-                                {tutorRequestStatus === "pending" && <p>Your request is pending review.</p>}
+                                                <div className="tutorRequestWrapper">
+                                                    <input
+                                                    type="file"
+                                                    name="resume"
+                                                    accept="application/pdf"
+                                                    onChange={handleResumeUpload}
+                                                    />
 
+                                                    {resumeFile ? (
+                                                        <button
+                                                            className={styles.saveButton}
+                                                            onClick={handleTutorRequest}
+                                                        >
+                                                            Request to Become a Tutor
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            className={styles.disabledButton}
+                                                            disabled
+                                                            title="Please upload a PDF before requesting"
+                                                        >
+                                                            Upload PDF to Enable Tutor Request
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </>
+                                        )}
+
+                                        {/* Status messages */}
+                                        {tutorRequestStatus === "approved" && <p>Your tutor request has been approved.</p>}
+                                        {tutorRequestStatus === "rejected" && <p>Your request to become a tutor was rejected. Please contact Admin to retry.</p>}
+                                        {tutorRequestStatus === "pending" && <p>Your request is pending review.</p>}
+                                    </>
+                                ) : (
+                                    <p className={styles.disabledMessage}>
+                                        Tutor requests are currently disabled by the admin.
+                                    </p>         
+                                )}
                             </div>
                         </div>
                     </div>

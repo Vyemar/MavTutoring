@@ -223,6 +223,21 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    // Added way to fetch a user's major for Student Reports and Tutor Reports
+    if (user.role === 'Student') {
+      const studentProfile = await mongoose.model('StudentProfile').findOne({ userId: user._id }).select('major');
+      if (studentProfile) {
+        user._doc.major = studentProfile.major;
+      }
+    }
+
+    else if (user.role === "Tutor") {
+      const tutorProfile = await mongoose.model('TutorProfile').findOne({ userId: user._id }).select('major');
+      if (tutorProfile) {
+        user._doc.major = tutorProfile.major;
+      }
+    }
+
     console.log('User found:', user.firstName, user.lastName);
     res.status(200).json(user);
   } catch (err) {
