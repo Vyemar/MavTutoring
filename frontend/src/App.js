@@ -29,6 +29,7 @@ import { SidebarProvider } from "./components/Sidebar/SidebarContext";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import CourseManager from "./pages/admin/CourseManager";
 import TutorRequests from "./pages/admin/TutorRequests"; 
+import TutorAvailability from "./pages/student/TutorAvailability";
 import AdvancedReports from "./pages/admin/AdvancedReports";
 import StudentUserReport from "./pages/admin/StudentUserReport";
 import TutorUserReport from "./pages/admin/TutorUserReport";

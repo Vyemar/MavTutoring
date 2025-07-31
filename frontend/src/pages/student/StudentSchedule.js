@@ -3,6 +3,7 @@ import axios from 'axios';
 import styles from '../../styles/StudentSchedule.module.css';
 import StudentSidebar from '../../components/Sidebar/StudentSidebar';
 import { useSidebar } from "../../components/Sidebar/SidebarContext";
+import { useLocation } from 'react-router-dom';
 
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
@@ -28,6 +29,9 @@ function StudentSchedule() {
   const [upcomingSessions, setUpcomingSessions] = useState([]);
   const [specialRequest, setSpecialRequest] = useState('');
   const [userData, setUserData] = useState(null);
+  const location = useLocation();
+
+
 
   useEffect(() => {
     const fetchUserSession = async () => {
@@ -37,6 +41,10 @@ function StudentSchedule() {
         });
         
         if (response.data && response.data.user) {
+          if (response.data.user.role !== 'Student') {
+            setError('Only students can book sessions.');
+            return;
+          }
           setUserData(response.data.user);
         } else {
           setError('No user session found. Please log in again.');
@@ -95,6 +103,7 @@ function StudentSchedule() {
 
   useEffect(() => {
     if (userData && userData.id) {
+      const preselectedTutorId = location.state?.tutorId || null;
       const fetchTutors = async () => {
         try {
           const response = await axios.get(`${BACKEND_URL}/api/users/tutors`, {
@@ -102,6 +111,14 @@ function StudentSchedule() {
           });
           setTutors(response.data);
           setLoading(false);
+
+          if (preselectedTutorId) {
+            setSelectedTutor(preselectedTutorId);
+
+            const matchedTutor = response.data.find(t => t._id === preselectedTutorId);
+            setSelectedTutorInfo(matchedTutor || null);
+          }
+
         } catch (error) {
           setError('Error loading tutors');
           setLoading(false);
