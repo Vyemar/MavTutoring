@@ -22,6 +22,7 @@ import ViewProfile from "./pages/admin/ViewProfile";
 import TutorDetails from "./pages/admin/TutorDetails";
 import AnalyticsOptions from "./pages/admin/AnalyticsOptions";
 import Attendance from "./pages/admin/AttendanceReport";
+import AdminReviews from "./pages/admin/AdminReviews";
 import StudentSessionCardSwipe from "./pages/student/SessionCardSwipe";
 import TutorSessionCardSwipe from "./pages/tutor/SessionCardSwipe";
 import { SidebarProvider } from "./components/Sidebar/SidebarContext";
@@ -29,6 +30,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import CourseManager from "./pages/admin/CourseManager";
 import TutorRequests from "./pages/admin/TutorRequests"; 
 import TutorAvailability from "./pages/student/TutorAvailability";
+import AdvancedReports from "./pages/admin/AdvancedReports";
+import StudentUserReport from "./pages/admin/StudentUserReport";
+import TutorUserReport from "./pages/admin/TutorUserReport";
 
 import { useEffect, useState } from "react";
 import { axiosGetData } from "./utils/api";
@@ -80,6 +84,8 @@ function App() {
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/admin/report/student/:userId" element={<StudentUserReport />} />
+          <Route path="/admin/report/tutor/:userId" element={<TutorUserReport />} />
 
           {/* Protected routes */}
           <Route
@@ -130,6 +136,15 @@ function App() {
               </ProtectedRoute>
             }
           />
+           <Route
+            path="/admin-reviews"
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminReviews /> 
+              </ProtectedRoute>
+
+            }/>
+                
           <Route //i added this
             path="/manage-courses"
             element={
@@ -188,6 +203,7 @@ function App() {
           <Route path="/admin-settings" element={<Settings />} />
 
           <Route path="/tutor-requests" element={<TutorRequests />} />
+          <Route path="/advanced-reports" element={<AdvancedReports />} />
           
         </Routes>
       </BrowserRouter>`

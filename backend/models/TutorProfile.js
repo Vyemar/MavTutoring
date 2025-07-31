@@ -28,7 +28,8 @@ const tutorProfileSchema = new mongoose.Schema({
     //like array of courses
     courses: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Course'
+        ref: 'Course',
+        default: []
     }],
     skills: {
         type: String,

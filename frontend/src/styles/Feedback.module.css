@@ -1,28 +1,27 @@
 /* Overall background styling */
 .background {
-  background-color: #f5f5f5; /* Light gray background for a clean look */
+  background-color: #f5f5f5;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh; /* Full viewport height */
+  min-height: 100vh; 
   padding: 20px;
 }
 
 .container {
   display: flex;
-  min-height: 100vh; /* Full viewport height */
+  min-height: 100vh; 
 }
 
-/* Center the container. Renamed to mainContent so it doesn't clash with other container styles. */
 .mainContent {
-  background: #ffffff; /*White background for the form */
-  border-radius: 10px; /* Smooth rounded corners */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  background: #ffffff;
+  border-radius: 10px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
   padding: 30px;
   max-width: 500px;
   width: 100%;
   text-align: center;
-  margin-left :80px;/*accounts for sidebar when its minimized*/
+  margin-left :100px;
 
   /* Center positioning */
   position: absolute;
@@ -73,7 +72,7 @@
   margin-bottom: 15px;
   background-color: #f9f9f9;
   color: #333333;
-  resize: none; /* Disable resizing */
+  resize: none;
 }
 
 /* Star rating container */
@@ -86,18 +85,18 @@
 /* Individual star styling */
 .star {
   font-size: 2rem;
-  color: #cccccc; /* Default star color (unselected) */
+  color: #cccccc; 
   cursor: pointer;
   transition: color 0.3s ease;
 }
 
 .starSelected {
-  color: #ffd700; /* Gold color for selected stars */
+  color: #ffd700; 
 }
 
 /* Button styling */
 .submitButton {
-  background-color: #007bff; /* Primary blue color */
+  background-color: #007bff;
   color: #ffffff;
   font-size: 1rem;
   padding: 10px 15px;
@@ -110,12 +109,12 @@
 }
 
 .submitButton:hover {
-  background-color: #0056b3; /* Darker blue on hover */
+  background-color: #0056b3;
 }
 
 /* Error message styling */
 .textDanger {
-  color: #ff4d4d; /* Red for error messages */
+  color: #ff4d4d;
   font-size: 0.9rem;
   margin-top: 5px;
   text-align: left;
@@ -131,8 +130,109 @@
 
 /* Success message styling */
 .text-success {
-  color: #28a745; /* Green for success message */
+  color: #28a745;
   font-size: 1rem;
   margin-bottom: 15px;
   text-align: center;
 }
+
+/* Background for the whole reviews page */
+.reviewsBackground {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 40px 20px;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+
+/* Container for the reviews content */
+.reviewsContainer {
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 30px;
+  max-width: 900px;
+  margin-left :200px;
+  width: 200%;
+}
+
+/* Title style */
+.reviewsTitle {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* Each review card */
+.reviewCard {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  background-color: #fafafa;
+}
+
+/* Review field label */
+.reviewLabel {
+  font-weight: 600;
+  color: #555555;
+}
+
+/* Review text */
+.reviewText {
+  margin: 5px 0 15px 0;
+  color: #444444;
+}
+
+/* Date styling */
+.reviewDate {
+  font-size: 0.85rem;
+  color: #888888;
+  text-align: right;
+}
+
+.starsDisplay {
+  color: #ffd700;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+}
+
+.reviewCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.detailCard {
+  flex: 0 0 40%;
+  margin-left: 20px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  animation: slideIn 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.reviewsContainer {
+  flex: 1;
+  max-width: 60%;
+  overflow-y: auto;
+}
+

@@ -97,7 +97,7 @@ router.post('/review', async (req, res) => {
                     name: `${user.firstName} ${user.lastName}`, // Fixed the annoying bug where it couldn't receive the name 
                     profilePicture: null,        // Or pull from studentProfile if you support it
                     bio: "",                     // Can be left empty or filled in later
-                    courses: "", // []?
+                    courses: [], // Change to an array, NOT a string (defined differently than before)
                     skills: "",
                     major: "",
                     currentYear: "Not Specified"
@@ -121,7 +121,7 @@ router.post('/review', async (req, res) => {
 
         return res.status(200).json({ message: `Request ${decision}` });
     } catch (error) {
-        console.error('Error reviewing tutor request:', error);
+        console.error('Error reviewing tutor request:', error.message, error.stack);
         return res.status(500).json({ message: 'Server error' });
     }
 });
