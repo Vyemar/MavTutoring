@@ -9,6 +9,8 @@ const TutorUserReport = () => {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
   const [sessions, setSessions] = useState([]);
+  const [viewOption, setViewOption] = useState('sessions');
+  const [ratings, setRatings] = useState([]);
   const navigate = useNavigate();
 
   const formatDateTime = (isoString) => {
@@ -27,6 +29,10 @@ const TutorUserReport = () => {
 
         const sessionsRes = await axios.get(`${BACKEND_URL}/api/sessions/tutor/${userId}`);
         setSessions(sessionsRes.data);
+
+        const ratingsRes = await axios.get(`${BACKEND_URL}/api/feedback/ratings/tutor/${userId}`);
+        setRatings(ratingsRes.data);
+
       } catch (error) {
         console.error('Error fetching tutor report data', error);
       }
@@ -52,26 +58,55 @@ const TutorUserReport = () => {
         <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
         <p><strong>Email:</strong> {user.email}</p>
         <p><strong>Phone:</strong> {user.phone}</p>
-
-        {/* If student hasn't chosen an option on their profile, default to N/A*/}
-        <p><strong>Major:</strong> {user.major && user.major.trim() !== "" ? user.major : "N/A"} </p>
-        
+        <p><strong>Major:</strong> {user.major && user.major.trim() !== "" ? user.major : "N/A"}</p>
       </div>
 
       <div className={styles.reportSection}>
-        <h2>Session History</h2>
-        {sessions.length > 0 ? (
-          <ul className={styles.sessionList}>
-            {sessions.map((session, index) => (
-              <li key={index} className={styles.sessionItem}>
-                <span>{formatDateTime(session.sessionTime)}</span>
-                <span>Student: {session.studentID?.firstName} {session.studentID?.lastName}</span>
-                <span>Course: {session.courseID?.code} - {session.courseID?.title}</span>
-              </li>
-            ))}
-          </ul>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <select
+            value={viewOption}
+            onChange={(e) => setViewOption(e.target.value)}
+            style={{ padding: '6px 10px', fontSize: '1rem' }}
+          >
+            <option value="sessions">Session History</option>
+            <option value="ratings">Ratings by Students</option>
+          </select>
+
+          <select style={{ padding: '6px 10px', fontSize: '1rem' }}>
+            <option value="alphabetical">Sort by: Alphabetical</option>
+            <option value="highest">Sort by: Highest Number</option>
+            <option value="lowest">Sort by: Lowest Number</option>
+          </select>
+        </div>
+
+        {viewOption === 'sessions' ? (
+          sessions.length > 0 ? (
+            <ul className={styles.sessionList}>
+              {sessions.map((session, index) => (
+                <li key={index} className={styles.sessionItem}>
+                  <span>{formatDateTime(session.sessionTime)}</span>
+                  <span>Student: {session.studentID?.firstName} {session.studentID?.lastName}</span>
+                  <span>Course: {session.courseID?.code} - {session.courseID?.title}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No sessions found.</p>
+          )
         ) : (
-          <p>No sessions found.</p>
+          ratings.length > 0 ? (
+            <ul className={styles.sessionList}>
+              {ratings.map((rating, index) => (
+                <li key={index} className={styles.sessionItem}>
+                  <span>
+                     {rating.score} - "{rating.comment || 'No comment'}"
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No ratings found.</p>
+          )
         )}
       </div>
     </div>

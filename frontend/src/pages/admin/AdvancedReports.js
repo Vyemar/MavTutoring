@@ -26,8 +26,10 @@ function AdvancedReports() {
   const [learningStyles, setLearningStyles] = useState([]);
   const [tutorDepartments, setTutorDepartments] = useState([]);
   const [topTutorCourses, setTopTutorCourses] = useState([]);
-  const [tutorSessionVolume, setTutorSessionVolume] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [studentStats, setStudentStats] = useState([]);
+  const [tutorStats, setTutorStats] = useState({});
+  const [tutorRatings, setTutorRatings] = useState([]);
 
   // Retrieves tutor's and student's analytics
   useEffect(() => {
@@ -121,6 +123,19 @@ function AdvancedReports() {
   }, []);
 
   useEffect(() => {
+    const fetchTutorStats = async () => {
+      try {
+        const res = await axios.get(`${BACKEND_URL}/api/analytics/tutor-stats`);
+        setTutorStats(res.data);
+      } catch (err) {
+        console.error("Failed to fetch tutor stats", err);
+      }
+    };
+    
+    fetchTutorStats();
+  }, []);
+
+  useEffect(() => {
     const fetchTutorDepartments = async () => {
       try {
         const res = await axios.get(`${BACKEND_URL}/api/analytics/tutor-departments`, {
@@ -151,18 +166,16 @@ function AdvancedReports() {
   }, []);
 
   useEffect(() => {
-    const fetchTutorSessionVolume = async () => {
+    const fetchTutorRatings = async () => {
       try {
-        const res = await axios.get(`${BACKEND_URL}/api/analytics/tutor-session-volume`, {
-          withCredentials: true
-        });
-        setTutorSessionVolume(res.data);
-      } catch (err) {
-        console.error("Failed to fetch tutor session volume data", err);
+        const res = await axios.get(`${BACKEND_URL}/api/analytics/tutors-average-rating`);
+        setTutorRatings(res.data);
+      } catch (error) {
+        console.error('Error fetching tutor ratings:', error);
       }
     };
 
-    fetchTutorSessionVolume();
+    fetchTutorRatings();
   }, []);
 
   const toggleExpand = (id) => {
@@ -172,6 +185,16 @@ function AdvancedReports() {
         : [...prev, id]
     );
   };
+
+  const filteredTutors = tutors.filter(t =>
+    t.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+
+  const filteredStudents = students.filter(s =>
+    s.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
 
   return (
     <div className={styles.container}>
@@ -214,9 +237,9 @@ function AdvancedReports() {
                     <h2>Top 5 Courses by Tutor Count</h2>
                     <Pie
                       data={{
-                        labels: topTutorCourses.map(course => course.name), // ✅ using 'name'
+                        labels: topTutorCourses.map(course => course.name), 
                         datasets: [{
-                          data: topTutorCourses.map(course => course.count), // ✅ using 'count'
+                          data: topTutorCourses.map(course => course.count), 
                           backgroundColor: ['#ff6384', '#36a2eb', '#ffcd56', '#4bc0c0', '#9966ff']
                         }]
                       }}
@@ -224,41 +247,64 @@ function AdvancedReports() {
                   </div>
                 )}
 
-                {/* Tutors by Session Volume */}
-                {tutorSessionVolume.length > 0 && (
-                  <div className={styles.pieChart}>
-                    <h2>Tutors by Session Count</h2>
-                    <Pie
-                      data={{
-                        labels: tutorSessionVolume.map(vol => vol.range),
-                        datasets: [{
-                          data: tutorSessionVolume.map(vol => vol.count),
-                          backgroundColor: ['#4bc0c0', '#ffcd56', '#9966ff', '#ff6384', '#36a2eb']
-                        }]
-                      }}
-                    />
-                  </div>
-                )}
+                {/* Tutors by Average Rating */}
+                {tutorRatings.length > 0 && (
+                <div className={styles.pieChart}>
+                  <h2>Tutors by Average Rating</h2>
+                  <Pie
+                    data={{
+                      labels: tutorRatings.map(r => r._id),
+                      datasets: [{
+                        data: tutorRatings.map(r => r.count),
+                        backgroundColor: ['#0eaf29ff', '#4bc0c0', '#ffcd56', '#9966ff', '#ff6384', '#36a2eb', '#ff9f40']
+                      }]
+                    }}
+                  />
+                </div>
+              )}
+              </div>
+
+
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search by name..."
+                  style={{
+                    width: '300px',
+                    padding: '10px',
+                    fontSize: '16px',
+                    borderRadius: '8px',
+                    border: '1px solid #ccc',
+                    backgroundColor: '#fff'
+                  }}
+                />
               </div>
 
               <ul className={styles.reportList}>
-                {tutors.map(tutor => (
+                {filteredTutors.map(tutor => (
                   <li key={tutor.id} className={styles.reportCard}>
                     <div onClick={() => toggleExpand(tutor.id)} style={{ cursor: 'pointer' }}>
                       <Link to={`/admin/report/tutor/${tutor.id}`} className={styles.nameLink}>
                         {tutor.name}
                       </Link>
-                      : Total sessions {tutor.totalSessions}
                     </div>
 
-                    {expandedIds.includes(tutor.id) && (
-                      <div className={styles.details}>
-                        <p>Average Rating: {tutor.avgRating || 'N/A'}</p>
-                        <p>Number of Ratings: {tutor.ratingCount || 0}</p>
-                        <p>Department (Major): {tutor.major || 'Not Specified'}</p>
-                        <p>Courses: {tutor.courses && tutor.courses.length > 0 ? tutor.courses.join(', ') : 'None'}</p>
-                      </div>
-                    )}
+                    {expandedIds.includes(tutor.id) && (() => {
+                      const stats = tutorStats[tutor.id];
+                      return stats ? (
+                        <div className={styles.details}>
+                          <p>Average Rating: {tutor.avgRating || 'N/A'}</p>
+                          <p>Number of Ratings: {tutor.ratingCount || 0}</p>
+                          <p>Most Frequent Course: {stats.mostFrequentCourse || 'N/A'}</p>
+                          <p>Most Frequent Student: {stats.mostFrequentStudent || 'N/A'}</p>
+                          <p>Total Sessions Completed: {stats.completedSessions || 0}</p>
+                        </div>
+                      ) : (
+                        <p>This tutor has no session details yet.</p>
+                      );
+                    })()}
                   </li>
                 ))}
               </ul>
@@ -325,9 +371,26 @@ function AdvancedReports() {
                 )}
               </div>
 
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search by name..."
+                  style={{
+                    width: '300px',
+                    padding: '10px',
+                    fontSize: '16px',
+                    borderRadius: '8px',
+                    border: '1px solid #ccc',
+                    backgroundColor: '#fff'
+                  }}
+                />
+              </div>
+
               {/* Student list*/}
               <ul className={styles.reportList}>
-                {students.map(student => (
+                {filteredStudents.map(student => (
                   <li key={student.id} className={styles.reportCard}>
                     <div onClick={() => toggleExpand(student.id)} style={{ cursor: 'pointer' }}>
                       <Link to={`/admin/report/student/${student.id}`} className={styles.nameLink}>

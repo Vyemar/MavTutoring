@@ -399,6 +399,104 @@ router.get('/student-stats', async (req, res) => {
   }
 });
 
+// Same as student stats except for tutors
+router.get('/tutor-stats', async (req, res) => {
+  try {
+    const tutorStats = await Session.aggregate([
+      {
+        $match: {
+          tutorID: { $exists: true, $ne: null },
+          studentID: { $exists: true, $ne: null }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            tutorID: '$tutorID',
+            studentID: '$studentID',
+            courseID: '$courseID'
+          },
+          count: { $sum: 1 },
+          completedCount: {
+            $sum: {
+              $cond: [{ $eq: ['$status', 'Completed'] }, 1, 0]
+            }
+          }
+        }
+      },
+      { $sort: { count: -1 } },
+      {
+        $group: {
+          _id: '$_id.tutorID',
+          mostFrequentStudent: { $first: '$_id.studentID' },
+          mostFrequentCourse: { $first: '$_id.courseID' },
+          totalSessions: { $sum: '$count' },
+          completedSessions: { $sum: '$completedCount' }
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'mostFrequentStudent',
+          foreignField: '_id',
+          as: 'studentInfo'
+        }
+      },
+      { $unwind: { path: '$studentInfo', preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: 'courses',
+          localField: 'mostFrequentCourse',
+          foreignField: '_id',
+          as: 'courseInfo'
+        }
+      },
+      { $unwind: { path: '$courseInfo', preserveNullAndEmptyArrays: true } },
+      {
+        $project: {
+          _id: 1,
+          mostFrequentStudent: {
+            $concat: [
+              { $ifNull: ['$studentInfo.firstName', ''] },
+              ' ',
+              { $ifNull: ['$studentInfo.lastName', ''] }
+            ]
+          },
+          mostFrequentCourse: {
+            $cond: {
+              if: {
+                $and: [
+                  { $ifNull: ['$courseInfo.code', false] },
+                  { $ifNull: ['$courseInfo.title', false] }
+                ]
+              },
+              then: {
+                $concat: [
+                  '$courseInfo.code',
+                  ' - ',
+                  '$courseInfo.title'
+                ]
+              },
+              else: 'N/A'
+            }
+          },
+          totalSessions: 1,
+          completedSessions: 1
+        }
+      }
+    ]);
+
+    const statsMap = {};
+    tutorStats.forEach(stat => {
+      statsMap[stat._id.toString()] = stat;
+    });
+
+    res.json(statsMap);
+  } catch (err) {
+    console.error('Error fetching tutor stats:', err);
+    res.status(500).json({ message: 'Failed to fetch tutor stats' });
+  }
+});
 
 // Gets the number of tutors by department
 router.get('/tutor-departments', async (req, res) => {
@@ -541,6 +639,49 @@ router.get('/tutor-session-volume', async (req, res) => {
   } catch (error) {
     console.error('Error fetching tutor session volume:', error);
     res.status(500).json({ message: 'Failed to fetch tutor session volume data' });
+  }
+})
+
+// Gets the average ratings of tutors
+router.get('/tutors-average-rating', async (req, res) => {
+  try {
+    const results = await Feedback.aggregate([
+      {
+        $group: {
+          _id: "$tutorUniqueId",
+          avgRating: { $avg: "$rating" }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $switch: {
+              branches: [
+                { case: { $eq: ["$avgRating", null] }, then: "Undefined" },
+                { case: { $and: [{ $gte: ["$avgRating", 0.1] }, { $lte: ["$avgRating", 0.9] }] }, then: "0.1-0.9" },
+                { case: { $and: [{ $gte: ["$avgRating", 1] }, { $lte: ["$avgRating", 1.9] }] }, then: "1-1.9" },
+                { case: { $and: [{ $gte: ["$avgRating", 2] }, { $lte: ["$avgRating", 2.9] }] }, then: "2-2.9" },
+                { case: { $and: [{ $gte: ["$avgRating", 3] }, { $lte: ["$avgRating", 3.9] }] }, then: "3-3.9" },
+                { case: { $and: [{ $gte: ["$avgRating", 4] }, { $lte: ["$avgRating", 4.9] }] }, then: "4-4.9" },
+                { case: { $eq: ["$avgRating", 5] }, then: "5" }
+              ],
+              default: "Undefined"
+            }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: {
+          _id: 1 
+        }
+      }
+    ]);
+
+    res.json(results);
+  } catch (err) {
+    console.error("Error bucketing tutor ratings:", err);
+    res.status(500).json({ error: "Failed to group tutor ratings." });
   }
 });
 
