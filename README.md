@@ -167,6 +167,7 @@ backend/
 
    ```
    - npm install react-select
+   - npm install chart.js react-chartjs-2
    - Future developer if you end up installing any new libraries add here. 
    ```
 
