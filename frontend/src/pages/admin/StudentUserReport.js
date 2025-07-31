@@ -51,7 +51,10 @@ const StudentUserReport = () => {
         <h2>Student Information</h2>
         <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
         <p><strong>Email:</strong> {user.email}</p>
-        <p><strong>Major:</strong> {user.department}</p>
+
+        {/* If student hasn't chosen an option on their profile, default to N/A*/}
+        <p><strong>Major:</strong> {user.major && user.major.trim() !== "" ? user.major : "N/A"}</p>
+
         <p><strong>Student ID:</strong> {user.studentID}</p>
       </div>
 
@@ -62,6 +65,8 @@ const StudentUserReport = () => {
             {sessions.map((session, index) => (
               <li key={index} className={styles.sessionItem}>
                 <span>{formatDateTime(session.sessionTime)}</span>
+                <span>Tutor: {session.tutorID?.firstName} {session.tutorID?.lastName}</span>
+                <span>Course: {session.courseID?.code} - {session.courseID?.title}</span>
               </li>
             ))}
           </ul>

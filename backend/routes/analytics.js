@@ -281,6 +281,7 @@ router.get('/student-stats', async (req, res) => {
           courseID: { $exists: true, $ne: null },
         }
       },
+
       // Initial group is grouping sessions by student + course pair
       {
         $group: {
@@ -293,19 +294,22 @@ router.get('/student-stats', async (req, res) => {
           }
         }
       },
+
       { 
         $sort: { count: -1 } // Sorts in descending order, then will choose the first course from the list (since it has the most frequency)
       },
+
       {
         // Regroup with the most frequent course to pick most frequent course and sum completedSessions
         $group: {
           _id: '$_id.studentID',
           mostFrequentCourse: { $first: '$_id.courseID' },
-          completedSessions: { $sum: '$completedSessions' }
+          completedSessions: { $sum: '$completedSessions' },
+          uniqueCourses: { $addToSet: '$_id.courseID' } // Collects unique courses using $addToSet
         }
       },
 
-       // Lookup course info from courses collection
+       // Lookup course info from courses collection to get the most frequent courses
       {
         $lookup: {
           from: 'courses',
@@ -315,7 +319,7 @@ router.get('/student-stats', async (req, res) => {
         }
       },
 
-      // Flattens array for easy lookup
+      // Flattens array for easy lookup (only use $unwind for 1:1 relationships)
       {
         $unwind: 
         { 
@@ -323,11 +327,49 @@ router.get('/student-stats', async (req, res) => {
           preserveNullAndEmptyArrays: true // If $lookup finds no matches, still includes courseInfo even if its NULL (just for safety)
         }
       },
+
+      // Lookup student profile to get preferred learning style (only use $unwind for 1:1 relationships)
+      {
+        $lookup: {
+          from: 'studentprofiles',
+          localField: '_id',
+          foreignField: 'userId',
+          as: 'studentProfile'
+        }
+      },
+
+      { 
+        $unwind: 
+        { 
+          path: '$studentProfile', 
+          preserveNullAndEmptyArrays: true 
+        } 
+      },
+
+      // Lookup all unique courses from courses collection
+      {
+        $lookup: {
+          from: 'courses',
+          localField: 'uniqueCourses',
+          foreignField: '_id',
+          as: 'uniqueCourseInfo'
+        }
+      },
+
       {
         $project: {
           completedSessions: 1, // The aggregation result calculats only 1 completed session for a student
           mostFrequentCourseCode: '$courseInfo.code',
-          mostFrequentCourseTitle: '$courseInfo.title'
+          mostFrequentCourseTitle: '$courseInfo.title',
+          uniqueCoursesCount: { $size: '$uniqueCourses' }, // Number of elements in the array
+          uniqueCourses: {
+            $map: { // Maps to an array containing only the course code and title
+              input: '$uniqueCourseInfo',
+              as: 'course',
+              in: { code: '$$course.code', title: '$$course.title' }
+            }
+          },
+          preferredLearningStyle: '$studentProfile.preferredLearningStyle'
         }
       }
     ]);
@@ -343,7 +385,10 @@ router.get('/student-stats', async (req, res) => {
       statsMap[stat._id.toString()] = {
         completedSessions: stat.completedSessions,
         mostFrequentCourseCode: stat.mostFrequentCourseCode || 'N/A',
-        mostFrequentCourseTitle: stat.mostFrequentCourseTitle || 'N/A'
+        mostFrequentCourseTitle: stat.mostFrequentCourseTitle || 'N/A',
+        uniqueCoursesCount: stat.uniqueCoursesCount || 0,
+        uniqueCourses: stat.uniqueCourses || ['N/A'],
+        preferredLearningStyle: stat.preferredLearningStyle || 'Not Specified on Student Profile'
       };
     });
 

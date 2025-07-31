@@ -52,7 +52,10 @@ const TutorUserReport = () => {
         <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
         <p><strong>Email:</strong> {user.email}</p>
         <p><strong>Phone:</strong> {user.phone}</p>
-        <p><strong>Department:</strong> {user.department}</p>
+
+        {/* If student hasn't chosen an option on their profile, default to N/A*/}
+        <p><strong>Major:</strong> {user.major && user.major.trim() !== "" ? user.major : "N/A"} </p>
+        
       </div>
 
       <div className={styles.reportSection}>
@@ -62,6 +65,8 @@ const TutorUserReport = () => {
             {sessions.map((session, index) => (
               <li key={index} className={styles.sessionItem}>
                 <span>{formatDateTime(session.sessionTime)}</span>
+                <span>Student: {session.studentID?.firstName} {session.studentID?.lastName}</span>
+                <span>Course: {session.courseID?.code} - {session.courseID?.title}</span>
               </li>
             ))}
           </ul>
