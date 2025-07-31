@@ -36,34 +36,40 @@ body .month_default_event_inner {
 
 /* toolbar */
 .toolbar {
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  margin-top: 8px;
+  padding: 0 12px;
 }
 
 .toolbar-group {
-    display: inline-flex;
+  display: flex;
+  gap: 8px;
 }
 
-.toolbar button {
-    background-color: #3c78d8;
-    color: white;
-    border: 0;
-    padding: .5rem 1rem;
-    width: 80px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    margin-right: 1px;
-    transition: all 0.2s;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.08);
-    box-sizing: border-box;
+.toolbar-group button,
+.toolbar button.standalone {
+  padding: 8px 14px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #1f2937;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 1px solid #e0e0e0;
+  transition: background-color 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  cursor: pointer;
 }
 
-.toolbar button.selected {
-    background-color: #1c4587;
-    box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+.toolbar-group button.selected,
+.toolbar button.standalone:hover {
+  background-color: #007bff;
+  color: white;
+  border: 1px solid #007bff;
 }
+
 
 .toolbar .toolbar-group button:first-child {
     border-top-left-radius: 30px;

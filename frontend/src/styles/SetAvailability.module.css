@@ -37,7 +37,7 @@ body {
 }
 
 .calendarContainer {
-  width: 80%;
+  width: 100%;
   max-width: 900px;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -45,7 +45,7 @@ body {
   background-color: #fff;
   padding: 20px;
   margin-bottom: 20px;
-  overflow: hidden;
+  overflow-x: auto;
 }
 
 .submitButton {
@@ -55,7 +55,7 @@ body {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: auto;
+  font-size: 16px;
   text-align: center;
 }
 
@@ -73,15 +73,8 @@ body {
   color: white;
 }
 
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid rgba(0, 123, 255, 0.3);
-  border-top: 4px solid #007bff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 10px;
-}
+
+
 
 @keyframes spin {
   0% {
