@@ -72,7 +72,7 @@
   margin-bottom: 15px;
   background-color: #f9f9f9;
   color: #333333;
-  resize: none; /* Disable resizing */
+  resize: none;
 }
 
 /* Star rating container */
