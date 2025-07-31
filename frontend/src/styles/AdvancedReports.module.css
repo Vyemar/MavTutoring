@@ -34,11 +34,24 @@
   padding: 0;
 }
 
+.reportList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px; 
+}
+
 .tabContent .reportCard {
   margin-bottom: 10px;
   padding: 20px;
   background: #f9f9f9;
-  border-radius: 8px;
+  border-radius: 15px;
+}
+
+.reportCard {
+  width: 100%;
+  max-width: 700px; /* Restrict card width */
+  text-align: center;
 }
 
 .details {
