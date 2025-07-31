@@ -55,6 +55,12 @@
   margin-bottom: 0.5rem;
 }
 
+.sessionCourse {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0.25rem;
+}
+
 .sessionTime {
   color: #4b5563;
   margin-bottom: 0.25rem;
@@ -72,8 +78,15 @@
   margin-top: 0.5rem;
 }
 
+.checkInTime,
+.checkOutTime {
+  font-size: 0.8rem;
+  color: #000000; 
+  margin: 0;
+}
+
 .noSessions {
-  color: #6b7280;
+  color: #f3f3f3;
   text-align: center;
   padding: 1rem;
 }

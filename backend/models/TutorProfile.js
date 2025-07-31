@@ -24,10 +24,13 @@ const tutorProfileSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
-    courses: {
-        type: String,
-        trim: true
-    },
+    //added the big bracket so each tutor can have multiple courses not just one
+    //like array of courses
+    courses: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course',
+        default: []
+    }],
     skills: {
         type: String,
         trim: true

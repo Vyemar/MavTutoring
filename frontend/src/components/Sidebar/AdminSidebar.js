@@ -11,8 +11,10 @@ import {
   MdRateReview,
 } from "react-icons/md";
 import { IoSettingsOutline } from "react-icons/io5";
-import { FaRegAddressCard } from "react-icons/fa";
 import { FaUsers } from "react-icons/fa6";
+import { FaBookOpen } from "react-icons/fa";
+import { FaInbox } from 'react-icons/fa';
+
 
 const AdminSidebar = ({ selected }) => {
   const location = useLocation();
@@ -38,7 +40,6 @@ const AdminSidebar = ({ selected }) => {
           <ul className={styles.ulStudent}>
             {[
               { key: "home", label: "Dashboard", icon: <MdOutlineSpaceDashboard />, path: "/home" },
-              { key: "card-swipe", label: "ID Card Session", icon: <FaRegAddressCard />, path: "/card-swipe" },
               { key: "manage-users", label: "Manage Users", icon: <FaUsers />, path: "/manage-users" },
               { key: "analytics", label: "System Analytics", icon: <MdOutlineAnalytics />, path: "/analytics" },
               { key: "admin-settings", label: "Settings", icon: <IoSettingsOutline />, path: "/admin-settings" },
@@ -57,7 +58,62 @@ const AdminSidebar = ({ selected }) => {
               </li>
             ))}
             <li
-              className={styles.liStudent}
+            
+              className={`${styles.liStudent} ${selected === "home" ? styles.active : ""}`} 
+              onClick={() => goTo("/home")}
+            >
+              <div className={styles.iconContainer}>
+                <MdOutlineSpaceDashboard className={styles.sidebarIcon} />
+              </div>
+              <span className={styles.aItem}>Dashboard</span>
+            </li>
+            <li 
+              className={`${styles.liStudent} ${selected === "manage-users" ? styles.active : ""}`} 
+              onClick={() => goTo("/manage-users")}
+            >
+              <div className={styles.iconContainer}>
+                <FaUsers className={styles.sidebarIcon} />
+              </div>
+              <span className={styles.aItem}>Manage Users</span>
+            </li>
+            <li 
+              className={`${styles.liStudent} ${selected === "manage-courses" ? styles.active : ""}`} 
+              onClick={() => goTo("/manage-courses")}
+            >
+              <div className={styles.iconContainer}>
+                <FaBookOpen className={styles.sidebarIcon} />
+              </div>
+              <span className={styles.aItem}>Manage Courses</span>
+            </li>
+            <li 
+              className={`${styles.liStudent} ${selected === "analytics" ? styles.active : ""}`} 
+              onClick={() => goTo("/analytics")}
+            >
+              <div className={styles.iconContainer}>
+                <MdOutlineAnalytics className={styles.sidebarIcon} />
+              </div>
+              <span className={styles.aItem}>System Analytics</span>
+            </li>
+            <li 
+              className={`${styles.liStudent} ${selected === "tutor-requests" ? styles.active : ""}`} 
+              onClick={() => goTo("/tutor-requests")}
+            >
+              <div className={styles.iconContainer}>
+                <FaInbox className={styles.sidebarIcon} />
+              </div>
+              <span className={styles.aItem}>Tutor Requests</span>
+            </li>
+            <li 
+              className={`${styles.liStudent} ${selected === "admin-settings" ? styles.active : ""}`} 
+              onClick={() => goTo("/admin-settings")}
+            >
+              <div className={styles.iconContainer}>
+                <IoSettingsOutline className={styles.sidebarIcon} />
+              </div>
+              <span className={styles.aItem}>Settings</span>
+            </li>
+            <li 
+              className={styles.liStudent} 
               onClick={handleLogout}
               role="button"
               tabIndex={0}

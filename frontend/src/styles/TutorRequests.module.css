@@ -1,0 +1,58 @@
+.mainContent {
+    margin-top: 90px;
+    margin-left: 80px; /* Accounts for sidebar when its minimized */
+    padding: 20px;
+    overflow-y: auto; /* Allows scrolling if content gets too long */
+    min-height: 100vh;
+}
+
+/* Removes bullet point and indention from it */
+.requestList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.requestItem {
+    background: white;
+    padding: 20px; /* Internal space inside the card */
+    border-radius: 12px; /* Rounds corners */
+    margin-bottom: 20px;
+}
+
+.buttonGroup {
+    display: flex; /* Sits buttons side-by-side */
+    gap: 10px;
+    margin-top: 10px;
+}
+
+
+.buttonGroup button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+/* Accept Button */
+.buttonGroup button:first-child {
+    background-color: #28a745;
+    color: white;
+}
+
+.buttonGroup button:first-child:hover {
+    background-color: #218838;
+}
+
+
+/* Reject Button */
+.buttonGroup button:last-child {
+    background-color: #dc3545;
+    color: white;
+}
+
+.buttonGroup button:last-child:hover {
+    background-color: #c82333;
+}

@@ -44,7 +44,7 @@ function FindMyTutorProfile() {
           setProfile({
             name: "",
             bio: "",
-            courses: "",
+            courses: [],
             skills: "",
             major: "",
             currentYear: ""
@@ -232,7 +232,15 @@ function FindMyTutorProfile() {
             <div className={styles.profileInfo}>
               <p><strong>Name:</strong> {profile?.name || `${user?.firstName} ${user?.lastName}`}</p>
               <p><strong>Bio:</strong> {profile?.bio || "Not provided"}</p>
-              <p><strong>Courses:</strong> {profile?.courses || "Not provided"}</p>
+              <p><strong>Courses:</strong> {profile?.courses?.length > 0
+                ? profile.courses.map((course, index) => (
+                    <span key={course._id || index}>
+                      {course.code} - {course.title}{index < profile.courses.length - 1 ? ', ' : ''}
+                    </span>
+                  ))
+                : "Not provided"}
+              </p>
+
               <p><strong>Skills:</strong> {profile?.skills || "Not provided"}</p>
               <p><strong>Major:</strong> {profile?.major || "Not provided"}</p>
               <p><strong>Year:</strong> {profile?.currentYear || "Not provided"}</p>

@@ -138,6 +138,11 @@
   max-width: 300px;
 }
 
+.courseList {
+  padding-left: 20px;
+  margin-top: 8px;
+}
+
 .buttonGroup {
   margin-top: 20px;
   display: flex;
@@ -188,4 +193,9 @@
   margin-bottom: 20px;
   border-radius: 4px;
   border-left: 4px solid #a94442;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

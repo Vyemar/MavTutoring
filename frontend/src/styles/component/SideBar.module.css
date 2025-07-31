@@ -174,7 +174,8 @@
   display: none;
 }
 
-.ulStudent {
+.ulStudent,
+.ulTutor {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -184,7 +185,8 @@
   margin: 0;
 }
 
-.liStudent {
+.liStudent, 
+.liTutor {
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -222,7 +224,8 @@
   height: 3.5rem;
 }
 
-.liStudent:hover {
+.liStudent:hover,
+.liTutor:hover {
   background-color: #f2f2f2;
   transition: 0.25s;
 }

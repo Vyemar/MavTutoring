@@ -5,6 +5,8 @@ const mongoose = require('mongoose'); // Add this importS
 const Session = require('../models/Session');
 const Attendance = require('../models/Attendance');
 
+const {sendNotification} = require('../routes/notifications/confirmation');
+
 // Get available time slots for a tutor on a specific date
 router.get('/availability/:tutorId/:date', async (req, res) => {
   try {
@@ -61,7 +63,7 @@ router.get('/availability/:tutorId/:date', async (req, res) => {
 // Book a session
 router.post('/', async (req, res) => {
   try {
-    const { tutorId, studentId, sessionTime, duration, specialRequest } = req.body;
+    const { tutorId, studentId, sessionTime, duration, specialRequest, courseId } = req.body;
 
     // Validate required fields
     if (!tutorId || !studentId || !sessionTime || !duration) {
@@ -94,7 +96,8 @@ router.post('/', async (req, res) => {
       sessionTime: sessionDate,
       duration,
       status: 'Scheduled',
-      notes: specialRequest || '' // Save special request in notes field
+      notes: specialRequest || '', // Save special request in notes field
+      courseID: courseId
     });
 
     await session.save();
@@ -130,6 +133,7 @@ router.get('/student/:studentId', async (req, res) => {
       studentID: req.params.studentId
     })
     .populate('tutorID', 'firstName lastName')
+    .populate('courseID', 'code title')
     .sort({ sessionTime: 1 });
     
     // Ensure consistent time format in response
@@ -151,6 +155,7 @@ router.get('/tutor/:tutorId', async (req, res) => {
       tutorID: req.params.tutorId
     })
     .populate('studentID', 'firstName lastName')
+    .populate('courseID', 'code title')
     .sort({ sessionTime: 1 });
     
     // Ensure consistent time format in response
@@ -174,6 +179,7 @@ router.get('/all', async (req, res) => {
     const sessions = await Session.find()
       .populate('studentID', 'firstName lastName')
       .populate('tutorID', 'firstName lastName')
+      .populate('courseID', 'code title')
       .sort({ sessionTime: 1 });
 
     // Format sessions with basic error handling
@@ -227,11 +233,40 @@ router.get('/all', async (req, res) => {
   }
 });
 
+// Get upcoming sessions for a student
+router.get('/student/upcoming/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const now = new Date();
+    const sessions = await Session.find({
+      studentID: userId,
+      sessionTime: { $gte: now },
+      status: 'Scheduled',
+    })
+    .populate('studentID', 'firstName lastName')
+    .populate('tutorID', 'firstName lastName')
+    .populate('courseID', 'code title')
+    .sort({ sessionTime: 1 });
+    
+    // Ensure consistent time format in response
+    const formattedSessions = sessions.map(session => ({
+      ...session.toObject(),
+      sessionTime: new Date(session.sessionTime).toISOString()
+    }));
+    
+    res.json(formattedSessions);
+  } catch (error) { 
+    console.error('Error fetching upcoming sessions:', error);
+    res.status(500).json({ message: 'Error fetching upcoming sessions' });
+  }
+});
+
 
 // Update session status
 router.put('/:sessionId/status', async (req, res) => {
   try {
-    const { status } = req.body;
+    //added noShow flag
+    const { status, noShow } = req.body;
 
     if (!['Scheduled', 'Completed', 'Cancelled'].includes(status)) {
       return res.status(400).json({ message: 'Invalid status' });
@@ -246,6 +281,9 @@ router.put('/:sessionId/status', async (req, res) => {
       console.error('Session missing studentID. Session ID:', session._id);
       return res.status(400).json({ message: 'Session has no associated student.' });
     }
+
+    // Ensured courseID is declared
+    const courseID = session.courseID ? session.courseID._id : undefined;
     
     const studentID = session.studentID._id; 
     const existingAttendance = await Attendance.findOne({
@@ -261,6 +299,7 @@ router.put('/:sessionId/status', async (req, res) => {
       const attendance = new Attendance({
         sessionID: session._id,
         studentID,
+        courseID: session.courseID, // Fixes the "ReferenceError: courseID is not defined" error
         checkInTime,
         checkOutTime,
         duration: session.duration,
@@ -277,18 +316,33 @@ router.put('/:sessionId/status', async (req, res) => {
         sessionID: session._id,
         studentID,
         wasNoShow: true,
-        checkInStatus: 'Cancelled',
-        checkOutStatus: 'Cancelled',
+        //now updates check-in and check-out status based on noShow flag
+        checkInStatus: noShow ? 'No Show' : 'Cancelled',
+        checkOutStatus: noShow ? 'No Show' : 'Cancelled',
         duration: 0
       });
 
       await attendance.save();
+    } else if (status === 'Cancelled' && existingAttendance) {
+      existingAttendance.wasNoShow = true;
+      //now updates check-in and check-out status based on noShow flag
+      existingAttendance.checkInStatus = noShow ? 'No Show' : 'Cancelled';
+      existingAttendance.checkOutStatus = noShow ? 'No Show' : 'Cancelled';
+      existingAttendance.duration = 0;
+      await existingAttendance.save();
     }
 
     session.status = status;
     await session.save();
 
-    res.json(session);
+    //send notification
+    await sendNotification(session._id);
+
+    res.json({ 
+      success: true, 
+      session,
+      message: 'Session status updated successfully'
+    });
   } catch (error) {
     console.error('Error updating session status:', error);
     res.status(500).json({ message: 'Error updating session status', error: error.message });
@@ -311,17 +365,24 @@ function generateTimeSlots(startTime, endTime, bookedSessions, date) {
   const effectiveStartDate = isToday && now > startDate ? now : startDate;
   
   // Generate slots in 1-hour intervals
-  for (let time = effectiveStartDate; time < endDate; time = new Date(time.getTime() + 60 * 60 * 1000)) {
-    const timeString = `${time.getUTCHours().toString().padStart(2, '0')}:${time.getUTCMinutes().toString().padStart(2, '0')}`;
+  for (let time = effectiveStartDate; 
+    time < endDate; 
+    time = new Date(time.getTime() + 60 * 60 * 1000)
+  ) {
+    const sessionStart = new Date(time);
+    const sessionEnd = new Date(time.getTime() + 60 * 60 * 1000);
+
+    const start = `${sessionStart.getUTCHours().toString().padStart(2, '0')}:${sessionStart.getUTCMinutes().toString().padStart(2, '0')}`;
+    const end = `${sessionEnd.getUTCHours().toString().padStart(2, '0')}:${sessionEnd.getUTCMinutes().toString().padStart(2, '0')}`;
     
     const isBooked = bookedSessions.some(session => {
       const sessionTime = new Date(session.sessionTime);
-      return sessionTime.getUTCHours() === time.getUTCHours() && 
-             sessionTime.getUTCMinutes() === time.getUTCMinutes();
+      return sessionTime.getUTCHours() === sessionStart.getUTCHours() && 
+             sessionTime.getUTCMinutes() === sessionStart.getUTCMinutes();
     });
 
     if (!isBooked) {
-      slots.push(timeString);
+      slots.push({ start, end });   //pushing slot as object
     }
   }
   
