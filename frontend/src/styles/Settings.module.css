@@ -1,67 +1,104 @@
-.container {
+
+.headerSection {
+  position: fixed;
+  top: 0;
+  height: 80px;
+  background: white;
+  padding: 15px 25px;
+  border-bottom: 1px solid #ddd;
   display: flex;
-  min-height: 100vh; /* Full viewport height */
+  align-items: center;
+  z-index: 1000;
+  margin-left: -10px;
 }
+
+
 
 .mainContent {
   flex: 1;
   padding: 20px;
   color: black;
-  margin-left :80px;/*accounts for sidebar when its minimized*/
+  margin-left: 80px;
+  padding-top: 100px;
+  width: 100%;
 }
+
+
 
 .heading {
   font-size: 2rem;
-  color: #ffffff;
-  margin-bottom: 20px;
+  color: #007bff;
+  font-weight: bold;
+  margin: 0;
+  white-space: nowrap;
 }
 
-
 .adminSettings {
+  background-color: white;
   padding: 2rem;
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .settingsSection {
   margin-bottom: 2rem;
   padding: 1.5rem;
-  border: 1px solid #eee;
-  border-radius: 8px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  align-items: flex-start;
+}
+
+.toggleSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; 
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  padding: 1.5rem;
+  gap: 10px;
+  margin-bottom: 2rem;
+}
+
+.toggleSection h3 {
+  font-size: 1.25rem;
+  color: #333;
+  margin-bottom: 1rem;
 }
 
 .settingsSection h3 {
-  font-size: 14;
+  font-size: 1.25rem;
+  color: #333;
+  margin-bottom: 1rem;
 }
 
 .currentLogo {
   margin: 1rem 0;
-  padding: 1rem;
-  border: 1px dashed #ccc;
+  padding: 1.25rem;
+  border: 2px dashed #ccc;
   display: flex;
   justify-content: center;
-}
-
-.formGroup {
-  margin-bottom: 1rem;
+  background-color: #ffffff;
+  border-radius: 10px;
 }
 
 .formGroup label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: #444;
 }
 
 .formGroup input,
 .formGroup textarea {
   width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.formGroup textarea {
-  min-height: 100px;
+  padding: 0.65rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
 }
 
 .submitButton {
@@ -69,11 +106,31 @@
   color: white;
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  font-size: 1rem;
+  margin-top: 1rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.submitButton:hover {
+  background-color: #0056b3;
 }
 
 .submitButton:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+.switchLabel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  color: #333;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

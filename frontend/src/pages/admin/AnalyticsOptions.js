@@ -3,9 +3,12 @@ import { useNavigate } from "react-router-dom";
 import AdminSidebar from "../../components/Sidebar/AdminSidebar";
 import styles from "../../styles/AdminHome.module.css";
 import analyticsStyles from "../../styles/AnalyticsOptions.module.css";
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
 const AnalyticsOptions = () => {
   const navigate = useNavigate();
+  const { isCollapsed } = useSidebar();
+  const sidebarWidth = isCollapsed ? "80px" : "270px";
 
   const handleTutorPerformance = () => {
     navigate("/analytics/tutor-performance");
@@ -18,7 +21,7 @@ const AnalyticsOptions = () => {
   return (
     <div className={styles.container}>
       <AdminSidebar selected="analytics" />
-      <div className={styles.content}>
+      <div className={styles.content} style={{ marginLeft: isCollapsed ? "80px" : "260px", transition: "margin-left 0.5s ease", "--sidebar-width": sidebarWidth}}>
         <div className={analyticsStyles.pageHeader}>
           <h1>Analytics Dashboard</h1>
           <p>Select an analytics option to view detailed insights</p>

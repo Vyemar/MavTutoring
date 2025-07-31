@@ -41,6 +41,10 @@ function StudentSchedule() {
         });
         
         if (response.data && response.data.user) {
+          if (response.data.user.role !== 'Student') {
+            setError('Only students can book sessions.');
+            return;
+          }
           setUserData(response.data.user);
         } else {
           setError('No user session found. Please log in again.');
