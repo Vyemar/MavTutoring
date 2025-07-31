@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');  // Assuming you have a User model
-const Feedback = require('../models/Feedback');  // Using the Feedback model we created earlier
+const User = require('../models/User');
+const Feedback = require('../models/Feedback');
 
 
-// POST /feedback - Create new feedback
+// Create new feedback
 router.post('/', async (req, res) => {
     try {
         const { studentUniqueId, tutorUniqueId, feedbackText, rating } = req.body;
@@ -48,7 +48,7 @@ router.post('/', async (req, res) => {
         const tutorRecord = await User.findById(tutorUniqueId);
 
         // Update tutor's rating
-        const currentRating = tutorRecord.rating || 0; // fallback to 0 if undefined
+        const currentRating = tutorRecord.rating || 0;
         const currentNumberOfRatings = tutorRecord.numberOfRating || 0;
 
         const newNumberOfRatings = currentNumberOfRatings + 1;
@@ -74,7 +74,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// GET /feedback - Get all feedbacks with student and tutor info
+// Get all feedbacks with student and tutor info
 router.get('/', async (req, res) => {
     try {
       const feedbacks = await Feedback.find()
