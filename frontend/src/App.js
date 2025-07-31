@@ -1,7 +1,10 @@
 import "./styles/App.css";
 import Login from "./pages/Login";
+import ResetPassword from "./pages/ResetPassword";
+import ForgotPassword from "./pages/ForgotPassword";
 import Signup from "./pages/Signup";
 import Home from "./pages/Home";
+import AdminEmail from "./pages/admin/AdminEmail";
 import ManageUsers from "./pages/admin/ManageUsers";
 import ViewTutors from "./pages/student/ViewTutors";
 import Feedback from "./pages/student/Feedback";
@@ -85,6 +88,8 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/admin/report/student/:userId" element={<StudentUserReport />} />
           <Route path="/admin/report/tutor/:userId" element={<TutorUserReport />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* Protected routes */}
           <Route
@@ -152,6 +157,15 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/admin/email"
+            element={
+              <ProtectedRoute>
+                <AdminEmail />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="/Notifications" element={<Notifications />} />
           <Route path="/StudentSchedule" element={<StudentSchedule />} />
           <Route path="/FindMyTutorProfile/:tutorId" element={<FindMyTutorProfile />} />

@@ -4,6 +4,7 @@ const nodemailer = require("nodemailer");
 const path = require("path");
 const ejs = require("ejs");
 require("dotenv").config();
+const { sendSMS } = require("../../services/sms");    // New
 const Notification = require("../../models/Notification");
 const Session = require("../../models/Session");
 
@@ -87,6 +88,12 @@ async function sendNotification(sessionId) {
       };
 
       await transporter.sendMail(mailOptions);
+
+      // New SMS confirmation note: (maybe use switch statement)
+      const e164 = user.phone.startsWith('+') ? user.phone : `+1${user.phone}`; // Confirm E.164 format
+      console.log('→ about to SMS', e164);          
+      const smsBody = `MavAssist: ${message}`;
+      await sendSMS({ to: e164, body: smsBody });
     }
   }
 

@@ -1,7 +1,11 @@
+const { parsePhoneNumberFromString } = require("libphonenumber-js");
+
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const User = require('../models/User');
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 
 // Get configuration from environment variables
 const PROTOCOL = process.env.PROTOCOL || 'https';
@@ -25,7 +29,15 @@ MIIC8DCCAdigAwIBAgIQX5Xik+PqsIVE5xiJqcWsADANBgkqhkiG9w0BAQsFADA0MTIwMAYDVQQDEylN
 
 // Handle the signup POST request
 router.post('/signup', async (req, res) => {
-    const { firstName, lastName, phone, email, password, studentID } = req.body;
+    const { firstName, lastName, phone: rawPhone, email, password, studentID } = req.body;
+
+    // Normalize phone to E.164 using libphonenumber-js
+    const phoneObj = parsePhoneNumberFromString(rawPhone, "US");
+    if (!phoneObj || !phoneObj.isValid()) {
+        return res.status(400).json({ message: "Invalid phone number." });
+    }
+    const phone = phoneObj.number; //e.g. "+18175550123"
+
     try {
         // Create new user with the provided data
         const userData = {
@@ -143,6 +155,27 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// === Email Transporter ===
+// This is for password reset function
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_SERVER,
+  port: Number(process.env.SMTP_PORT),
+  secure: false,
+  auth: {
+    user: process.env.SMTP_USERNAME,
+    pass: process.env.SMTP_PASSWORD,
+  },
+});
+
+// ─── VERIFY SMTP CONNECTIVITY ───────────────────────────────────────────
+transporter.verify((err, success) => {
+  if (err) {
+    console.error("SMTP connection error:", err);
+  } else {
+    console.log("SMTP connection OK");
+  }
+});
+
 // === SSO Authentication Routes ===
 // Route to initiate SAML authentication
 router.get('/saml', passport.authenticate('saml', { failureRedirect: '/' }));
@@ -156,7 +189,9 @@ router.post('/saml/callback',
         try {
             const firstName = req.user['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] || "Unknown";
             const lastName = req.user['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'] || "Unknown";
-            const phone = req.user['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone/PhoneNumber'] || "Unknown";
+            const rawPhone = req.user['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone/PhoneNumber'];
+            const phoneObj = parsePhoneNumberFromString(rawPhone, "US");
+            const phone = phoneObj && phoneObj.isValid() ? phoneObj.number : null;
             const email = req.user.nameID;
             const studentID = req.user['StudentNumber'] || req.user.StudentNumber;
 
@@ -254,6 +289,116 @@ router.get('/logout', (req, res) => {
             console.log("User logged out successfully");
         });
     });
+});
+
+// === POST /request-reset ===
+// This is to send email for password reset, Body: { email: string }
+router.post("/request-reset", async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ message: "Email is required." });
+  }
+
+  try {
+    // 1) Generate a secure token
+    const token = crypto.randomBytes(20).toString("hex");
+
+    // 2) Find the user by email
+    const user = await User.findOne({ email });
+    // Always respond 200 to avoid account enumeration
+    if (!user) {
+      return res
+        .status(200)
+        .json({ message: "If that email is registered, you’ll receive a reset link." });
+    }
+
+    // 3) Save token & expiry (1h)
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 3600000;
+    await user.save();
+
+    // 4) Send the email
+    const resetUrl = `${FRONTEND_URL}/reset-password?token=${token}`;
+    const mailOptions = {
+      to: user.email,
+      from: process.env.SMTP_FROM,
+      subject: "BugHouse Password Reset",
+      text: `
+You requested a password reset for BugHouse. Click or paste this link into your browser within one hour:
+
+${resetUrl}
+
+If you didn’t request this, just ignore this email.
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    // Final response
+    return res
+      .status(200)
+      .json({ message: "If that email is registered, you’ll receive a reset link." });
+  } catch (err) {
+    console.error("Error in /request-reset:", err);
+    return res.status(500).json({ message: "Server error." });
+  }
+});
+
+// === POST /reset-password ===
+// This is the actual part to reset the password, Body: { token: string, newPassword: string }
+router.post("/reset-password", async (req, res) => {
+  const { token, newPassword } = req.body;
+  if (!token || !newPassword) {
+    return res
+      .status(400)
+      .json({ message: "Token and new password are required." });
+  }
+
+  try {
+    // 1) Find the user with this token & not yet expired
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired token." });
+    }
+
+    // 2) Update their password & clear the reset fields
+    user.password = newPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    // (Optional) send them a confirmation email here
+
+    return res
+      .status(200)
+      .json({ message: "Password has been reset successfully." });
+  } catch (err) {
+    console.error("Error in /reset-password:", err);
+    return res
+      .status(500)
+      .json({ message: "Server error." });
+  }
+});
+
+// ─── GET /api/auth/test-email — verify mail delivery in isolation ───────────
+router.get("/test-email", async (req, res) => {
+  try {
+    await transporter.sendMail({
+      to: "trebsmi0422@gmail.com",
+      from: process.env.SMTP_FROM,     // make sure SMTP_FROM is set in .env
+      subject: "BugHouse SMTP Test",
+      text: "If you see this email, your SMTP setup is working correctly.",
+    });
+    res.json({ message: "Test email sent." });
+  } catch (err) {
+    console.error("Error sending test email:", err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Export the SAML strategy configuration so it can be used in server.js

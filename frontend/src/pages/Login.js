@@ -209,6 +209,13 @@ function Login() {
               Register
             </Link>
           </p>
+
+           <p className="mt-1 text-center">
+            Forgot your password?{" "}
+            <Link to="/forgot-password" className={styles.link}>
+              Reset Password
+            </Link>
+          </p>
         </div>
       </div>
     </div>

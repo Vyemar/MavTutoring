@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import styles from "../../styles/component/SideBar.module.css";
 import { handleLogout } from "../../utils/authUtils";
 import BaseSidebar from "./BaseSidebar";
@@ -7,6 +7,7 @@ import { useSidebar } from "./SidebarContext";
 import {
   MdOutlineSpaceDashboard,
   MdOutlineAnalytics,
+  MdOutlineEmail,
   MdLogout,
   MdRateReview,
 } from "react-icons/md";
@@ -67,8 +68,14 @@ const AdminSidebar = ({ selected }) => {
               </div>
               <span className={styles.aItem}>Dashboard</span>
             </li>
-            <li 
-              className={`${styles.liStudent} ${selected === "manage-users" ? styles.active : ""}`} 
+            <li
+              className={`${styles.liStudent} ${selected === "card-swipe" ? styles.active : ""}`}
+              onClick={() => goTo("/card-swipe")}
+            >
+              <span className={styles.aItem}>ID Card Session</span>
+            </li>
+            <li
+              className={`${styles.liStudent} ${selected === "manage-users" ? styles.active : ""}`}
               onClick={() => goTo("/manage-users")}
             >
               <div className={styles.iconContainer}>
@@ -119,6 +126,22 @@ const AdminSidebar = ({ selected }) => {
               tabIndex={0}
               onKeyDown={(e) => { if(e.key === "Enter") handleLogout(); }}
             >
+            </li>
+
+            {/* Admin Email link */}
+           <li
+             className={`${styles.liStudent} ${selected==="admin-email"?styles.active:""}`}
+             onClick={() => goTo("/admin/email")}
+           >
+             <div className={styles.iconContainer}>
+               <MdOutlineEmail className={styles.sidebarIcon} />
+              </div>
+              <span className={styles.aItem} style={{ marginLeft: '8px' }}>
+                Admin Email
+              </span>
+            </li>
+
+            <li className={styles.liStudent} onClick={handleLogout}>
               <div className={styles.iconContainer}>
                 <MdLogout className={styles.sidebarIcon} />
               </div>
