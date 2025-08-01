@@ -1,101 +1,86 @@
 const express = require("express");
 const router = express.Router();
 const nodemailer = require("nodemailer");
-const path = require("path");
 const ejs = require("ejs");
 require("dotenv").config();
-const { sendSMS } = require("../../services/sms");    // New
+const path = require("path");
+const smsModulePath = path.resolve(__dirname, "../../services/sms.mjs");
 const Notification = require("../../models/Notification");
 const Session = require("../../models/Session");
 
-
-// Extract sendNotification function for reusability
 async function sendNotification(sessionId) {
-    if (!sessionId) {
-      return res.status(400).json({ message: "sessionId is required." });
-    }
-
-    // Fetch session details
-    const session = await Session.findById(sessionId)
-      .populate({ path: "studentID", model: "User" })
-      .populate({ path: "tutorID", model: "User" });
-
-    if (!session)
-      return res.status(404).json({ message: "Session not found." });
-
-    const status = session.status;
-    let message = "";
-
-    // Customize the message based on session status
-    switch (status) {
-      case "Scheduled":
-        message = `Your session has been scheduled on ${(new Date(session.sessionTime)).toLocaleString()}.`;
-        break;
-      case "Completed":
-        message = `Your session on ${(new Date(session.sessionTime)).toLocaleString()} is completed. Notes: ${session.notes || "N/A"}`;
-        break;
-      case "Cancelled":
-        message = `Your session for ${(new Date(session.sessionTime)).toLocaleString()} was cancelled.`;
-        break;
-      default:
-        message = `Session update.`;
-    }
-
-    // Store notification in the database
-    await Notification.create({
-      userId: session.studentID.id,
-      message,
-      sessionId, // REQUIRED
-    });
-
-    await Notification.create({
-      userId: session.tutorID.id,
-      message,
-      sessionId, // REQUIRED
-    });
-
-    // Send Email Notification
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_SERVER,
-      port: process.env.SMTP_PORT,
-      auth: {
-        user: process.env.SMTP_USERNAME,
-        pass: process.env.SMTP_PASSWORD,
-      },
-    });
-
-    const subject = `Session ${status} - Tutor Tech`;
-
-    const templatePath = path.join(__dirname, "views", "email-template.ejs");
-
-    const recipients = [session.studentID, session.tutorID];
-
-    for (const user of recipients) {
-      const htmlContent = await ejs.renderFile(templatePath, {
-        name: `${user.firstName} ${user.lastName}`,
-        isTutor: user.id === session.tutorID.id,
-        session,
-        message,
-        subject,
-      });
-
-      const mailOptions = {
-        from: process.env.SMTP_USERNAME,
-        replyTo: process.env.SMTP_PROXY_EMAIL,
-        to: user.email,
-        subject,
-        html: htmlContent,
-      };
-
-      await transporter.sendMail(mailOptions);
-
-      // New SMS confirmation note: (maybe use switch statement)
-      const e164 = user.phone.startsWith('+') ? user.phone : `+1${user.phone}`; // Confirm E.164 format
-      console.log('→ about to SMS', e164);          
-      const smsBody = `MavAssist: ${message}`;
-      await sendSMS({ to: e164, body: smsBody });
-    }
+  if (!sessionId) {
+    return res.status(400).json({ message: "sessionId is required." });
   }
+
+  const smsModulePath = path.resolve(__dirname, "../../services/sms.mjs");
+  const { sendSMS } = await import(smsModulePath);
+
+  const session = await Session.findById(sessionId)
+    .populate({ path: "studentID", model: "User" })
+    .populate({ path: "tutorID", model: "User" });
+
+  if (!session)
+    return res.status(404).json({ message: "Session not found." });
+
+  const status = session.status;
+  let message = "";
+
+  switch (status) {
+    case "Scheduled":
+      message = `Your session has been scheduled on ${(new Date(session.sessionTime)).toLocaleString()}.`;
+      break;
+    case "Completed":
+      message = `Your session on ${(new Date(session.sessionTime)).toLocaleString()} is completed. Notes: ${session.notes || "N/A"}`;
+      break;
+    case "Cancelled":
+      message = `Your session for ${(new Date(session.sessionTime)).toLocaleString()} was cancelled.`;
+      break;
+    default:
+      message = `Session update.`;
+  }
+
+  await Notification.create({ userId: session.studentID.id, message, sessionId });
+  await Notification.create({ userId: session.tutorID.id, message, sessionId });
+
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_SERVER,
+    port: process.env.SMTP_PORT,
+    auth: {
+      user: process.env.SMTP_USERNAME,
+      pass: process.env.SMTP_PASSWORD,
+    },
+  });
+
+  const subject = `Session ${status} - Tutor Tech`;
+  const templatePath = path.join(__dirname, "views", "email-template.ejs");
+  const recipients = [session.studentID, session.tutorID];
+
+  for (const user of recipients) {
+    const htmlContent = await ejs.renderFile(templatePath, {
+      name: `${user.firstName} ${user.lastName}`,
+      isTutor: user.id === session.tutorID.id,
+      session,
+      message,
+      subject,
+    });
+
+    const mailOptions = {
+      from: process.env.SMTP_USERNAME,
+      replyTo: process.env.SMTP_PROXY_EMAIL,
+      to: user.email,
+      subject,
+      html: htmlContent,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    const e164 = user.phone.startsWith('+') ? user.phone : `+1${user.phone}`;
+    console.log('→ about to SMS', e164);
+    const smsBody = `MavAssist: ${message}`;
+    await sendSMS({ to: e164, body: smsBody });
+  }
+}
 
 router.post("/send-notification", async (req, res) => {
   try {
