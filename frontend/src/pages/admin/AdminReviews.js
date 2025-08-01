@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import AdminSidebar from '../../components/Sidebar/AdminSidebar';
 import styles from '../../styles/Feedback.module.css';
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
 const AdminReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [selectedReview, setSelectedReview] = useState(null);
+  const { isCollapsed } = useSidebar();
+  const sidebarWidth = isCollapsed ? "80px" : "270px";
 
   useEffect(() => {
     fetch('/api/feedback')
@@ -16,7 +19,7 @@ const AdminReviews = () => {
   return (
     <div className="admin-layout" style={{ display: 'flex' }}>
       <AdminSidebar selected="admin-reviews" />
-      <main className={styles.reviewsBackground}>
+      <main className={styles.reviewsBackground} style={{ marginLeft: isCollapsed ? "80px" : "260px", transition: "margin-left 0.5s ease", "--sidebar-width": sidebarWidth }}>
         {/* Left Review List */}
         <div className={styles.reviewsContainer}>
           <h1 className={styles.reviewsTitle}>Tutor Reviews</h1>

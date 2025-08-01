@@ -17,6 +17,7 @@ import { FaBookOpen } from "react-icons/fa";
 import { FaInbox } from 'react-icons/fa';
 
 
+
 const AdminSidebar = ({ selected }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -39,25 +40,6 @@ const AdminSidebar = ({ selected }) => {
         </div>
         <div className={`${styles.contentsContainer} ${isCollapsed ? styles.contentsContainerActive : ""}`}>
           <ul className={styles.ulStudent}>
-            {[
-              { key: "home", label: "Dashboard", icon: <MdOutlineSpaceDashboard />, path: "/home" },
-              { key: "manage-users", label: "Manage Users", icon: <FaUsers />, path: "/manage-users" },
-              { key: "analytics", label: "System Analytics", icon: <MdOutlineAnalytics />, path: "/analytics" },
-              { key: "admin-settings", label: "Settings", icon: <IoSettingsOutline />, path: "/admin-settings" },
-              { key: "admin-reviews", label: "Tutor Reviews", icon: <MdRateReview />, path: "/admin-reviews" },
-            ].map(({ key, label, icon, path }) => (
-              <li
-                key={key}
-                className={`${styles.liStudent} ${selected === key ? styles.active : ""}`}
-                onClick={() => goTo(path)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => { if(e.key === "Enter") goTo(path); }}
-              >
-                <div className={styles.iconContainer}>{React.cloneElement(icon, { className: styles.sidebarIcon })}</div>
-                <span className={styles.aItem}>{label}</span>
-              </li>
-            ))}
             <li
             
               className={`${styles.liStudent} ${selected === "home" ? styles.active : ""}`} 
@@ -67,12 +49,6 @@ const AdminSidebar = ({ selected }) => {
                 <MdOutlineSpaceDashboard className={styles.sidebarIcon} />
               </div>
               <span className={styles.aItem}>Dashboard</span>
-            </li>
-            <li
-              className={`${styles.liStudent} ${selected === "card-swipe" ? styles.active : ""}`}
-              onClick={() => goTo("/card-swipe")}
-            >
-              <span className={styles.aItem}>ID Card Session</span>
             </li>
             <li
               className={`${styles.liStudent} ${selected === "manage-users" ? styles.active : ""}`}
@@ -92,6 +68,19 @@ const AdminSidebar = ({ selected }) => {
               </div>
               <span className={styles.aItem}>Manage Courses</span>
             </li>
+
+            <li
+              className={`${styles.liStudent} ${selected === "admin-reviews" ? styles.active : ""}`}
+              onClick={() => goTo("/admin-reviews")}
+            >
+              <div className={styles.iconContainer}>
+                <MdRateReview className={styles.sidebarIcon} />
+              </div>
+              <span className={styles.aItem}>Tutor Review</span>
+            </li>
+
+
+
             <li 
               className={`${styles.liStudent} ${selected === "analytics" ? styles.active : ""}`} 
               onClick={() => goTo("/analytics")}
@@ -119,15 +108,6 @@ const AdminSidebar = ({ selected }) => {
               </div>
               <span className={styles.aItem}>Settings</span>
             </li>
-            <li 
-              className={styles.liStudent} 
-              onClick={handleLogout}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => { if(e.key === "Enter") handleLogout(); }}
-            >
-            </li>
-
             {/* Admin Email link */}
            <li
              className={`${styles.liStudent} ${selected==="admin-email"?styles.active:""}`}
