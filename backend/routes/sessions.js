@@ -266,9 +266,9 @@ router.get('/student/upcoming/:userId', async (req, res) => {
 router.put('/:sessionId/status', async (req, res) => {
   try {
     //added noShow flag
-    const { status, noShow } = req.body;
+    const { status } = req.body;
 
-    if (!['Scheduled', 'Completed', 'Cancelled'].includes(status)) {
+    if (!['Scheduled', 'Completed', 'Cancelled', 'No Show'].includes(status)) {
       return res.status(400).json({ message: 'Invalid status' });
     }
 
@@ -311,25 +311,41 @@ router.put('/:sessionId/status', async (req, res) => {
       await attendance.save();
     }
 
-    if (status === 'Cancelled' && !existingAttendance) {
+    if (status === 'No Show' && !existingAttendance) {
+      const checkInTime = new Date(session.sessionTime);
+      const checkOutTime = new Date(checkInTime.getTime() + session.duration * 60000);
+
       const attendance = new Attendance({
         sessionID: session._id,
         studentID,
-        wasNoShow: true,
-        //now updates check-in and check-out status based on noShow flag
-        checkInStatus: noShow ? 'No Show' : 'Cancelled',
-        checkOutStatus: noShow ? 'No Show' : 'Cancelled',
-        duration: 0
+        courseID,
+        checkInTime,
+        checkOutTime,
+        duration: session.duration,
+        checkInStatus: 'No Show',
+        checkOutStatus: 'No Show',
+        wasNoShow: true
       });
 
       await attendance.save();
-    } else if (status === 'Cancelled' && existingAttendance) {
-      existingAttendance.wasNoShow = true;
-      //now updates check-in and check-out status based on noShow flag
-      existingAttendance.checkInStatus = noShow ? 'No Show' : 'Cancelled';
-      existingAttendance.checkOutStatus = noShow ? 'No Show' : 'Cancelled';
-      existingAttendance.duration = 0;
-      await existingAttendance.save();
+    }
+
+    if (status === 'Cancelled' && !existingAttendance) {
+      const checkInTime = new Date(session.sessionTime);
+      const checkOutTime = new Date(checkInTime.getTime() + session.duration * 60000);
+
+      const attendance = new Attendance({
+        sessionID: session._id,
+        studentID,
+        courseID,
+        checkInTime,
+        checkOutTime,
+        duration: 0,
+        checkInStatus: 'Cancelled',
+        checkOutStatus: 'Cancelled',
+        wasNoShow: true
+      });
+      await attendance.save();
     }
 
     session.status = status;
