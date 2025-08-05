@@ -118,21 +118,24 @@ function TutorSessions() {
     }
     
     try {
-      await axios.put(
-        `${BACKEND_URL}/api/sessions/${sessionId}/status`, 
+      const res = await axios.put(
+        `${BACKEND_URL}/api/sessions/${sessionId}/status`,
         { status: newStatus, noShow },
         { withCredentials: true }
       );
-      // Refresh sessions after status update
-      fetchSessions();
-      fetchAttendanceRecords();
+
+      if (res.status === 200 && res.data.success) {
+        console.log("Session status updated:", res.data.message);
+        fetchSessions();
+        fetchAttendanceRecords();
+      } else {
+        console.warn("Unexpected response:", res);
+        setError("Unexpected response from server.");
+      }
     } catch (error) {
       console.error("Error updating session status:", error);
-      if (error.response) {
-        setError(`Failed to update session: ${error.response.data.message || error.response.statusText}`);
-      } else {
-        setError("Failed to update session status. Please try again.");
-      }
+      const msg = error.response?.data?.message || error.message || "Unknown error";
+      setError("Failed to update session: " + msg);
     }
   };
 
