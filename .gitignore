@@ -8,3 +8,12 @@ backend/ssl/server.cert
 # Environment variables
 backend/.env
 .DS_Store
+
+package-lock.json
+package.json
+
+frontend/package-lock.json
+frontend/package.json
+
+backend/package-lock.json
+backend/package.json
