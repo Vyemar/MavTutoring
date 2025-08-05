@@ -93,18 +93,17 @@ function TutorSessions() {
       setError("User session expired. Please log in again.");
       return;
     }
-    
     try {
       const res = await axios.put(
         `${BACKEND_URL}/api/sessions/${sessionId}/status`,
-        { status: newStatus, noShow },
+        { status: newStatus},
         { withCredentials: true }
       );
-
+ 
       if (res.status === 200 && res.data.success) {
         console.log("Session status updated:", res.data.message);
         fetchSessions();
-        fetchAttendanceRecords();
+       // fetchAttendanceRecords();
       } else {
         console.warn("Unexpected response:", res);
         setError("Unexpected response from server.");
@@ -282,7 +281,7 @@ function TutorSessions() {
                         <div className={styles.sessionInfo}>
                           <p>
                             <strong>Student:</strong> {session.studentID ? `${session.studentID.firstName} ${session.studentID.lastName}` : 'Unknown Student'}
-                            {/* Removed No Show tag */}
+        
                           </p>
                           {session.courseID &&(
                           <p><strong>Course:</strong> {session.courseID.code} - {session.courseID.title}</p>
