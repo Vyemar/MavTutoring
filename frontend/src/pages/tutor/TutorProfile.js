@@ -32,6 +32,29 @@ function TutorProfile() {
     const [courseMap, setCourseMap] = useState({});
     const { isCollapsed } = useSidebar();
     const sidebarWidth = isCollapsed ? "80px" : "270px";
+    const [uploadedFiles, setUploadedFiles] = useState([]);
+    const [showFiles, setShowFiles] = useState(false);
+    const [loadingFiles, setLoadingFiles] = useState(false);
+
+    const fetchUploadedFiles = async() => {
+        if(!userData?.id)
+            return;
+        setLoadingFiles(true);
+        setShowFiles(true);
+        try{
+            const response = await axios.get(`${BACKEND_URL}/api/tutors/tutor/${userData.id}/files`, {
+                withCredentials: true
+            });
+            setUploadedFiles(response.data);
+        }
+        catch(error){
+            console.error("Error fetching uploaded files:", error);
+            setError("Failed to load uploaded files");
+        }
+        finally {
+            setLoadingFiles(false);
+        }
+    };
 
     useEffect(() => {
         const fetchUserSession = async () => {
@@ -337,9 +360,40 @@ function TutorProfile() {
                             Cancel
                             </button>
                         )}
+                        
+                            <button className={styles.fileUploadButton} onClick={fetchUploadedFiles}>
+                                {"Show Uploaded Files"}
+                            </button>
+
                         </div>
                     </div>
-                </div>
+                    {showFiles && (
+                        <div className={styles.uploadedFilesSection}>
+                            <h3> Uploaded Files </h3>
+                            {
+                            loadingFiles ? (
+                                    <p> Loading files...</p>
+                                ) : uploadedFiles.length === 0 ? (
+                                    <p> No Files Uploaded Yet</p>
+                                ) : ( 
+                                    <ul className = {styles.fileList}>
+                                        {uploadedFiles.map((file, index) => (
+                                            <li key = {index}>
+                                                <a
+                                                    href = {`${BACKEND_URL}/uploads/${file.fileName}`}
+                                                    target = "_blank"
+                                                >
+                                                {file.originalName}
+                                                </a>{" "}
+                                                - uploaded { new Date(file.uploadedAt).toString()}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                                
+                        </div>
+                    )}
+                    </div>
             </div>
         </div>
     );

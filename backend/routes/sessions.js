@@ -4,8 +4,66 @@ const User = require('../models/User');
 const mongoose = require('mongoose'); // Add this importS
 const Session = require('../models/Session');
 const Attendance = require('../models/Attendance');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
 const {sendNotification} = require('../routes/notifications/confirmation');
+
+
+//tutor can upload files for students for  upcoming sessions
+const storage = multer.diskStorage({
+  destination: function(req,file,cb){
+
+    const dir = './uploads/';
+    if(!fs.existsSync(dir)){
+      fs.mkdirSync(dir);
+    }
+    cb(null,dir);
+  },
+  filename: function(req,file,cb){
+    const ext = path.extname(file.originalname);
+    cb(null, `${req.params.sessionId}-${Date.now()}${ext}`);
+  }
+});
+
+const upload = multer({storage});
+
+router.post('/:sessionId/upload', upload.single('file'), async (req,res) =>{
+  try{
+    const sessionId = req.params.sessionId;
+    const session = await Session.findById(sessionId);
+    if(!session){
+      return res.status(404).json({message: 'Session not found'});
+    }
+    if(!req.file){
+      return res.status(404).json({message: 'No file uploaded'});
+    }
+    if(!session.uploads) session.uploads = [];
+    session.uploads.push({
+      fileName: req.file.filename,
+      originalName: req.file.originalname,
+      filePath: req.file.path,
+      uploadedAt: new Date()
+    });
+
+    await session.save();
+
+    res.json({
+      message: 'File uploaded successfully',
+      file: {
+        fileName: req.file.filename,
+        originalName: req.file.originalname,
+        path: req.file.path
+      }
+    });
+  }
+  catch(err){
+    console.error('Upload error:', err);
+    res.status(500).json({ message: 'Error uploading file' , error: err.message})
+  }
+});
+
 
 // Get available time slots for a tutor on a specific date
 router.get('/availability/:tutorId/:date', async (req, res) => {

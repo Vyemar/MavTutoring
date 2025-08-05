@@ -96,8 +96,8 @@ const analyticsRoutes = require('./routes/analytics');
 const bugHouse = require('./routes/bugHouse');
 const courseRoutes = require('./routes/courses'); // for all the course
 const tutorRequestRoutes = require('./routes/tutorRequests'); // Tutor request routes
-
-
+const path = require('path'); //for tutor session material uploads
+const tutorFileRoutes = require('./routes/schedules/tutor');
 
 // Mount other routes
 app.use('/api/auth', auth.router); // Use the router exported from auth.js
@@ -113,8 +113,9 @@ app.use('/api/analytics', analyticsRoutes); //analytics routes
 app.use('/api/bugHouse', bugHouse); //Bug House settings information
 app.use('/api/courses', courseRoutes)
 app.use('/api/tutor-request', tutorRequestRoutes); // Requesting tutor functionalities
-
-
+app.use('/uploads', express.static(path.join(__dirname,'uploads'))); //for tutor session material uploads
+app.use('api/tutors', require('./routes/schedules/tutor'));
+app.use("/api/tutors", tutorFileRoutes);
 
 app.use("/api/notifications", notificationRoutes); // Notification routes
 

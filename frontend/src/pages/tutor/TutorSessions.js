@@ -21,6 +21,8 @@ function TutorSessions() {
   const [userData, setUserData] = useState(null);
   const [attendance, setAttendance] = useState([]);
   const [attendanceRecords, setAttendanceRecords] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState({});
+  const [uploadStatus, setUploadStatus] = useState([]);
 
   // Fetch the user session data
   useEffect(() => {
@@ -213,6 +215,36 @@ function TutorSessions() {
     );
   }
 
+  const handleFileChange = (sessionId, file) => {
+    setSelectedFiles(prev => ({...prev, [sessionId]: file}));
+  }
+
+  const handleFileUpload = async(sessionId) => {
+    const file = selectedFiles[sessionId];
+    if(!file) 
+      return;
+    const formData = new FormData();
+    formData.append('file',file);
+
+    try {
+      const response = await axios.post(
+        `${BACKEND_URL}/api/sessions/${sessionId}/upload`,
+        formData,
+        {
+          headers: {'Content-Type': 'multipart/form-data'},
+          withCredentials: true
+        }
+      );
+      setUploadStatus(prev=>({...prev,[sessionId]: 'success'}));
+      console.log('File uploaded:', response.data);
+    }
+      catch(error){
+        setUploadStatus(prev=> ({...prev,[sessionId]: 'error'}));
+        console.log('Upload failed', error);
+      }
+  };
+  
+
   return (
     <div className={styles.container}>
       <TutorSideBar selected="sessions" />
@@ -262,6 +294,27 @@ function TutorSessions() {
                         >
                           Cancel Session
                         </button>
+                      </div>
+                      {/*This allows the tutor to actually upload the files from the upcoming sessions section of the UI*/}
+                      <div className = {styles.sessionUpload}>
+                        <input 
+                          type = "file"
+                          accept = ".pdf,.png,.jpg,.jpeg,.doc,.docx,.txt"
+                          onChange={(e) => handleFileChange(session._id, e.target.files[0])}
+                        />
+                        <button
+                          onClick = {() => handleFileUpload(session._id)}
+                          disabled = {!selectedFiles[session._id]}
+                          className = {styles.uploadButton}
+                        >
+                          Upload File
+                        </button>
+                        {uploadStatus[session._id] === 'success' && (
+                          <p className = {styles.successText}> Upload Successful!</p>
+                        )}
+                        {uploadStatus[session._id] === 'error' &&(
+                          <p className = {styles.errorText}> Upload Failed.</p>
+                        )}
                       </div>
                     </div>
                   ))}

@@ -32,6 +32,19 @@ const SessionSchema = new mongoose.Schema({
     notes: {
         type: String, // Optional notes for the session
     },
+    // for files that tutors can upload with helpful infomation for tutoring sessions
+        uploads: [
+            
+            {
+                fileName: String,
+                originalName: String,
+                filePath: String,
+                uploadAt: {
+                    type: Date,
+                    default: Date.now,
+                }
+            }
+        ],
     createdAt: {
         type: Date,
         default: Date.now,

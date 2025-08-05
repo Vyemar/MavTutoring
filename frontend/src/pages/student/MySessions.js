@@ -150,6 +150,26 @@ function MySessions() {
                   <p className={styles.sessionStatus}>
                     Status: {displayStatus}
                   </p>
+                  
+                  {/*this part allowes students to view/download the files that a tutor has uploaded for a students tutor session*/}
+                  {session.uploads && Array.isArray(session.uploads) && session.uploads.length > 0 &&(
+                    <div className = {styles.uploadSection}>
+                      <p className = {styles.uploadHeader}> Session Materials:</p>
+                      <ul className = {styles.uploadList}>
+                        {session.uploads.map((file, index) => (
+                          <li key = {index}>
+                            <a
+                              href={`${BACKEND_URL}/uploads/${file.fileName}`}
+                                target = "_blank"
+                              className = {styles.uploadLink}
+                            >
+                            {file.originalName}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
                 {attendanceForSession?.checkInTime && (
                   <p className={styles.checkInTime}>
