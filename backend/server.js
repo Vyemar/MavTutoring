@@ -1,7 +1,10 @@
+require('dotenv').config(); // Load environment variables
+
 const express = require('express');
 const passport = require('passport');
 const SamlStrategy = require('passport-saml').Strategy;
 const session = require('express-session');
+const adminEmailRoutes = require('./routes/adminEmail');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -9,7 +12,6 @@ const mongoose = require('mongoose');
 const https = require('https');
 const http = require('http');
 const fs = require('fs');
-require('dotenv').config(); // Load environment variables
 
 const app = express();
 
@@ -113,10 +115,13 @@ app.use('/api/analytics', analyticsRoutes); //analytics routes
 app.use('/api/bugHouse', bugHouse); //Bug House settings information
 app.use('/api/courses', courseRoutes)
 app.use('/api/tutor-request', tutorRequestRoutes); // Requesting tutor functionalities
+app.use('/api/analytics', require('./routes/analytics'));
+
 
 
 
 app.use("/api/notifications", notificationRoutes); // Notification routes
+app.use("/api/admin", adminEmailRoutes);
 
 // === Connect to MongoDB ===
 if (!MONGO_URI) {

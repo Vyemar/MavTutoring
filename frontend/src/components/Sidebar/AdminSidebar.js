@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import styles from "../../styles/component/SideBar.module.css";
 import { handleLogout } from "../../utils/authUtils";
 import BaseSidebar from "./BaseSidebar";
@@ -7,7 +7,9 @@ import { useSidebar } from "./SidebarContext";
 import {
   MdOutlineSpaceDashboard,
   MdOutlineAnalytics,
+  MdOutlineEmail,
   MdLogout,
+  MdRateReview,
 } from "react-icons/md";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaUsers } from "react-icons/fa6";
@@ -15,29 +17,31 @@ import { FaBookOpen } from "react-icons/fa";
 import { FaInbox } from 'react-icons/fa';
 
 
+
 const AdminSidebar = ({ selected }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isCollapsed, toggleSidebar } = useSidebar();
-  
+
   const goTo = (path) => {
     if (location.pathname !== path) {
       navigate(path);
     }
   };
-  
+
   return (
     <div className={`${styles.sidebar} ${isCollapsed ? styles.sidebarActive : ""}`}>
       <BaseSidebar isCollapsed={isCollapsed}>
         <div
           className={`${styles.burgerContainer} ${isCollapsed ? styles.burgerContainerActive : ""}`}
         >
-          <div className={styles.burgerTrigger} onClick={toggleSidebar}></div>
+          <div className={styles.burgerTrigger} onClick={toggleSidebar} role="button" tabIndex={0} />
           <div className={styles.burgerMenu}></div>
         </div>
         <div className={`${styles.contentsContainer} ${isCollapsed ? styles.contentsContainerActive : ""}`}>
           <ul className={styles.ulStudent}>
-            <li 
+            <li
+            
               className={`${styles.liStudent} ${selected === "home" ? styles.active : ""}`} 
               onClick={() => goTo("/home")}
             >
@@ -46,8 +50,8 @@ const AdminSidebar = ({ selected }) => {
               </div>
               <span className={styles.aItem}>Dashboard</span>
             </li>
-            <li 
-              className={`${styles.liStudent} ${selected === "manage-users" ? styles.active : ""}`} 
+            <li
+              className={`${styles.liStudent} ${selected === "manage-users" ? styles.active : ""}`}
               onClick={() => goTo("/manage-users")}
             >
               <div className={styles.iconContainer}>
@@ -64,6 +68,19 @@ const AdminSidebar = ({ selected }) => {
               </div>
               <span className={styles.aItem}>Manage Courses</span>
             </li>
+
+            <li
+              className={`${styles.liStudent} ${selected === "admin-reviews" ? styles.active : ""}`}
+              onClick={() => goTo("/admin-reviews")}
+            >
+              <div className={styles.iconContainer}>
+                <MdRateReview className={styles.sidebarIcon} />
+              </div>
+              <span className={styles.aItem}>Tutor Review</span>
+            </li>
+
+
+
             <li 
               className={`${styles.liStudent} ${selected === "analytics" ? styles.active : ""}`} 
               onClick={() => goTo("/analytics")}
@@ -91,10 +108,20 @@ const AdminSidebar = ({ selected }) => {
               </div>
               <span className={styles.aItem}>Settings</span>
             </li>
-            <li 
-              className={styles.liStudent} 
-              onClick={handleLogout}
-            >
+            {/* Admin Email link */}
+           <li
+             className={`${styles.liStudent} ${selected==="admin-email"?styles.active:""}`}
+             onClick={() => goTo("/admin/email")}
+           >
+             <div className={styles.iconContainer}>
+               <MdOutlineEmail className={styles.sidebarIcon} />
+              </div>
+              <span className={styles.aItem} style={{ marginLeft: '8px' }}>
+                Admin Email
+              </span>
+            </li>
+
+            <li className={styles.liStudent} onClick={handleLogout}>
               <div className={styles.iconContainer}>
                 <MdLogout className={styles.sidebarIcon} />
               </div>

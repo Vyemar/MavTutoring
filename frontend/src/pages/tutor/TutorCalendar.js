@@ -5,6 +5,13 @@ import "../../styles/CalendarDaypilot.css";
 import { axiosGetData } from '../../utils/api';
 import axios from 'axios';
 
+/* Hello I am Rajesh, I was working on most of database and UI,
+   this is only for calendar which i would recommend next team
+   to swtich to FullCalendar instead of react-big-calendar because
+   rbc calendar is old schooled and doesn't let you do alot of stuffs 
+   technically. It's hard to make it look modern with rbc.
+*/
+
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
 const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
@@ -115,7 +122,10 @@ const TutorCalendar = () => {
 
         return {
           id: session._id,
-          text: `Student: ${session.studentID?.firstName || 'Unknown'} ${session.studentID?.lastName || ''}`,
+          text: `👨‍🎓${session.studentID?.firstName || 'Student'}\n 📚${session.courseID?.code || 'Course'}`,
+          toolTip: `Student: ${session.studentID?.firstName || 'N/A'} ${session.studentID?.lastName || ''}
+        Course: ${session.courseID?.title || 'N/A'}
+        Status: ${session.status}`,
           start,
           end,
           backColor
@@ -143,7 +153,6 @@ const TutorCalendar = () => {
             <button onClick={() => setView("Week")} className={view === "Week" ? "selected" : ""}>Week</button>
             <button onClick={() => setView("Month")} className={view === "Month" ? "selected" : ""}>Month</button>
           </div>
-          <button onClick={() => setStartDate(DayPilot.Date.today())} className={"standalone"}>Today</button>
         </div>
 
         <DayPilotCalendar

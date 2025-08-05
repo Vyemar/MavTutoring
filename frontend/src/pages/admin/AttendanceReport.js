@@ -3,6 +3,7 @@ import axios from "axios";
 import styles from "../../styles/AttendanceReport.module.css";
 import AdminSideBar from "../../components/Sidebar/AdminSidebar";
 import { useSidebar } from "../../components/Sidebar/SidebarContext";
+import { useNavigate } from "react-router-dom";
 
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
@@ -121,6 +122,7 @@ function AttendanceReport() {
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
   const { isCollapsed } = useSidebar();
+  const navigate = useNavigate();
   
   // Define fetchAttendance as a useCallback
   const fetchAttendance = useCallback(async () => {
@@ -702,6 +704,13 @@ function AttendanceReport() {
                 disabled={loading}
               >
                 {loading ? "Refreshing..." : "Refresh Data"}
+              </button>
+
+              <button 
+                className={styles.refreshButton}
+                onClick={() => navigate("/advanced-reports")}
+              >
+                View Advanced Reports
               </button>
             </div>
           )}

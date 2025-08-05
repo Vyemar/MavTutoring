@@ -11,6 +11,12 @@
   margin-left :80px;/*accounts for sidebar when its minimized*/
 }
 
+.upcomingSessions {
+  max-height: 700px;       
+  overflow-y: auto;        
+  padding-right: 5px;
+}
+
 .scheduleContainer {
   max-width: 1200px;
   margin: 0 auto;

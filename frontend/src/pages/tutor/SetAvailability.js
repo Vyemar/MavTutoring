@@ -7,6 +7,15 @@ import TutorSidebar from '../../components/Sidebar/TutorSidebar';
 import { axiosGetData } from '../../utils/api'; // Import the API utility
 import { useSidebar } from "../../components/Sidebar/SidebarContext"; //this is for responsive sidebar which was not in Tutor and Student
 
+
+/* Hello I am Rajesh, I was working on most of database and UI,
+   this is only for calendar which i would recommend next team
+   to swtich to FullCalendar instead of react-big-calendar because
+   rbc calendar is old schooled and doesn't let you do alot of stuffs 
+   technically. It's hard to make it look modern with rbc.
+*/ 
+
+
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
 const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
@@ -43,6 +52,7 @@ const customComponents = {
     },
   }
 };
+
 
 const SetAvailability = () => {
     const [events, setEvents] = useState([]);
@@ -174,7 +184,7 @@ const SetAvailability = () => {
             const newEvent = {
                 id: Date.now(), // Temporary unique ID
                 start: slotInfo.start,
-                end: slotInfo.end,
+                end: slotInfo.end
             };
             setEvents((prevEvents) => [...prevEvents, newEvent]);
         } else {
@@ -261,7 +271,7 @@ const SetAvailability = () => {
                                 step={30}
                                 timeslots={2}
                                 formats={formats}
-                                components={customComponents}
+                                components={{customComponents}}
                             />
                         </div>
                         <button 

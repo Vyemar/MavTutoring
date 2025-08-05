@@ -107,8 +107,18 @@ function Settings() {
   return (
     <div className={styles.container}>
       <AdminSideBar selected="admin-settings"></AdminSideBar>
+      
+        
       <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "90px" : "270px", transition: "margin-left 0.5s ease"}}>
-        <h1 className={styles.heading}>BugHouse Settings</h1>
+        <div
+          className={styles.headerSection}
+          style={{
+            left: isCollapsed ? "90px" : "270px",
+            width: isCollapsed ? "calc(100% - 90px)" : "calc(100% - 270px)",
+            transition: "all 0.3s ease"
+          }}>
+          <h1 className={styles.heading}>BugHouse Settings</h1>
+        </div>
         <div className={styles.adminSettings}>
           <form onSubmit={handleSubmit}>
             <div className={styles.settingsSection}>
@@ -162,7 +172,7 @@ function Settings() {
                 />
               </div>
             </div>
-            <div className={styles.settingsSection}>
+            <div className={styles.toggleSection}>
             <h3>Allow Tutor Requests</h3>
             <label className={styles.switchLabel}>
               <input

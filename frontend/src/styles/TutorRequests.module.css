@@ -6,6 +6,12 @@
     min-height: 100vh;
 }
 
+.mainContent h1{
+    color: white;
+    padding-bottom: 20px;
+    
+}
+
 /* Removes bullet point and indention from it */
 .requestList {
     list-style: none;

@@ -8,6 +8,7 @@ import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
 function TutorHome() {
     const navigate = useNavigate();
+    const [ tutorName, setTutorName ] = useState("");
     const { isCollapsed } = useSidebar();
     const [availability, setAvailability] = useState([]);
     const [notifications, setNotifications] = useState([]);
@@ -19,6 +20,14 @@ function TutorHome() {
             .catch((err) => console.error('Error fetching notifications:', err));
     }, []);
 
+    useEffect(() => {
+        const storeUser = JSON.parse(localStorage.getItem("user"));
+         console.log("Fetched user:", storeUser);
+        if(storeUser?.firstName) {
+          setTutorName(storeUser.firstName);
+        }
+      }, []);
+
     return (
         <div className={styles.container}>
             {/* Use the TutorSidebar component */}
@@ -27,7 +36,14 @@ function TutorHome() {
             {/* Main Content */}
             <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "90px" : "280px" , transition: "margin-left 0.5s ease"}}
 >
-                <h1 className={styles.heading}>Tutor Dashboard</h1>
+                <div className={styles.headingRow}>
+                          <div>
+                            <h1>
+                              Welcome, {tutorName || "Tutor"} <span role="img">👋</span>
+                            </h1>
+                            <p>Here's your tutoring calendar</p>
+                          </div>
+                        </div>
 
                 {/* Schedule Section */}
                 <section className = {styles.tutorHomeSec}>

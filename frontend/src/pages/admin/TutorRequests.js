@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import AdminSidebar from "../../components/Sidebar/AdminSidebar";
 import styles from "../../styles/TutorRequests.module.css";
+import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || "https";
 const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || "localhost";
@@ -11,6 +12,8 @@ const BACKEND_URL = `${PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}`;
 const TutorRequests = () => {
     const [requests, setRequests] = useState([]);
     const [error, setError] = useState("");
+    const { isCollapsed } = useSidebar();
+    const sidebarWidth = isCollapsed ? "80px" : "270px";
 
     // Populates the tutor request list when initially loading
     useEffect(() => {
@@ -72,7 +75,7 @@ const TutorRequests = () => {
 return (
     <div className={styles.container}>
       <AdminSidebar selected="tutor-requests" />
-      <div className={styles.mainContent}>
+      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "260px", transition: "margin-left 0.5s ease", "--sidebar-width": sidebarWidth}}>
         <h1>Incoming Tutor Requests</h1>
         {error && <p className={styles.error}>{error}</p>}
 

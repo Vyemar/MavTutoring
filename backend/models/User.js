@@ -59,7 +59,10 @@ const userSchema = new Schema({
     type: String,
     unique: true,
     sparse: true, // Optional student number for lookup and attendance
-  }
+  },
+
+  resetPasswordToken:   { type: String }, // Forgot password properties
+  resetPasswordExpires: { type: Date   },
 });
 
 // Pre-save hook to hash password before saving
