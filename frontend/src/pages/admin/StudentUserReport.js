@@ -9,8 +9,10 @@ const StudentUserReport = () => {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
   const [sessions, setSessions] = useState([]);
-  const [viewOption, setViewOption] = useState('sessions');
   const [courseHistory, setCourseHistory] = useState([]);
+  const [viewOption, setViewOption] = useState('sessions');
+  const [sessionSort, setSessionSort] = useState('recent'); 
+  const [courseSort, setCourseSort] = useState('most');     
   const navigate = useNavigate();
 
   const formatDateTime = (isoString) => {
@@ -32,7 +34,6 @@ const StudentUserReport = () => {
 
         const coursesRes = await axios.get(`${BACKEND_URL}/api/sessions/student/${userId}/courses`);
         setCourseHistory(coursesRes.data);
-        
       } catch (error) {
         console.error('Error fetching student report data', error);
       }
@@ -42,6 +43,22 @@ const StudentUserReport = () => {
   }, [userId]);
 
   if (!user) return <p>Loading student data...</p>;
+
+  const sortedSessions = [...sessions].sort((a, b) => {
+    if (sessionSort === 'recent') {
+      return new Date(b.sessionTime) - new Date(a.sessionTime);
+    } else {
+      return new Date(a.sessionTime) - new Date(b.sessionTime);
+    }
+  });
+
+  const sortedCourses = [...courseHistory].sort((a, b) => {
+    if (courseSort === 'most') {
+      return b.visitCount - a.visitCount;
+    } else {
+      return a.visitCount - b.visitCount;
+    }
+  });
 
   return (
     <div className={styles.mainContent}>
@@ -57,6 +74,7 @@ const StudentUserReport = () => {
         <h2>Student Information</h2>
         <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
         <p><strong>Email:</strong> {user.email}</p>
+        <p><strong>Phone:</strong> {user.phone}</p>
         <p><strong>Major:</strong> {user.major && user.major.trim() !== "" ? user.major : "N/A"}</p>
         <p><strong>Student ID:</strong> {user.studentID}</p>
       </div>
@@ -72,17 +90,36 @@ const StudentUserReport = () => {
             <option value="courses">Full Course History</option>
           </select>
 
-          <select style={{ padding: '6px 10px', fontSize: '1rem' }}>
-            <option value="alphabetical">Sort by: Alphabetical</option>
-            <option value="highest">Sort by: Most Recent</option>
-            <option value="lowest">Sort by: Oldest</option>
+          <select
+            value={viewOption === 'sessions' ? sessionSort : courseSort}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (viewOption === 'sessions') {
+                setSessionSort(value);
+              } else {
+                setCourseSort(value);
+              }
+            }}
+            style={{ padding: '6px 10px', fontSize: '1rem' }}
+          >
+            {viewOption === 'sessions' ? (
+              <>
+                <option value="recent">Sort by: Most Recent</option>
+                <option value="oldest">Sort by: Oldest</option>
+              </>
+            ) : (
+              <>
+                <option value="most">Sort by: Most Course Visits</option>
+                <option value="least">Sort by: Least Course Visits</option>
+              </>
+            )}
           </select>
         </div>
 
         {viewOption === 'sessions' ? (
-          sessions.length > 0 ? (
+          sortedSessions.length > 0 ? (
             <ul className={styles.sessionList}>
-              {sessions.map((session, index) => (
+              {sortedSessions.map((session, index) => (
                 <li key={index} className={styles.sessionItem}>
                   <span>{formatDateTime(session.sessionTime)}</span>
                   <span>Tutor: {session.tutorID?.firstName} {session.tutorID?.lastName}</span>
@@ -94,11 +131,12 @@ const StudentUserReport = () => {
             <p>No sessions found.</p>
           )
         ) : (
-          courseHistory.length > 0 ? (
+          sortedCourses.length > 0 ? (
             <ul className={styles.sessionList}>
-              {courseHistory.map((course, index) => (
+              {sortedCourses.map((course, index) => (
                 <li key={index} className={styles.sessionItem}>
                   <span>{course.code} - {course.title}</span>
+                  <span>Visits: {course.visitCount}</span>
                 </li>
               ))}
             </ul>

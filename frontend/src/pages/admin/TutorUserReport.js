@@ -11,6 +11,8 @@ const TutorUserReport = () => {
   const [sessions, setSessions] = useState([]);
   const [viewOption, setViewOption] = useState('sessions');
   const [ratings, setRatings] = useState([]);
+  const [ratingSort, setRatingSort] = useState('highest');
+  const [sessionSort, setSessionSort] = useState('recent');
   const navigate = useNavigate();
 
   const formatDateTime = (isoString) => {
@@ -41,6 +43,21 @@ const TutorUserReport = () => {
     fetchData();
   }, [userId]);
 
+  const sortedRatings = [...ratings].sort((a, b) => {
+    return ratingSort === 'highest' ? b.score - a.score : a.score - b.score;
+  });
+
+  const sortedSessions = [...sessions].sort((a, b) => {
+    const aTime = new Date(a.sessionTime);
+    const bTime = new Date(b.sessionTime);
+
+    if (sessionSort === 'recent') {
+      return bTime - aTime;
+    } else {
+      return aTime - bTime;
+    }
+  });
+
   if (!user) return <p>Loading tutor data...</p>;
 
   return (
@@ -59,6 +76,7 @@ const TutorUserReport = () => {
         <p><strong>Email:</strong> {user.email}</p>
         <p><strong>Phone:</strong> {user.phone}</p>
         <p><strong>Major:</strong> {user.major && user.major.trim() !== "" ? user.major : "N/A"}</p>
+        <p><strong>ID:</strong> {user.studentID}</p>
       </div>
 
       <div className={styles.reportSection}>
@@ -72,17 +90,33 @@ const TutorUserReport = () => {
             <option value="ratings">Ratings by Students</option>
           </select>
 
-          <select style={{ padding: '6px 10px', fontSize: '1rem' }}>
-            <option value="alphabetical">Sort by: Alphabetical</option>
-            <option value="highest">Sort by: Highest Number</option>
-            <option value="lowest">Sort by: Lowest Number</option>
-          </select>
+          {viewOption === 'sessions' && (
+            <select
+              value={sessionSort}
+              onChange={(e) => setSessionSort(e.target.value)}
+              style={{ padding: '6px 10px', fontSize: '1rem' }}
+            >
+              <option value="recent">Sort by: Most Recent</option>
+              <option value="oldest">Sort by: Oldest First</option>
+            </select>
+          )}
+
+          {viewOption === 'ratings' && (
+            <select
+              value={ratingSort}
+              onChange={(e) => setRatingSort(e.target.value)}
+              style={{ padding: '6px 10px', fontSize: '1rem' }}
+            >
+              <option value="highest">Sort by: Highest Rating</option>
+              <option value="lowest">Sort by: Lowest Rating</option>
+            </select>
+          )}
         </div>
 
         {viewOption === 'sessions' ? (
-          sessions.length > 0 ? (
+          sortedSessions.length > 0 ? (
             <ul className={styles.sessionList}>
-              {sessions.map((session, index) => (
+              {sortedSessions.map((session, index) => (
                 <li key={index} className={styles.sessionItem}>
                   <span>{formatDateTime(session.sessionTime)}</span>
                   <span>Student: {session.studentID?.firstName} {session.studentID?.lastName}</span>
@@ -94,12 +128,12 @@ const TutorUserReport = () => {
             <p>No sessions found.</p>
           )
         ) : (
-          ratings.length > 0 ? (
+          sortedRatings.length > 0 ? (
             <ul className={styles.sessionList}>
-              {ratings.map((rating, index) => (
+              {sortedRatings.map((rating, index) => (
                 <li key={index} className={styles.sessionItem}>
                   <span>
-                     {rating.score} - "{rating.comment || 'No comment'}"
+                    {rating.score} - "{rating.comment || 'No comment'}"
                   </span>
                 </li>
               ))}
@@ -111,6 +145,6 @@ const TutorUserReport = () => {
       </div>
     </div>
   );
-};
+}
 
 export default TutorUserReport;
