@@ -135,7 +135,7 @@ router.post('/tutor', upload.single('profilePicture'), async (req, res) => {
             bio: bio || "",
             courses,
             skills: skills || "",
-            major: major || "Not Specified",
+            major: major || "N/A",
             currentYear: currentYear || "Not Specified",
             ...(profilePicture && { profilePicture })
         };
@@ -209,7 +209,7 @@ router.post('/student', upload.single('profilePicture'), async (req, res) => {
             userId,
             name,
             bio: bio || "",
-            major: major || "",
+            major: major || "N/A",
             currentYear: currentYear || "Not Specified",
             coursesEnrolled: parsedCoursesEnrolled || [],
             areasOfInterest: parsedAreasOfInterest || [],
@@ -279,7 +279,7 @@ router.put('/update-role/:userId', async (req, res) => {
                     bio: studentProfile.bio || "",
                     courses: [],
                     skills: "",
-                    major: studentProfile.major || "Not Specified",
+                    major: studentProfile.major || "N/A",
                     currentYear: studentProfile.currentYear || "Not Specified",
                     profilePicture: studentProfile.profilePicture
                 });
@@ -301,7 +301,7 @@ router.put('/update-role/:userId', async (req, res) => {
                     bio: "",
                     courses: "",
                     skills: "",
-                    major: "Not Specified",
+                    major: "N/A",
                     currentYear: "Not Specified",
                     profilePicture: null
                 });
@@ -324,7 +324,7 @@ router.put('/update-role/:userId', async (req, res) => {
                     studentID: tutorProfile.studentID, 
                     name: tutorProfile.name,
                     bio: tutorProfile.bio || "",
-                    major: tutorProfile.major || "",
+                    major: tutorProfile.major || "N/A",
                     currentYear: tutorProfile.currentYear || "Not Specified",
                     coursesEnrolled: [],
                     areasOfInterest: [],
@@ -356,7 +356,7 @@ router.put('/update-role/:userId', async (req, res) => {
                     studentID: user.studentID,
                     name: fullName,
                     bio: "",
-                    major: "",
+                    major: "N/A",
                     currentYear: "Not Specified",
                     coursesEnrolled: [],
                     areasOfInterest: [],
@@ -383,7 +383,7 @@ router.put('/update-role/:userId', async (req, res) => {
                     studentID: user.studentID,
                     name: fullName,
                     bio: "",
-                    major: "",
+                    major: "N/A",
                     currentYear: "Not Specified",
                     coursesEnrolled: [],
                     areasOfInterest: [],
@@ -402,7 +402,7 @@ router.put('/update-role/:userId', async (req, res) => {
                     bio: "",
                     courses: [],
                     skills: "",
-                    major: "Not Specified",
+                    major: "N/A",
                     currentYear: "Not Specified",
                     profilePicture: null
                 });
