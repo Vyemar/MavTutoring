@@ -26,7 +26,7 @@ const studentProfileSchema = new mongoose.Schema({
     },
     major: {
         type: String,
-        enum: ['Computer Science', 'Computer Engineer', 'Software Engineer', 'N/A'],
+        enum: ['','Computer Science', 'Computer Engineer', 'Software Engineer', 'N/A'],
         default: 'N/A',
         trim: true
     },

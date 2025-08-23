@@ -99,8 +99,7 @@ router.post('/review', async (req, res) => {
                     bio: "",                     // Can be left empty or filled in later
                     courses: [], // Change to an array, NOT a string (defined differently than before)
                     skills: "",
-                    major: "",
-                    currentYear: "Not Specified"
+                    major: "N/A"
                 });
 
                 await newTutorProfile.save()
