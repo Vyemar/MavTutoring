@@ -298,7 +298,19 @@ function TutorProfile() {
                             )}</p>
 
                             <p><strong>Major:</strong> {isEditing ? (
-                                <input type="text" name="major" value={profile.major} onChange={handleChange} required className={styles.inputField}/>
+                                <select // Changed from input to select for the dropdown menu
+                                    type="text"
+                                    name="major"
+                                    value={profile.major}
+                                    onChange={handleChange}
+                                    className={styles.inputField}
+                                >
+                                    <option value="">Select Major</option>
+                                    <option value="Computer Science">Computer Science</option>
+                                    <option value="Computer Engineer">Computer Engineer</option>
+                                    <option value="Software Engineer">Software Engineer</option>
+                                    <option value="N/A">N/A</option>
+                                </select>
                             ) : (
                                 profile.major || "Not provided"
                             )}</p>

@@ -352,8 +352,8 @@ function StudentProfile() {
                                 >
                                     <option value="">Select Major</option>
                                     <option value="Computer Science">Computer Science</option>
-                                    <option value="Computer Engineering">Computer Engineering</option>
-                                    <option value="Software Engineering">Software Engineering</option>
+                                    <option value="Computer Engineer">Computer Engineer</option>
+                                    <option value="Software Engineer">Software Engineer</option>
                                     <option value="N/A">N/A</option>
                                 </select>
                             ) : (
