@@ -1,3 +1,5 @@
+# Amara
+
 # bugHouse - CSE Student Success Center Tutoring Web Application
 
 ## Project Overview
