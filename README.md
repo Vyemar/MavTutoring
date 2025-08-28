@@ -1,4 +1,5 @@
 # bugHouse - CSE Student Success Center Tutoring Web Application
+# MavTutoring Team
 
 ## Project Overview
 
