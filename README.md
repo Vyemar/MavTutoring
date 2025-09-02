@@ -168,6 +168,7 @@ backend/
    ```
    - npm install react-select
    - npm install chart.js react-chartjs-2
+   - npm install @csstools/normalize.css
    - Future developer if you end up installing any new libraries add here. 
    ```
 
