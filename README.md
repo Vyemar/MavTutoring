@@ -169,6 +169,7 @@ backend/
    - npm install react-select
    - npm install chart.js react-chartjs-2
    - npm install @csstools/normalize.css
+   - npm install @daypilot/daypilot-lite-react@latest
    - Future developer if you end up installing any new libraries add here. 
    ```
 
