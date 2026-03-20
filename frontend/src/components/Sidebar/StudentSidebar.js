@@ -43,12 +43,12 @@ const StudentSidebar = ({ selected }) => {
       icon: CgProfile,
       onClick: () => goTo("/student-profile"),
     },
-    // {
-    //   key: "find-tutors",
-    //   label: "Find Tutors",
-    //   icon: FaSearch,
-    //   onClick: () => goTo("/find-tutors"),
-    // },
+    {
+      key: "student-card-swipe",
+      label: "Session Check-In",
+      icon: FaRegAddressCard,
+      onClick: () => goTo("/student/card-swipe"),
+    },
     {
       key: "feedback",
       label: "Leave Feedback",
@@ -91,7 +91,7 @@ const StudentSidebar = ({ selected }) => {
               <span className={styles.aItem}>Dashboard</span>
             </li>
             <li 
-              className={`${styles.liStudent} ${selected === "student-profile" ? styles.active : ""}`} 
+              className={`${styles.liStudent} ${selected === "student-profile" ? styles.active : ""} ${styles.hiddenMobile}`}  //add hiddenMobile class for hiding item in mobile view 
               onClick={() => goTo("/student-profile")}
             >
               <div className={styles.iconContainer}>
@@ -127,7 +127,7 @@ const StudentSidebar = ({ selected }) => {
               <span className={styles.aItem}>My Sessions</span>
             </li>
             <li 
-              className={`${styles.liStudent} ${selected === "student-card-swipe" ? styles.active : ""}`} 
+              className={`${styles.liStudent} ${selected === "student-card-swipe" ? styles.active : ""} ${styles.hiddenMobile}`}  //add hiddenMobile class for hiding item in mobile view
               onClick={() => goTo("/student/card-swipe")}
             >
               <div className={styles.iconContainer}>
@@ -136,7 +136,7 @@ const StudentSidebar = ({ selected }) => {
               <span className={styles.aItem}>Session Check-In</span>
             </li>
             <li 
-              className={`${styles.liStudent} ${selected === "feedback" ? styles.active : ""}`} 
+              className={`${styles.liStudent} ${selected === "feedback" ? styles.active : ""} ${styles.hiddenMobile}`}  //add hiddenMobile class for hiding item in mobile view
               onClick={() => goTo("/feedback")}
             >
               <div className={styles.iconContainer}>
@@ -154,7 +154,7 @@ const StudentSidebar = ({ selected }) => {
               <span className={styles.aItem}>Notifications</span>
             </li>
             <li 
-              className={styles.liStudent} 
+              className={`${styles.liStudent} ${styles.hiddenMobile}`}  //add hiddenMobile class for hiding item in mobile view
               onClick={handleLogout}
             >
               <div className={styles.iconContainer}>
