@@ -16,6 +16,14 @@ import { FaUsers } from "react-icons/fa6";
 import { FaBookOpen } from "react-icons/fa";
 import { FaInbox } from 'react-icons/fa';
 
+//Add later for mobile view
+import useBugHouseInfo from "../../hooks/useBugHouseInfo";
+import { FaEnvelope, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
+import useMobileDrawer from "../../hooks/useMobileDrawer";
+import useSidebarNavigation from "../../hooks/useSidebarNavigation";
+import MobileMenuTrigger from "./MobileMenuTrigger";
+import MobileDrawer from "./MobileDrawer";
+//Add later for mobile view
 
 
 const AdminSidebar = ({ selected }) => {
@@ -23,22 +31,58 @@ const AdminSidebar = ({ selected }) => {
   const navigate = useNavigate();
   const { isCollapsed, toggleSidebar } = useSidebar();
 
-  const goTo = (path) => {
-    if (location.pathname !== path) {
-      navigate(path);
-    }
-  };
+    //======== Mobile Navigation State (Mobile View) ========
+  const {isMobile, isMobileMenuOpen, setIsMobileMenuOpen} = useMobileDrawer();
+  //Handles page navigation and automatically closes the mobile drawer right after navigation
+  const goTo = useSidebarNavigation(location, navigate, isMobile, setIsMobileMenuOpen);
+  const bugHouseInfo = useBugHouseInfo(); //Fetching BugHouse Info and contact Info by using custom hook
+
+  // const goTo = (path) => {
+  //   if (location.pathname !== path) {
+  //     navigate(path);
+  //   }
+  // };
+    const adminMenuItems = [
+  {
+    key: "analytics",
+    label: "System Analytics",
+    icon: MdOutlineAnalytics,
+    onClick: () => goTo("/analytics"),
+  },
+  {
+    key: "admin-settings",
+    label: "Settings",
+    icon: IoSettingsOutline,
+    onClick: () => goTo("/admin-settings"),
+  },
+];
 
   return (
-    <div className={`${styles.sidebar} ${isCollapsed ? styles.sidebarActive : ""}`}>
-      <BaseSidebar isCollapsed={isCollapsed}>
+        <>
+    {/* ==================Mobile View ====================*/}
+    <MobileMenuTrigger
+      isMobile={isMobile}
+      isMobileMenuOpen={isMobileMenuOpen}
+      setIsMobileMenuOpen={setIsMobileMenuOpen}
+    />
+    <MobileDrawer
+      isMobile={isMobile}
+      isMobileMenuOpen={isMobileMenuOpen}
+      setIsMobileMenuOpen={setIsMobileMenuOpen}
+      bugHouseInfo={bugHouseInfo}
+      handleLogout={handleLogout}
+      menuItems={adminMenuItems}
+    />
+  {/* ==================Mobile View ====================*/}
+    <div className={`${styles.sidebar} ${!isMobile && isCollapsed ? styles.sidebarActive : ""}`}>
+      <BaseSidebar isCollapsed={!isMobile && isCollapsed}>
         <div
           className={`${styles.burgerContainer} ${isCollapsed ? styles.burgerContainerActive : ""}`}
         >
           <div className={styles.burgerTrigger} onClick={toggleSidebar} role="button" tabIndex={0} />
           <div className={styles.burgerMenu}></div>
         </div>
-        <div className={`${styles.contentsContainer} ${isCollapsed ? styles.contentsContainerActive : ""}`}>
+        <div className={`${styles.contentsContainer} ${!isMobile && isCollapsed ? styles.contentsContainerActive : ""}`}>
           <ul className={styles.ulStudent}>
             <li
             
@@ -121,7 +165,9 @@ const AdminSidebar = ({ selected }) => {
               </span>
             </li>
 
-            <li className={styles.liStudent} onClick={handleLogout}>
+            <li 
+            className={`${styles.liStudent} ${styles.hiddenMobile}`} //add hiddenMobile class for hiding item in mobile view
+            onClick={handleLogout}>
               <div className={styles.iconContainer}>
                 <MdLogout className={styles.sidebarIcon} />
               </div>
@@ -131,6 +177,7 @@ const AdminSidebar = ({ selected }) => {
         </div>
       </BaseSidebar>
     </div>
+  </>
   );
 };
 
