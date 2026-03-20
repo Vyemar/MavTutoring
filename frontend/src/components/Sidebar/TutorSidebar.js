@@ -18,27 +18,61 @@ import {
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { SlCalender } from "react-icons/sl";
 
+//mobile view
+import useBugHouseInfo from "../../hooks/useBugHouseInfo";
+import { FaEnvelope, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
+import useMobileDrawer from "../../hooks/useMobileDrawer";
+import useSidebarNavigation from "../../hooks/useSidebarNavigation";
+import MobileMenuTrigger from "./MobileMenuTrigger";
+import MobileDrawer from "./MobileDrawer";
+//mobile view
+
 const TutorSidebar = ({ selected }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isCollapsed, toggleSidebar } = useSidebar();
   
-  const goTo = (path) => {
-    if (location.pathname !== path) {
-      navigate(path);
-    }
-  };
+  //======== Mobile Navigation State ========
+  const {isMobile, isMobileMenuOpen, setIsMobileMenuOpen} = useMobileDrawer();
+  //Handles page navigation and automatically closes the mobile drawer right after navigation
+  const goTo = useSidebarNavigation(location, navigate, isMobile, setIsMobileMenuOpen);
+  const bugHouseInfo = useBugHouseInfo(); //Fetching BugHouse Info and contact Info by using custom hook
+
+  const tutorMenuItems = [
+      {
+        key: "tutor-profile",
+        label: "My Profile",
+        icon: CgProfile,
+        onClick: () => goTo("/tutor-profile"),
+      },
+  ];
   
   return (
-    <div className={`${styles.sidebar} ${isCollapsed ? styles.sidebarActive : ""}`}>
-      <BaseSidebar isCollapsed={isCollapsed}>
+    <>
+        {/* ==================Mobile View ====================*/}
+    <MobileMenuTrigger
+      isMobile={isMobile}
+      isMobileMenuOpen={isMobileMenuOpen}
+      setIsMobileMenuOpen={setIsMobileMenuOpen}
+    />
+    <MobileDrawer
+      isMobile={isMobile}
+      isMobileMenuOpen={isMobileMenuOpen}
+      setIsMobileMenuOpen={setIsMobileMenuOpen}
+      bugHouseInfo={bugHouseInfo}
+      handleLogout={handleLogout}
+      menuItems={tutorMenuItems}
+    />
+  {/* ==================Mobile View ====================*/}
+    <div className={`${styles.sidebar} ${!isMobile && isCollapsed ? styles.sidebarActive : ""}`}>
+      <BaseSidebar isCollapsed={!isMobile && isCollapsed}>
         <div
           className={`${styles.burgerContainer} ${isCollapsed ? styles.burgerContainerActive : ""}`}
         >
           <div className={styles.burgerTrigger} onClick={toggleSidebar}></div>
           <div className={styles.burgerMenu}></div>
         </div>
-        <div className={`${styles.contentsContainer} ${isCollapsed ? styles.contentsContainerActive : ""}`}>
+        <div className={`${styles.contentsContainer} ${!isMobile && isCollapsed ? styles.contentsContainerActive : ""}`}>
           <ul className={styles.ulStudent}>
             <li 
               className={`${styles.liStudent} ${selected === "home" ? styles.active : ""}`} 
@@ -116,6 +150,7 @@ const TutorSidebar = ({ selected }) => {
         </div>
       </BaseSidebar>
     </div>
+    </>
   );
 }
 
