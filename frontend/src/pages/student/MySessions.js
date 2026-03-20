@@ -95,10 +95,7 @@ function MySessions() {
   return (
     <div className={styles.container}>
       <StudentSidebar selected="my-sessions" />
-      <div
-        className={styles.mainContent}
-        style={{ marginLeft: isCollapsed ? "80px" : "270px", transition: "margin-left 0.5s ease" }}
-      >
+      <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
         <h1 className={styles.heading}>My Sessions</h1>
 
         {loading ? (

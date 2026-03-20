@@ -1,9 +1,14 @@
 .mainContent {
     margin-top: 90px;
-    margin-left: 80px; /* Accounts for sidebar when its minimized */
+    margin-left: 260px; /* Accounts for sidebar when its minimized */
     padding: 20px;
     overflow-y: auto; /* Allows scrolling if content gets too long */
     min-height: 100vh;
+    transition: margin-left 0.5s ease;
+}
+
+.mainContentCollapsed {
+    margin-left: 80px;
 }
 
 .mainContent h1{

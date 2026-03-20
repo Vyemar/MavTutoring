@@ -689,7 +689,7 @@ function AttendanceReport() {
   return (
     <div className={styles.container}>
       <AdminSideBar selected="analytics"></AdminSideBar>
-      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "100px" : "290px" , transition: "margin-left 0.5s ease"}}>
+      <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
         <div className={styles.headerContainer}>
           <h1 className={styles.heading}>Attendance Report</h1>
           

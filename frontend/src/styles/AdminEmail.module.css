@@ -12,12 +12,17 @@
   flex-direction: column;
   padding: 20px;
   margin-top: 90px;
-  margin-left: var(--sidebar-width, 80px);
+  margin-left: 270px;
   transition: margin-left 0.5s ease;
   height: calc(100vh - 90px);
   overflow: auto;
   background-color: #007bff; /* Blue background */
   color: #fff;               /* White text */
+  transition: margin-left 0.5s ease;
+}
+
+.mainContentCollapsed {
+  margin-left: 80px;
 }
 
 /* Fixed header at top of main content */
@@ -27,13 +32,18 @@
   align-items: center;
   position: fixed;
   top: 0;
-  left: var(--sidebar-width, 80px);
+  left: 270px;
   right: 0;
   height: 90px;
   padding: 0 20px;
   background-color: #0056b3; /* Darker blue */
   z-index: 100;
   color: #fff;
+  transition: left 0.5s ease;
+}
+
+.headerSectionCollapsed {
+  left: 90px;
 }
 
 /* Page title */

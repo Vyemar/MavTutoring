@@ -8,7 +8,12 @@
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
-  margin-left :80px;/*accounts for sidebar when its minimized*/
+  margin-left :270px;/*accounts for sidebar when its minimized*/
+  transition: margin-left 0.5s ease;
+}
+
+.mainContentCollapsed {
+  margin-left: 80px;
 }
 
 .upcomingSessions {

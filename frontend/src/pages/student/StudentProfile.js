@@ -288,7 +288,7 @@ function StudentProfile() {
     return (
         <div className={styles.container}>
             <StudentSidebar selected="student-profile"/>
-            <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "260px", transition: "margin-left 0.5s ease", "--sidebar-width": sidebarWidth}}>
+            <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
                 <div className={styles.profileContainer}>
                     <h1 className={styles.heading}>Profile</h1>
                     <hr className={styles.profileDivider} />
