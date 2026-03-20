@@ -13,7 +13,12 @@
   margin: 10px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-left :80px;/*accounts for sidebar when its minimized*/
+  margin-left :290px;/*accounts for sidebar when its minimized*/
+  transition: margin-left 0.5s ease;
+}
+
+.mainContentCollapsed {
+  margin-left: 100px;
 }
 
 .headerContainer {
