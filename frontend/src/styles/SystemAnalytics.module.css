@@ -7,6 +7,12 @@
   flex-grow: 1;
   padding: 2rem;
   margin-left :80px;/*accounts for sidebar when its minimized*/
+  margin-left: 290px;
+  transition: margin-left 0.5s ease;
+}
+
+.mainContentCollapsed {
+  margin-left: 100px;
 }
 
 .heading {
