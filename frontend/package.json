@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@csstools/normalize.css": "^12.1.1",
+    "@daypilot/daypilot-lite-react": "^5.4.1",
     "@fullcalendar/core": "^6.1.15",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
