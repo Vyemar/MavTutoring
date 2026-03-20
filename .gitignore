@@ -1,6 +1,7 @@
 backend/.env
 .gitignore
 */node_modules/
+node_modules/
 # SSL certificates
 backend/ssl/server.key
 backend/ssl/server.cert
