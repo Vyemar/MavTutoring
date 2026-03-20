@@ -27,6 +27,12 @@
   margin-left :80px;/*accounts for sidebar when its minimized*/
   padding: 12px;
   color: black;
+  margin-left: 290px;
+  transition: margin-left 0.5s ease;
+}
+
+.mainContentCollapsed {
+  margin-left: 100px;
 }
 
 .searchInfoContent{
