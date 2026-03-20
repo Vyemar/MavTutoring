@@ -29,6 +29,12 @@ html, body {
   padding: 20px;
   /* margin-left :80px;accounts for sidebar when its minimized */
   color: #e0e7ed;
+  margin-left: 280px;
+  transition: margin-left 0.5s ease;
+}
+
+.mainContentCollapsed {
+  margin-left: 90px;
 }
 
 .headingRow {
