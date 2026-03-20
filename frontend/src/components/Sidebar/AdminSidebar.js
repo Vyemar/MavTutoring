@@ -16,14 +16,14 @@ import { FaUsers } from "react-icons/fa6";
 import { FaBookOpen } from "react-icons/fa";
 import { FaInbox } from 'react-icons/fa';
 
-//Add later for mobile view
+//mobile view
 import useBugHouseInfo from "../../hooks/useBugHouseInfo";
 import { FaEnvelope, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
 import useMobileDrawer from "../../hooks/useMobileDrawer";
 import useSidebarNavigation from "../../hooks/useSidebarNavigation";
 import MobileMenuTrigger from "./MobileMenuTrigger";
 import MobileDrawer from "./MobileDrawer";
-//Add later for mobile view
+//mobile view
 
 
 const AdminSidebar = ({ selected }) => {
@@ -31,18 +31,19 @@ const AdminSidebar = ({ selected }) => {
   const navigate = useNavigate();
   const { isCollapsed, toggleSidebar } = useSidebar();
 
-    //======== Mobile Navigation State (Mobile View) ========
+    //======== Mobile Navigation State ========
   const {isMobile, isMobileMenuOpen, setIsMobileMenuOpen} = useMobileDrawer();
   //Handles page navigation and automatically closes the mobile drawer right after navigation
   const goTo = useSidebarNavigation(location, navigate, isMobile, setIsMobileMenuOpen);
   const bugHouseInfo = useBugHouseInfo(); //Fetching BugHouse Info and contact Info by using custom hook
 
-  // const goTo = (path) => {
-  //   if (location.pathname !== path) {
-  //     navigate(path);
-  //   }
-  // };
-    const adminMenuItems = [
+  const adminMenuItems = [
+  {
+    key: "admin-reviews",
+    label: "Tutor Review",
+    icon: MdRateReview,
+    onClick: () => goTo("/admin-reviews"),
+  },
   {
     key: "analytics",
     label: "System Analytics",
@@ -50,10 +51,10 @@ const AdminSidebar = ({ selected }) => {
     onClick: () => goTo("/analytics"),
   },
   {
-    key: "admin-settings",
-    label: "Settings",
-    icon: IoSettingsOutline,
-    onClick: () => goTo("/admin-settings"),
+    key: "admin-email",
+    label: "Admin Email",
+    icon: MdOutlineEmail,
+    onClick: () => goTo("/admin/email"),
   },
 ];
 
@@ -114,7 +115,7 @@ const AdminSidebar = ({ selected }) => {
             </li>
 
             <li
-              className={`${styles.liStudent} ${selected === "admin-reviews" ? styles.active : ""}`}
+              className={`${styles.liStudent} ${selected === "admin-reviews" ? styles.active : ""}  ${styles.hiddenMobile}`}  //add hiddenMobile class for hiding item in mobile view
               onClick={() => goTo("/admin-reviews")}
             >
               <div className={styles.iconContainer}>
@@ -126,7 +127,7 @@ const AdminSidebar = ({ selected }) => {
 
 
             <li 
-              className={`${styles.liStudent} ${selected === "analytics" ? styles.active : ""}`} 
+              className={`${styles.liStudent} ${selected === "analytics" ? styles.active : ""}  ${styles.hiddenMobile}`}  //add hiddenMobile class for hiding item in mobile view
               onClick={() => goTo("/analytics")}
             >
               <div className={styles.iconContainer}>
@@ -154,7 +155,7 @@ const AdminSidebar = ({ selected }) => {
             </li>
             {/* Admin Email link */}
            <li
-             className={`${styles.liStudent} ${selected==="admin-email"?styles.active:""}`}
+             className={`${styles.liStudent} ${selected==="admin-email"?styles.active:""}  ${styles.hiddenMobile}`} //add hiddenMobile class for hiding item in mobile view
              onClick={() => goTo("/admin/email")}
            >
              <div className={styles.iconContainer}>
