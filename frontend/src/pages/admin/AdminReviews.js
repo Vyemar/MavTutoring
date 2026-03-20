@@ -19,7 +19,7 @@ const AdminReviews = () => {
   return (
     <div className="admin-layout" style={{ display: 'flex' }}>
       <AdminSidebar selected="admin-reviews" />
-      <main className={styles.reviewsBackground} style={{ marginLeft: isCollapsed ? "80px" : "260px", transition: "margin-left 0.5s ease", "--sidebar-width": sidebarWidth }}>
+      <main className={`${styles.reviewsBackground} ${isCollapsed ? styles.reviewsBackgroundCollapsed : ""}`}>
         {/* Left Review List */}
         <div className={styles.reviewsContainer}>
           <h1 className={styles.reviewsTitle}>Tutor Reviews</h1>
