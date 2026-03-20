@@ -42,17 +42,13 @@ html, body {
     color: #212529;
     height: calc(100vh - 90px);
     overflow: hidden; /* Prevents outer scrolling */
-    margin-left :80px;/*accounts for sidebar when its minimized*/
+    margin-left :260px;/*accounts for sidebar when its minimized*/
     width: 100%;
     transition: margin-left 0.5s ease;
 }
 
 .mainContentCollapsed {
   margin-left: 80px;
-}
-
-.expanded {
-  margin-left: 260px;
 }
 
 .headerSection {

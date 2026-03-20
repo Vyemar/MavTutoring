@@ -52,7 +52,7 @@ function ManageUsers() {
             <AdminSidebar selected="manage-users"/>
 
             {/* Main Content */}
-                <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : styles.expanded}`}>
+                <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
                     <div className={`${styles.headerSection} ${isCollapsed ? styles.headerSectionCollapsed : ""}`}>
                     <h1 className={styles.heading}>Manage Users</h1>
                 </div>
