@@ -163,23 +163,13 @@ backend/
 
 ### Installation Steps
 
-1. Particular library to install
-
-   ```
-   - npm install react-select
-   - npm install chart.js react-chartjs-2
-   - npm install @csstools/normalize.css
-   - npm install @daypilot/daypilot-lite-react@latest
-   - Future developer if you end up installing any new libraries add here. 
-   ```
-
-2. Clone the repository:
+1. Clone the repository:
 
    ```bash
-   git clone https://github.com/Ethyn-N/bugHouse.git
+   git clone https://github.com/UTAHiveMind/UTABughouse.git
    ```
 
-3. Install dependencies:
+2. Install dependencies:
 
    For backend:
 
