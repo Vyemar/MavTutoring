@@ -146,7 +146,7 @@ function SessionCardSwipe() {
 
       <TutorSidebar selected="tutor-card-swipe" />
 
-      <div className={styles.mainContent}>
+      <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
         <h1 className={styles.heading}>Tutor Session Check-In/Out</h1>
 
         <div className={styles.cardReaderBox}>
