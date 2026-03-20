@@ -109,14 +109,8 @@ function Settings() {
       <AdminSideBar selected="admin-settings"></AdminSideBar>
       
         
-      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "90px" : "270px", transition: "margin-left 0.5s ease"}}>
-        <div
-          className={styles.headerSection}
-          style={{
-            left: isCollapsed ? "90px" : "270px",
-            width: isCollapsed ? "calc(100% - 90px)" : "calc(100% - 270px)",
-            transition: "all 0.3s ease"
-          }}>
+      <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
+        <div className={`${styles.headerSection} ${isCollapsed ? styles.headerSectionCollapsed : ""}`}>
           <h1 className={styles.heading}>BugHouse Settings</h1>
         </div>
         <div className={styles.adminSettings}>
