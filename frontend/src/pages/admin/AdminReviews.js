@@ -93,7 +93,7 @@ const AdminReviews = () => {
               <strong>Submitted on:</strong>{' '}
               {new Date(selectedReview.createdAt).toLocaleString()}
             </p>
-            <button onClick={() => setSelectedReview(null)} style={{ marginTop: '15px' }}>
+            <button onClick={() => setSelectedReview(null)} style={{ marginTop: '15px' }} className={styles.closeButton}>
               Close
             </button>
           </div>
