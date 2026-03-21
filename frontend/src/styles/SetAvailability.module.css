@@ -89,3 +89,39 @@ body {
     transform: rotate(360deg);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+  .container {
+    background: var(--main-background-mobile);
+  }
+
+  .heading {
+    padding-top: 25px;
+    color: var(--main-title-color-mobile);
+  }
+
+  .mainContent {
+    margin-left: 0;
+    padding: 10px;
+    /* height: 80vh; */
+  }
+
+  .calendarContainer {
+    width: 100%;
+    padding: 0px;
+  }
+}
