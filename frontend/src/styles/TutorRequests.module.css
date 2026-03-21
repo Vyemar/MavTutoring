@@ -67,3 +67,73 @@
 .buttonGroup button:last-child:hover {
     background-color: #c82333;
 }
+
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+  .container {
+    background: var(--main-background-mobile);
+  }
+
+  body {
+    background: var(--main-background-mobile);
+  }
+  .mainContent {
+      margin-left: 0;
+  }
+
+  .mainContent, .mainContentCollapsed {
+      margin-left: 0;
+  }
+
+  .mainContent h1 {
+    color: var(--main-title-color-mobile);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+  }
+
+  .headerSection {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: transparent;
+      border-bottom: none;
+      left: 0;
+        background: var(--main-background-mobile);
+  }
+
+  .heading {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    font-size: 2rem;
+    margin: 0;
+    padding-bottom: 20px;
+    font-weight: var(--main-title-font-weight-mobile);
+    color: var(--main-title-color-mobile);
+    padding-top: 25px;
+  }
+
+  .courseTable thead {
+    position: sticky;
+    top: 0;
+    background: linear-gradient(rgb(107, 146, 253), rgb(38, 93, 201));
+    color: white;
+    z-index: 10;
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+}
+}

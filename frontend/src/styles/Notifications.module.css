@@ -64,3 +64,46 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+  .container {
+    background: var(--main-background-mobile);
+  }
+
+  .mainContent {
+    margin-left: 0;
+    padding: 10px;
+  }
+
+  .heading {
+    color: var(--main-title-color-mobile);
+    font-weight: var(--main-title-font-weight-mobile);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 25px;
+
+  }
+
+  .card {
+    border: 1px solid rgba(128, 128, 128, 0.115);
+    padding: 10px;
+    width: 100%;
+  }
+
+  .spinnerContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    padding-top: 15rem;
+  }
+}

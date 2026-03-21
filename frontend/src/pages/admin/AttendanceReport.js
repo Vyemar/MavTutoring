@@ -638,6 +638,52 @@ function AttendanceReport() {
         .${styles.attendanceTable} td {
           padding: 15px;
         }
+
+        /* Responsive Fixes */
+      @media (max-width: 768px) {
+        .statisticsContainer {
+          flex-direction: row;
+        }
+        
+        .statCard {
+          width: 100%;
+          margin-right: 0;
+          margin-bottom: 16px;
+        }
+
+      .statisticsContainer {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+
+        .statCard {
+        // flex: 1;
+        min-width: 2px;
+        background: linear-gradient(145deg, #ffffff, #f8f4ff) !important;
+        border-radius: 16px;
+        padding: 1px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e1e4e8;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        text-align: center;
+      }
+        
+        .${styles.attendanceTable} {
+          display: block;
+          overflow-x: auto;
+        }
+        
+        .${styles.attendanceTable} th,
+        .${styles.attendanceTable} td {
+          padding: 15px;
+        }
+      
       }
     `;
     document.head.appendChild(styleElement);

@@ -95,3 +95,46 @@ body .month_default_event_inner {
 .toolbar button:active {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        overflow-y: auto;
+        height: 100vh;
+        gap: 20px
+    }
+
+    .navigator {
+
+    }
+
+    .content {
+        /* transform: scale(.5); */
+        /* overflow-x: auto; */
+        /* width: 100%; */
+    }
+
+
+    .toolbar {
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+    align-items: center;
+    }
+
+}

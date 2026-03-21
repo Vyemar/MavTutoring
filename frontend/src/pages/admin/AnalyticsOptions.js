@@ -21,7 +21,7 @@ const AnalyticsOptions = () => {
   return (
     <div className={styles.container}>
       <AdminSidebar selected="analytics" />
-      <div className={styles.content} style={{ marginLeft: isCollapsed ? "80px" : "260px", transition: "margin-left 0.5s ease", "--sidebar-width": sidebarWidth}}>
+      <div className={`${styles.content} ${isCollapsed ? styles.contentCollapsed : ""}`}>
         <div className={analyticsStyles.pageHeader}>
           <h1>Analytics Dashboard</h1>
           <p>Select an analytics option to view detailed insights</p>

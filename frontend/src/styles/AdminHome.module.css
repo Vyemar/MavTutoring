@@ -160,3 +160,87 @@
   width: 1.2rem;
   height: 1.2rem;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+  .cardsContainer {
+    /* grid-template-columns: repeat(2, 1fr); */
+  }
+
+  .container {
+    margin-left: 0;
+    width: 100%;
+    background: var(--main-background-mobile);
+
+  } 
+
+  .pageHeader h1 {
+    font-weight: var(--main-title-font-weight-mobile);
+  }
+
+  .pageHeader  h1, .pageHeader  p {
+    /* color: black; */
+    color: var(--main-title-color-mobile);
+  }
+
+  .content {
+    padding: 2rem;
+    margin-left: 0;
+    width: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    /* padding-bottom: 90px; */
+    max-height: 95vh;
+    overflow-y: auto;
+  }
+
+  .cardsContainer {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-evenly;
+    align-items: center;
+    
+  }
+
+.adminCard {
+  padding: .5rem;
+  width: 20rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  /* overflow: auto; */
+  border: 0.5px outset rgb(192, 192, 192);
+}
+
+
+.adminCard:nth-child(1) {
+  border-top: 4px solid #3498db;
+
+}
+
+.adminCard:nth-child(2) {
+  border-top: 4px solid #2ecc71;
+}
+
+.adminCard:nth-child(3) {
+  border-top: 4px solid #9b59b6;
+}
+
+}

@@ -133,3 +133,93 @@ html, body {
   background: rgba(0, 0, 0, 0.2); /* Translucent black */
   border-radius: 8px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+  .container {
+    background: var(--main-background-mobile);
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding-bottom: 10rem;
+  }
+
+  .mainContent {
+    margin-left: 0;
+    width: 100%;
+    padding: 0px;
+  }
+
+  .heading, .calSubHeading {
+    color: var(--main-title-color-mobile);
+  }
+
+  .headingRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 00px;
+    color: white;
+    margin-bottom: 0px;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 0px 0px;
+    display: flex;
+    flex-direction: column;
+    padding-top: 25px;
+  }
+
+  .headingRow h1, .headingRow p {
+    color: var(--main-title-color-mobile);
+  }
+
+  .headingRow h1 {
+    font-weight: var(--main-title-font-weight-mobile);
+    width: 100%;
+    /* padding-top: 25px; */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .calSubHeading{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .headingRow {
+    background: white;
+  }
+
+  .notifications {
+    background-color: white;
+    border: 1px solid rgba(128, 128, 128, 0.376);
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.164);
+  }
+
+  .notifications h2, .notifications p {
+    color: var(--main-title-color-mobile);
+  }
+
+}
