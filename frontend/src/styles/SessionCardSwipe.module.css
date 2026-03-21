@@ -177,3 +177,40 @@
 }
 
 
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+  .container {
+    background: var(--main-background-mobile);
+  }
+
+  .mainContent {
+    margin-left: 0;
+  }
+
+  .sidebarToggle {
+    display: none;
+    
+  }
+
+  .heading {
+    /* color: black; */
+    font-weight: var(--main-title-font-weight-mobile);
+    color: var(--main-title-color-mobile);
+  }
+
+  .cardReaderBox {
+    background: linear-gradient(rgb(236, 241, 255), rgb(77, 128, 228));
+  }
+
+}
+
+
