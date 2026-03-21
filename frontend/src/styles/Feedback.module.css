@@ -258,37 +258,47 @@
 
 
 @media (max-width: 768px) {
-  .container {
+.container {
     background: var(--main-background-mobile);
   }
 
-  .reviewsBackground {
+
+  .mainContent, .profileContainer {
+    margin-left: 0;
+    width: 100%;
+    height: 100vh;
+  }
+
+    .heading {
     display: flex;
     flex-direction: column;
-    margin-left: 0;
+    justify-content: space-between;
+    align-items: center;
+    vertical-align: center;
     width: 100%;
-    padding: 10px;
-    height: 100vh;
-    padding-bottom: 100px;
+    font-weight: var(--main-title-font-weight-mobile);
+    color: var(--main-title-color-mobile);
   }
 
-  .reviewsContainer {
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  padding: 10px;
-  max-width: 100%;
-  margin-left :0px;
+  .currentLogo {
+    padding: 0px 0px;
   }
 
-  .detailCard {
+  .adminSettings {
     width: 100%;
-    padding: 10px;
-    margin-left: 0;
+    padding: 0px 0px;
   }
 
-  .closeButton {
-    color: white;
+  .settingsSection {
+    padding: 0.5px 0.5px;
+    border: none;
+  }
+
+  .formGroup {
+    margin-bottom: 0;
+  }
+
+  .submitButton {
     background-color: #36b2ff;
     padding: 5px 0px;
     display: flex;
@@ -304,4 +314,5 @@
         1px 8px 15px rgba(128, 128, 128, 0.416);
   }
 }
+
 
