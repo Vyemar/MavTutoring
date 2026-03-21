@@ -185,7 +185,7 @@
     width: 100%;
     background: var(--main-background-mobile);
 
-  }
+  } 
 
   .pageHeader h1 {
     font-weight: var(--main-title-font-weight-mobile);
