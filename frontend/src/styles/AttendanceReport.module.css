@@ -47,7 +47,7 @@
   font-size: 14px;
 }
 
-.refreshButton {
+.refreshButton, .csvButton {
   background-color: #3498db;
   color: white;
   border: none;
@@ -59,6 +59,7 @@
 
 .refreshButton:hover {
   background-color: #2980b9;
+  transform: translateY(-2px);
 }
 
 .refreshButton:disabled {
@@ -131,6 +132,17 @@
   background-color: #f8f9fa;
   transition: background-color 0.2s ease;
 }
+
+.csvButton:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+}
+
+.csvButton:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -217,7 +229,7 @@
     justify-content: right;
   }
 
-  .exportButton, .refreshButton {
+  .csvButton, .exportButton, .refreshButton {
     padding: 8px 8px;
     font-size: .7rem !important;
     border: .5px outset rgba(230, 225, 225, 0.388);
