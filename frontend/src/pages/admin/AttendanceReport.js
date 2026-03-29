@@ -369,7 +369,7 @@ function AttendanceReport() {
         font-size: 14px;
       }
       
-      .${styles.refreshButton} {
+      .${styles.refreshButton}, .${styles.csvButton}{
         background-color: rgba(255, 255, 255, 0.15);
         color: #fff;
         border: 1px solid rgba(255, 255, 255, 0.3);
@@ -381,11 +381,11 @@ function AttendanceReport() {
         transition: all 0.2s ease;
       }
       
-      .${styles.refreshButton}:hover {
+      .${styles.refreshButton}:hover, .${styles.csvButton}:hover {
         background-color: rgba(255, 255, 255, 0.25);
       }
       
-      .${styles.refreshButton}:disabled {
+      .${styles.refreshButton}:disabled, .${styles.csvButton}:disabled  {
         opacity: 0.5;
         cursor: not-allowed;
       }
@@ -830,8 +830,10 @@ const handleExport = () => {
               <span className={styles.lastUpdated}>
                 Last updated: {formatLastUpdated(lastUpdated)}
               </span>
-              <button onClick={handleExport}>
-                <FaFileCsv /> ⤓ CSV
+              <button 
+                className={styles.csvButton}
+                onClick={handleExport}>
+                <FaFileCsv /> Export CSV
               </button>
               <button 
                 className={styles.refreshButton}
