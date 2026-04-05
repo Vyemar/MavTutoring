@@ -69,20 +69,20 @@ const MobileDrawer = ({isMobile, isMobileMenuOpen, setIsMobileMenuOpen, bugHouse
             <div className={styles.mobileContactSection}>
               <h3 className={styles.mobileContactTitle}>Contact Us</h3>
 
-              <div className={styles.mobileContactItem}>
+              <a href={`mailto:${bugHouseInfo.contactInfo.email}`} className={styles.mobileContactItem} style={{ textDecoration: 'none' }}>
                 <FaEnvelope className={styles.contactIcon} />
                 <span>{bugHouseInfo.contactInfo.email}</span>
-              </div>
+              </a>
 
-              <div className={styles.mobileContactItem}>
+              <a href={`tel:${bugHouseInfo.contactInfo.phone}`} className={styles.mobileContactItem} style={{ textDecoration: 'none' }}>
                 <FaPhone className={styles.contactIcon} />
                 <span>{bugHouseInfo.contactInfo.phone}</span>
-              </div>
+              </a>
 
-              <div className={styles.mobileContactItem}>
+              <a href={`https://maps.google.com/?q=${encodeURIComponent(bugHouseInfo.contactInfo.address)}`} target="_blank" rel="noopener noreferrer" className={styles.mobileContactItem} style={{ textDecoration: 'none' }}>
                 <FaMapMarkerAlt className={styles.contactIcon} />
                 <span>{bugHouseInfo.contactInfo.address}</span>
-              </div>
+              </a>
             </div>
         </div>
       )}

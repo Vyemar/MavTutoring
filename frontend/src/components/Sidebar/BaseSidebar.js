@@ -54,18 +54,18 @@ function BaseSidebar({ children, isCollapsed }) {
         <div className={styles.sidebarContactInfo}>
           <h3>Contact Us</h3>
           <div className={styles.contactDetails}>
-            <div className={styles.contactItem}>
+            <a href={`mailto:${bugHouseInfo.contactInfo.email}`} className={styles.contactItem} style={{ textDecoration: 'none' }}>
               <FaEnvelope className={styles.contactIcon} />
               <span>{bugHouseInfo.contactInfo.email}</span>
-            </div>
-            <div className={styles.contactItem}>
+            </a>
+            <a href={`tel:${bugHouseInfo.contactInfo.phone}`} className={styles.contactItem} style={{ textDecoration: 'none' }}>
               <FaPhone className={styles.contactIcon} />
               <span>{bugHouseInfo.contactInfo.phone}</span>
-            </div>
-            <div className={styles.contactItem}>
+            </a>
+            <a href={`https://maps.google.com/?q=${encodeURIComponent(bugHouseInfo.contactInfo.address)}`} target="_blank" rel="noopener noreferrer" className={styles.contactItem} style={{ textDecoration: 'none' }}>
               <FaMapMarkerAlt className={styles.contactIcon} />
               <span>{bugHouseInfo.contactInfo.address}</span>
-            </div>
+            </a>
           </div>
         </div>
         )}
