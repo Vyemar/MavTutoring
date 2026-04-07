@@ -85,11 +85,7 @@ function TutorProfile() {
             const response = await axios.get(`${BACKEND_URL}/api/profile/${userData.id}`, {
                 withCredentials: true
             });
-            setProfile(prev => ({
-                ...prev,
-                ...response.data,
-                courses: Array.isArray(response.data.courses) ? response.data.courses : []
-            }));
+            setProfile(response.data);
         } catch (profileError) {
             if (profileError.response && profileError.response.status === 404) {
                 const defaultProfile = {
@@ -207,7 +203,7 @@ function TutorProfile() {
     return (
         <div className={styles.container}>
             <TutorSidebar selected="tutor-profile" />
-              <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
+            <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "260px", transition: "margin-left 0.5s ease", "--sidebar-width": sidebarWidth}}>
                 <div className={styles.profileContainer}>
                     <h1 className={styles.heading}>Profile</h1>
                     <hr className={styles.profileDivider} />

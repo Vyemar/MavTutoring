@@ -69,7 +69,7 @@ function ViewTutors() {
   return (
     <div className={styles.container}>
       <StudentSidebar selected="find-tutors"></StudentSidebar>
-      <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
+      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "100px" : "290px" , transition: "margin-left 0.5s ease"}}>
         <h1 className={styles.heading}>Our Tutors</h1>
         <div className="App">
           <div className="search-bar-container">

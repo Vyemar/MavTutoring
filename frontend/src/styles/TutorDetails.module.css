@@ -9,12 +9,7 @@
     flex-grow: 1;
     padding: 2rem;
     background-color: linear-gradient(135deg, #007bff, #6f42c1);
-    margin-left :290px;/*accounts for sidebar when its minimized*/
-    transition: margin-left 0.5s ease;
-  }
-
-  .mainContentCollapsed {
-    margin-left: 100px;
+    margin-left :80px;/*accounts for sidebar when its minimized*/
   }
   
   .headerContainer {
@@ -292,67 +287,4 @@
     .studentList {
       justify-content: center;
     }
-
-  .container {
-    background: var(--main-background-mobile);
-  }
-
-  html, body {
-
-  }
-  .mainContent {
-      margin-left: 0;
-      height: 100vh;
-      overflow-y: auto;
-      padding: 10px;
-      padding-bottom: 10rem;
-  }
-
-  .mainContent, .mainContentCollapsed {
-      margin-left: 0;
-  }
-
-  .headerSection {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    /* align-items: left; */
-    background: transparent;
-    /* padding: 15px 20px; */
-    border-bottom: none;
-    left: 0;
-    background: var(--main-background-mobile);
-  }
-
-  .heading {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    align-items: center;
-    font-size: 2rem;
-    /* color: black; */
-    margin: 0;
-    padding-bottom: 20px;
-    font-weight: var(--main-title-font-weight-mobile);
-    color: var(--main-title-color-mobile);
-    padding-top: 25px;
-  }
-
-  .statsContainer {
-    display: flex;
-    flex-direction: row;
-    gap: 1.5rem;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #eee;
-  }
-  
-  .statBox {
-    background-color: #f8f9fa;
-    padding: 1rem;
-    border-radius: 8px;
-    text-align: center;
-    flex: 1;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  }
   }

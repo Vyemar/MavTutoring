@@ -138,8 +138,7 @@ function TutorDetails() {
     return (
       <div className={styles.container}>
         <AdminSideBar selected="analytics" />
-              <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
-      
+        <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "100px" : "290px" , transition: "margin-left 0.5s ease"}}>
           <div className={styles.loadingContainer}>
             <p>Loading tutor details...</p>
           </div>
@@ -152,7 +151,7 @@ function TutorDetails() {
     return (
       <div className={styles.container}>
         <AdminSideBar selected="analytics" />
-              <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
+        <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "100px" : "290px" , transition: "margin-left 0.5s ease"}}>
           <div className={styles.errorContainer}>
             <p>{error}</p>
           </div>
@@ -165,7 +164,7 @@ function TutorDetails() {
     return (
       <div className={styles.container}>
         <AdminSideBar selected="analytics" />
-              <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
+        <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "100px" : "290px" , transition: "margin-left 0.5s ease"}}>
           <div className={styles.errorContainer}>
             <p>Tutor not found.</p>
           </div>
@@ -177,7 +176,7 @@ function TutorDetails() {
   return (
     <div className={styles.container}>
       <AdminSideBar selected="analytics" />
-            <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
+      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "100px" : "290px" , transition: "margin-left 0.5s ease"}}>
         <div className={styles.headerContainer}>
           <h1 className={styles.heading}>Tutor Details</h1>
           <button 

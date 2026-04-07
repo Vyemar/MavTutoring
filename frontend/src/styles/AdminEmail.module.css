@@ -12,17 +12,12 @@
   flex-direction: column;
   padding: 20px;
   margin-top: 90px;
-  margin-left: 270px;
+  margin-left: var(--sidebar-width, 80px);
   transition: margin-left 0.5s ease;
   height: calc(100vh - 90px);
   overflow: auto;
   background-color: #007bff; /* Blue background */
   color: #fff;               /* White text */
-  transition: margin-left 0.5s ease;
-}
-
-.mainContentCollapsed {
-  margin-left: 80px;
 }
 
 /* Fixed header at top of main content */
@@ -32,18 +27,13 @@
   align-items: center;
   position: fixed;
   top: 0;
-  left: 270px;
+  left: var(--sidebar-width, 80px);
   right: 0;
   height: 90px;
   padding: 0 20px;
   background-color: #0056b3; /* Darker blue */
   z-index: 100;
   color: #fff;
-  transition: left 0.5s ease;
-}
-
-.headerSectionCollapsed {
-  left: 90px;
 }
 
 /* Page title */
@@ -139,89 +129,4 @@
 .status {
   margin-top: 1rem;
   font-weight: 600;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@media (max-width: 768px) {
-  .container, .mainContent {
-    background: var(--main-background-mobile);
-  }
-
-  html, body {
-
-  }
-  .mainContent {
-      margin-left: 0;
-  }
-
-  .mainContent, .mainContentCollapsed {
-      margin-left: 0;
-  }
-
-  .headerSection {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      /* align-items: left; */
-      background: transparent;
-      /* padding: 15px 20px; */
-      border-bottom: none;
-      left: 0;
-          background: var(--main-background-mobile);
-  }
-
-  .heading {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    align-items: center;
-    font-size: 2rem;
-    /* color: black; */
-    margin: 0;
-    padding-bottom: 20px;
-    font-weight: var(--main-title-font-weight-mobile);
-    color: var(--main-title-color-mobile);
-    padding-top: 25px;
-  }
-
-  .formContainer {
-      margin-top: 0px; /* below header */
-    padding: 10px;
-    width: 100%;
-  }
-
-  .formContainer, .form {
-    background-color: white;
-    color: black;
-  }
-
-  .form input[type="text"],
-  .form input[type="email"],
-  .form textarea,
-  .form select {
-    padding: 10px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 4px;
-    width: 100%;
-    box-sizing: border-box;
-    background-color: #fff;  /* white background */
-    color: #212529;          /* dark text */
-    border: 1px solid black;
-  }
-
 }

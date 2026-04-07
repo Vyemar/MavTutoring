@@ -42,13 +42,8 @@ html, body {
     color: #212529;
     height: calc(100vh - 90px);
     overflow: hidden; /* Prevents outer scrolling */
-    margin-left :260px;/*accounts for sidebar when its minimized*/
+    margin-left :80px;/*accounts for sidebar when its minimized*/
     width: 100%;
-    transition: margin-left 0.5s ease;
-}
-
-.mainContentCollapsed {
-  margin-left: 80px;
 }
 
 .headerSection {
@@ -58,16 +53,11 @@ html, body {
     padding: 15px 25px;
     position: fixed;
     top: 0;
-    left: 270px;
+    left: var(--sidebar-width, 80px);
     right: 15px;
     border-bottom: #ddd;
     max-width: 100vw;
     /*width: calc(100% - 250px);*/
-    transition: left 0.5s ease;
-}
-
-.headerSectionCollapsed {
-    left: 80px;
 }
 
 .heading {
@@ -212,166 +202,7 @@ html, body {
     margin-bottom: 10px;
 }
 
-.roleCell {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-    vertical-align: middle;
-  gap: 8px;
-  height: 35px;
-}
-
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-}
-
-.studentRoleIcon {
-    color: rgb(199, 78, 199);
-}
-
-.tutorRoleIcon {
-    color: rgb(6, 205, 235);
-}
-
-.adminRoleIcon {
-    color: rgb(231, 171, 21);
-}
-
-.buttonRoleIcon {
-    /* color: rgb(93, 179, 255); */
-    color: white;
-    padding-right: 5px;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@media (max-width: 768px) {
-
-.container {
-    background: var(--main-background-mobile);
-}
-
-html, body {
-
-}
-.mainContent {
-    margin-left: 0;
-}
-
-.mainContent, .mainContentCollapsed {
-    margin-left: 0;
-}
-
-.headerSection {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    /* align-items: left; */
-    background: transparent;
-    /* padding: 15px 20px; */
-    border-bottom: none;
-    left: 0;
-    background: var(--main-background-mobile);
-}
-
-.heading {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    align-items: center;
-    font-size: 2rem;
-    /* color: black; */
-    margin: 0;
-    padding-bottom: 20px;
-    font-weight: var(--main-title-font-weight-mobile);
-    color: var(--main-title-color-mobile);
-    padding-top: 25px;
-}
-
-.roleSelector {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: center;
-    font-size: 1rem;
-    width: 15rem;
-}
-
-.roleSelector label {
-    font-weight: bold;
-    margin-bottom: 5px;
-    font-size: 1rem;
-}
-
-.roleSelector select {
-    border: 1px solid #b9b8b8cb;
-    border-radius: 1rem;
-    background: linear-gradient(rgb(107, 146, 253), rgb(38, 93, 201));    
-    color: #ffffff;
-    height: 45px;
-}
-
-.tableContainer {
-    flex: 1;
-    overflow-y: auto;
-    height: calc(100vh - 150px);
-    margin-top: 10px;
-    padding: 10px;
-    border-radius: 16px;
-}
-
-.userTable {
-    width: 100%;
-    border-collapse: separate;
-    background: #ffffff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    table-layout: fixed;
-    position: relative;
-    border-radius: 16px;
-    border: 1px solid silver;
-}
-
-.userTable thead {
-    position: sticky;
-    top: 0;
-    /* background: #007bff; */
-    /* background: linear-gradient(rgb(81, 165, 254),#0b7df6); */
-    background: linear-gradient(rgb(107, 146, 253), rgb(38, 93, 201));
-    color: white;
-    z-index: 10;
-    display: table;
-    width: 100%;
-    table-layout: fixed;
-    /* border-radius: 16px; */
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
-}
-
-.viewProfileButton {
-    padding: 5px 2px;
-    background-color: #ffffff;
-    color: black;
-    border: 0.5px solid rgb(113, 182, 255);
-    border-radius: 8px;
-    text-align: center;
-    width: 97%;
-}
-
-.buttonRoleIcon {
-    color: rgb(93, 179, 255);
-    padding-right: 5px;
-}
-
 }

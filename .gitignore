@@ -1,7 +1,6 @@
 backend/.env
 .gitignore
 */node_modules/
-node_modules/
 # SSL certificates
 backend/ssl/server.key
 backend/ssl/server.cert
@@ -10,11 +9,11 @@ backend/ssl/server.cert
 backend/.env
 .DS_Store
 
-# package-lock.json
-# package.json
+package-lock.json
+package.json
 
-# frontend/package-lock.json
-# frontend/package.json
+frontend/package-lock.json
+frontend/package.json
 
-# backend/package-lock.json
-# backend/package.json
+backend/package-lock.json
+backend/package.json

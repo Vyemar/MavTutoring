@@ -4,7 +4,6 @@ import styles from "../../styles/AttendanceReport.module.css";
 import AdminSideBar from "../../components/Sidebar/AdminSidebar";
 import { useSidebar } from "../../components/Sidebar/SidebarContext";
 import { useNavigate } from "react-router-dom";
-import { FaFileCsv } from 'react-icons/fa';
 
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
@@ -369,7 +368,7 @@ function AttendanceReport() {
         font-size: 14px;
       }
       
-      .${styles.refreshButton}, .${styles.csvButton}{
+      .${styles.refreshButton} {
         background-color: rgba(255, 255, 255, 0.15);
         color: #fff;
         border: 1px solid rgba(255, 255, 255, 0.3);
@@ -381,11 +380,11 @@ function AttendanceReport() {
         transition: all 0.2s ease;
       }
       
-      .${styles.refreshButton}:hover, .${styles.csvButton}:hover {
+      .${styles.refreshButton}:hover {
         background-color: rgba(255, 255, 255, 0.25);
       }
       
-      .${styles.refreshButton}:disabled, .${styles.csvButton}:disabled  {
+      .${styles.refreshButton}:disabled {
         opacity: 0.5;
         cursor: not-allowed;
       }
@@ -639,52 +638,6 @@ function AttendanceReport() {
         .${styles.attendanceTable} td {
           padding: 15px;
         }
-
-        /* Responsive Fixes */
-      @media (max-width: 768px) {
-        .statisticsContainer {
-          flex-direction: row;
-        }
-        
-        .statCard {
-          width: 100%;
-          margin-right: 0;
-          margin-bottom: 16px;
-        }
-
-      .statisticsContainer {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 40px;
-        flex-wrap: wrap;
-        gap: 5px;
-      }
-
-        .statCard {
-        // flex: 1;
-        min-width: 2px;
-        background: linear-gradient(145deg, #ffffff, #f8f4ff) !important;
-        border-radius: 16px;
-        padding: 1px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-        border: 1px solid #e1e4e8;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        align-items: center;
-        text-align: center;
-      }
-        
-        .${styles.attendanceTable} {
-          display: block;
-          overflow-x: auto;
-        }
-        
-        .${styles.attendanceTable} th,
-        .${styles.attendanceTable} td {
-          padding: 15px;
-        }
-      
       }
     `;
     document.head.appendChild(styleElement);
@@ -694,91 +647,6 @@ function AttendanceReport() {
       document.head.removeChild(styleElement);
     };
   }, []);
-
-// Function to handle escape each CSV cell
-function csvCellEscape (value) {
-  if (value == null || value == undefined) return "";
-
-  const str = String(value);
-  //the cell value should be wrapped by "" if they contain any characters below
-  if (/[",\n\r]/.test(str)) {
-    return `"${str.replace(/"/g, '""')}"`;
-  }
-
-  return str;
-}
-
-//Function build the csv content from database
-function buildCsvContent(data) {
-    //Headers of columns
-    const headers = [
-      "Student Name",
-      "Tutor Name",
-      "Date",
-      "Session Time",
-      "Check-in Time",
-      "Check-out Time",
-      "Duration",
-      "Status",
-    ];
-
-  const rows = data.map(r => {
-    //Combine start and end time
-    const sessionTime = `${r.startTime || "N/A"} to ${r.endTime || "N/A"}`;
-    //If no show or the session status is cancelled -> the duration is 0
-    const realDuration = r.wasNoShow || r.status === "Cancelled" ? 0 : r.duration;
-    return [
-      r.studentName,
-      r.tutorName,
-      r.date,
-      sessionTime,
-      r.wasNoShow ? "No Show" : r.checkInTime,
-      r.wasNoShow ? "No Show" : r.checkOutTime,
-      realDuration,
-      r.status,
-    ].map(csvCellEscape).join(','); //Escape each cell to match the CSV format
-  });
-
-  //join headers and all rows to be a complete csv
-  return headers.join(',') + "\n" + rows.join('\n');
-}
-
-//Function handle csv file export
-const handleExport = () => {
-  const now = new Date(); //Initiate the current time to name the dowload file
-  const today = String(now.getDate()).padStart(2, "0");
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const year = String(now.getFullYear());
-  //Create file name as format: attendance_report_MM_DD_YYYY.csv
-  const fileName = `attendance_report_${month}_${today}_${year}.csv`;
-
-  //Building the csv content from database by call buildCsvContent function
-  const csvContent = buildCsvContent(attendanceRecords);
-
-  //Initiate the Blob
-  const blob = new Blob (["\ufeff", csvContent], {type: 'text/csv; charset=utf-8;'});
-  const urlTemp = URL.createObjectURL(blob);  //Create temporary link
-
-  const link = document.createElement('a'); //Create anchor tag to trigger download
-  link.setAttribute('href', urlTemp);
-  link.setAttribute('download', fileName);
-
-  link.style.visibility = 'hidden';
-
-  //Add to DOM -> click -> remove it
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  //Free the memory
-  URL.revokeObjectURL(urlTemp);
-}
-
-
-
-
-
-
-
 
   // Function to manually refresh the data
   const handleRefresh = () => {
@@ -821,7 +689,7 @@ const handleExport = () => {
   return (
     <div className={styles.container}>
       <AdminSideBar selected="analytics"></AdminSideBar>
-      <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
+      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "100px" : "290px" , transition: "margin-left 0.5s ease"}}>
         <div className={styles.headerContainer}>
           <h1 className={styles.heading}>Attendance Report</h1>
           
@@ -830,11 +698,6 @@ const handleExport = () => {
               <span className={styles.lastUpdated}>
                 Last updated: {formatLastUpdated(lastUpdated)}
               </span>
-              <button 
-                className={styles.csvButton}
-                onClick={handleExport}>
-                <FaFileCsv /> Export CSV
-              </button>
               <button 
                 className={styles.refreshButton}
                 onClick={handleRefresh}

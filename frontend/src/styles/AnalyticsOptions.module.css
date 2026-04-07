@@ -114,28 +114,3 @@
     width: 1.2rem;
     height: 1.2rem;
   }
-
-@media (max-width: 768px) {
-  .pageHeader h1 {
-    font-weight: var(--main-title-font-weight-mobile);
-  }
-
-  .pageHeader h1, .pageHeader p {
-    color: var(--main-title-color-mobile);
-  }
-
-
-  .container {
-    background: var(--main-background-mobile);
-  }
-}
-
-
-
-
-
-
-
-
-
-

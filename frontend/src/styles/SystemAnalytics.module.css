@@ -7,12 +7,6 @@
   flex-grow: 1;
   padding: 2rem;
   margin-left :80px;/*accounts for sidebar when its minimized*/
-  margin-left: 290px;
-  transition: margin-left 0.5s ease;
-}
-
-.mainContentCollapsed {
-  margin-left: 100px;
 }
 
 .heading {
@@ -180,86 +174,4 @@
 
 .clickableRow:hover td:first-child {
   box-shadow: inset 4px 0 0 #4361ee;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@media (max-width: 768px) {
-  .container {
-    background: var(--main-background-mobile);
-  }
-  .mainContent {
-    margin-left: 0;
-  padding: 0;
-  }
-
-  .headerContainer {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    vertical-align: center;
-    margin-left: 0;
-    padding: 0px 0px;
-    width: 100%;
-    padding-top: 1rem;
-  }
-
-  .heading {
-    font-weight: var(--main-title-font-weight-mobile);
-    color: var(--main-title-color-mobile);
-    padding-top: 25px;
-  }
-
-  .analyticsSection {
-    padding: 0.5rem;
-  }
-
-  .tutorTable {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    background: #ffffff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    table-layout: fixed;
-    border-radius: 16px;
-    border: 1px solid silver;
-
-  }
-
-  .tutorTable thead th  {
-    /* background: linear-gradient(rgb(129, 160, 246), rgb(38, 93, 201)); */
-    background: linear-gradient(#a6e0a8, #5aa75c);
-    color: white;
-    z-index: 10;
-    table-layout: fixed;
-    text-align: center;
-    height: auto;
-    font-size: 14px;
-  }
-
-  .tutorTable tbody tr td {
-    text-align: center;
-  }
-
-  .tutorTable thead th:first-child {
-    border-top-left-radius: 16px;
-  }
-
- .tutorTable thead th:last-child {
-    border-top-right-radius: 16px;
- }
 }

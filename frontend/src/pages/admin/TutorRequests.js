@@ -75,7 +75,7 @@ const TutorRequests = () => {
 return (
     <div className={styles.container}>
       <AdminSidebar selected="tutor-requests" />
-      <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
+      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "260px", transition: "margin-left 0.5s ease", "--sidebar-width": sidebarWidth}}>
         <h1>Incoming Tutor Requests</h1>
         {error && <p className={styles.error}>{error}</p>}
 

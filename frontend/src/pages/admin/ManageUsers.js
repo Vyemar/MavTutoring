@@ -6,10 +6,6 @@ import ViewProfile from './ViewProfile';
 import styles from '../../styles/ManageUsers.module.css';
 import { useSidebar } from "../../components/Sidebar/SidebarContext";
 
-import useIsMobile from '../../hooks/useIsMobile';
-import { FaUser, FaUserGraduate, FaGraduationCap, FaShieldAlt } from "react-icons/fa";
-
-
 // Get configuration from environment variables
 const PROTOCOL = process.env.REACT_APP_PROTOCOL || 'https';
 const BACKEND_HOST = process.env.REACT_APP_BACKEND_HOST || 'localhost';
@@ -25,28 +21,20 @@ function ManageUsers() {
     const [searchTerm, setSearchTerm] = useState("");
     const { isCollapsed } = useSidebar();
     const sidebarWidth = isCollapsed ? "80px" : "270px";
-    const isMobile = useIsMobile();
 
     const navigate = useNavigate();  // Initialize navigate using useNavigate
-    
+
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                //Always show the Admin on the top, then Manager and Student
                 const response = await axios.get(`${BACKEND_URL}/api/users`);
-                const rolePriority = {
-                    Admin: 0,
-                    Manager: 1,
-                    User: 2
-                };
                 const filteredUsers = response.data
                     .filter(user => selectedRole === "All" ? true : user.role === selectedRole)
-                    .sort((a, b) => {
-                        if (rolePriority[a.role] !== rolePriority[b.role]) {
-                            return rolePriority[a.role] - rolePriority[b.role];
-                        }
-                        return a.lastName.localeCompare(b.lastName);
-                    });
+                    .filter(user =>
+                        `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        user.email.toLowerCase().includes(searchTerm.toLowerCase())
+                    )
+                    .sort((a, b) => a.lastName.localeCompare(b.lastName));
                 setUsers(filteredUsers);
             } catch (error) {
                 console.error("Error fetching users:", error);
@@ -56,7 +44,7 @@ function ManageUsers() {
         };
 
         fetchUsers();
-    }, [selectedRole]);
+    }, [selectedRole, searchTerm]);
 
     return (
         <div className={styles.container}>
@@ -64,8 +52,8 @@ function ManageUsers() {
             <AdminSidebar selected="manage-users"/>
 
             {/* Main Content */}
-                <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
-                    <div className={`${styles.headerSection} ${isCollapsed ? styles.headerSectionCollapsed : ""}`}>
+            <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "260px", transition: "margin-left 0.5s ease", "--sidebar-width": sidebarWidth}}>
+                <div className={styles.headerSection}>
                     <h1 className={styles.heading}>Manage Users</h1>
                 </div>
 
@@ -101,11 +89,8 @@ function ManageUsers() {
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Role</th>
-                                    {/* Mobile View */}
-                                    {!isMobile && <th>Email</th>}   
-                                    {!isMobile && <th>Phone</th>}
-                                    {/* Mobile View */}
+                                    <th>Email</th>
+                                    <th>Phone</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -113,15 +98,8 @@ function ManageUsers() {
                                 {users.map(user => (
                                     <tr key={user._id}>
                                         <td>{user.firstName} {user.lastName}</td>
-                                        <td className={styles.roleCell}>{user.role === 'Student' ? (<FaUser className={styles.studentRoleIcon} />) : 
-                                        user.role === 'Tutor' ? (<FaGraduationCap className={styles.tutorRoleIcon} />) : 
-                                        user.role === 'Admin' ? (<FaShieldAlt className={styles.adminRoleIcon} />) : null}
-                                        {user.role}
-                                        </td>
-                                        {/* Mobile View */}
-                                        {!isMobile && <td>{user.email}</td>}
-                                        {!isMobile && <td>{user.phone}</td>}
-                                        {/* Mobile View */}
+                                        <td>{user.email}</td>
+                                        <td>{user.phone}</td>
                                         <td>
                                             <button 
                                                 className={styles.viewProfileButton} 

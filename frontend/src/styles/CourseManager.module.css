@@ -22,13 +22,8 @@ html, body {
   margin-top: 90px;
   color: #212529;
   overflow: visible;
-  margin-left: 260px;
-  width: 100%;
-  transition: margin-left 0.5s ease;
-}
-
-.mainContentCollapsed {
   margin-left: 80px;
+  width: 100%;
 }
 
 .headerSection {
@@ -38,15 +33,10 @@ html, body {
   padding: 15px 25px;
   position: fixed;
   top: 0;
-  left: 270px;
+  left: var(--sidebar-width, 80px);
   right: 15px;
   border-bottom: #ddd;
   max-width: 100vw;
-  transition: left 0.5s ease;
-}
-
-.headerSectionCollapsed {
-    left: 80px;
 }
 
 .heading {
@@ -243,74 +233,4 @@ html, body {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-@media (max-width: 768px) {
-  .container {
-    background: var(--main-background-mobile);
-  }
-
-  html, body {
-
-  }
-  .mainContent {
-      margin-left: 0;
-  }
-
-  .mainContent, .mainContentCollapsed {
-      margin-left: 0;
-  }
-
-  .headerSection {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      /* align-items: left; */
-      background: transparent;
-      /* padding: 15px 20px; */
-      border-bottom: none;
-      left: 0;
-          background: var(--main-background-mobile);
-  }
-
-  .heading {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    align-items: center;
-    font-size: 2rem;
-    /* color: black; */
-    margin: 0;
-    padding-bottom: 20px;
-    font-weight: var(--main-title-font-weight-mobile);
-    color: var(--main-title-color-mobile);
-    padding-top: 25px;
-  }
-
-  .courseTable thead {
-    position: sticky;
-    top: 0;
-    /* background: #007bff; */
-    /* background: linear-gradient(rgb(81, 165, 254),#0b7df6); */
-    background: linear-gradient(rgb(107, 146, 253), rgb(38, 93, 201));
-    color: white;
-    z-index: 10;
-    display: table;
-    width: 100%;
-    table-layout: fixed;
-    /* border-radius: 16px; */
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
-}
 }

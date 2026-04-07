@@ -9,17 +9,11 @@
   flex-grow: 1;
   padding: 20px;
   overflow-y: auto;
-  background: transparent;
   background-color: linear-gradient(135deg, #007bff, #6f42c1);
   margin: 10px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-left :290px;/*accounts for sidebar when its minimized*/
-  transition: margin-left 0.5s ease;
-}
-
-.mainContentCollapsed {
-  margin-left: 100px;
+  margin-left :80px;/*accounts for sidebar when its minimized*/
 }
 
 .headerContainer {
@@ -48,7 +42,7 @@
   font-size: 14px;
 }
 
-.refreshButton, .csvButton {
+.refreshButton {
   background-color: #3498db;
   color: white;
   border: none;
@@ -60,7 +54,6 @@
 
 .refreshButton:hover {
   background-color: #2980b9;
-  transform: translateY(-2px);
 }
 
 .refreshButton:disabled {
@@ -134,17 +127,6 @@
   transition: background-color 0.2s ease;
 }
 
-.csvButton:hover {
-  background-color: #2980b9;
-  transform: translateY(-2px);
-}
-
-.csvButton:disabled {
-  background-color: #bdc3c7;
-  cursor: not-allowed;
-}
-
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .headerContainer {
@@ -165,114 +147,5 @@
   .sessionsTable th,
   .sessionsTable td {
     padding: 10px;
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@media (max-width: 768px) {
-  .container {
-    background: var(--main-background-mobile);
-    min-height: 100vh;
-  }
-  .headerContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-
-  .refreshContainer {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .sessionsTable {
-    font-size: 14px;
-  }
-
-  .sessionsTable th,
-  .sessionsTable td {
-    padding: 10px;
-  }
-
-  .mainContent {
-  padding: 12px;
-  /* overflow-y: auto; */
-  margin: 0px;
-  border-radius: 0px;
-  box-shadow: none;
-  margin-left: 0;
-  width: 100%;
-  min-height: calc(100vh - 72px);
-}
-
-  .heading {
-    padding-top: 18px;
-    font-size: 2rem;
-    /* color: black !important; */
-    font-weight: var(--main-title-font-weight-mobile) !important;
-    color: var(--main-title-color-mobile) !important;
-    line-height: 1.2;
-  }
-
-  .refreshContainer {
-     width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    align-items: stretch;
-  }
-
-  .csvButton, .exportButton, .refreshButton {
-    width: 100%;
-    min-height: 44px;
-    padding: 10px 12px;
-    font-size: 0.82rem !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    border: 0.5px outset rgba(230, 225, 225, 0.388);
-    box-shadow:
-      inset 0px 0px 2px #87CEFA,
-      inset -1px 2px 10px rgb(255, 255, 255),
-      inset 0 0 15px white,
-      inset 5px 0px 2px #ffffffd9,
-      1px 8px 15px rgba(128, 128, 128, 0.416);
-
-  }
-
-  .lastUpdated {
-    color: gray;
-    font-size: 12px;
-    width: 100%;
-  }
-.refreshContainer button:last-child {
-    grid-column: 1 / -1;
-  }
-  .refreshButton , .csvButton {
-    background-color:#3498db !important;
-  }
-
-  .attendanceSection {
-    padding: 0px !important;
-    width: 100% !important;
   }
 }
