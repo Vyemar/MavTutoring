@@ -143,7 +143,7 @@ function TutorSessions() {
     return (
       <div className={styles.container}>
         <TutorSideBar selected="sessions" />
-        <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "90px" : "280px" }}>
+        <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
           <div className={styles.spinnerContainer}>
             <div className={styles.spinner}></div>
             <p>Loading sessions...</p>
@@ -158,7 +158,7 @@ function TutorSessions() {
     return (
       <div className={styles.container}>
         <TutorSideBar selected="sessions" />
-        <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "90px" : "280px" }}>
+        <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
           <div className={styles.error}>
             Session expired or not found. Please log in again.
           </div>
@@ -170,7 +170,7 @@ function TutorSessions() {
   return (
     <div className={styles.container}>
       <TutorSideBar selected="sessions" />
-      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "90px" : "280px" , transition: "margin-left 0.5s ease"}}>
+      <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
         <h1 className={styles.heading}>Tutor Sessions</h1>
         {error && <div className={styles.error}>{error}</div>}
 

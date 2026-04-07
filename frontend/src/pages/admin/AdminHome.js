@@ -15,8 +15,7 @@ function AdminHome({ user }) {
       
       {/* Main Content */}
       <div 
-        className={styles.content} 
-        style={{ marginLeft: isCollapsed ? "100px" : "220px" , transition: "margin-left 0.5s ease"}}
+        className={`${styles.content} ${isCollapsed ? styles.contentCollapsed : ""}`} 
       >
         <div className={styles.pageHeader}>
           <h1>Admin Dashboard</h1>

@@ -243,7 +243,7 @@ const SetAvailability = () => {
     return (
         <div className={styles.container}>
             <TutorSidebar selected="availability" />
-            <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "260px", transition: "margin-left 0.5s ease", "--sidebar-width": sidebarWidth}}>
+              <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
                 <h1 className={styles.heading}>Set Availability</h1>
                 {isLoading ? (
                     <div className={styles.spinnerContainer}>

@@ -29,6 +29,12 @@ html, body {
   padding: 20px;
   /* margin-left :80px;accounts for sidebar when its minimized */
   color: #e0e7ed;
+  margin-left: 280px;
+  transition: margin-left 0.5s ease;
+}
+
+.mainContentCollapsed {
+  margin-left: 90px;
 }
 
 .headingRow {
@@ -130,4 +136,76 @@ html, body {
 .tabCard p {
   margin: 4px 0 0;
   color: #444;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+  .container {
+    background: var(--main-background-mobile);
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding-bottom: 10rem;
+  }
+
+  .calendarContent {
+        display: flex;
+    flex-direction: column;
+  }
+
+  .mainContent {
+    margin-left: 0;
+    width: 100%;
+    padding: 10px;
+  }
+
+  .headingRow h1, .headingRow p {
+    color: var(--main-title-color-mobile);
+  }
+
+  .headingRow h1 {
+    font-weight: var(--main-title-font-weight-mobile);
+    width: 100%;
+    padding-top: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .calSubHeading{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .headingRow {
+    background: white;
+  }
+
+  .notifications {
+    background-color: white;
+    border: 1px solid rgba(128, 128, 128, 0.376);
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.164);
+  }
+
+  .notifications h2, .notifications p {
+    color: var(--main-title-color-mobile);
+  }
 }

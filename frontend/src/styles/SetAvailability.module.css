@@ -25,7 +25,12 @@ body {
   justify-content: flex-start;
   padding: 20px;
   color: #212529;
-  margin-left :80px;/*accounts for sidebar when its minimized*/
+  margin-left :260px;/*accounts for sidebar when its minimized*/
+  transition: margin-left 0.5s ease;
+}
+
+.mainContentCollapsed {
+  margin-left: 80px;
 }
 
 .heading {
@@ -82,5 +87,41 @@ body {
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+  .container {
+    background: var(--main-background-mobile);
+  }
+
+  .heading {
+    padding-top: 25px;
+    color: var(--main-title-color-mobile);
+  }
+
+  .mainContent {
+    margin-left: 0;
+    padding: 10px;
+    /* height: 80vh; */
+  }
+
+  .calendarContainer {
+    width: 100%;
+    padding: 0px;
   }
 }

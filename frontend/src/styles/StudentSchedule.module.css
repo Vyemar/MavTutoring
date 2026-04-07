@@ -8,7 +8,12 @@
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
-  margin-left :80px;/*accounts for sidebar when its minimized*/
+  margin-left :270px;/*accounts for sidebar when its minimized*/
+  transition: margin-left 0.5s ease;
+}
+
+.mainContentCollapsed {
+  margin-left: 80px;
 }
 
 .upcomingSessions {
@@ -229,8 +234,43 @@
   .bookingGrid {
     grid-template-columns: 1fr;
   }
+
+  .container {
+    background: var(--main-background-mobile);
+    width: 100%;
+    height: 100vh;
+  }
   
   .mainContent {
-    padding: 1rem;
+    padding: 0;
+    margin-left: 0;
+    padding-bottom: 10rem;
+  }
+
+    .heading {
+    color: var(--main-title-color-mobile);
+    font-weight: var(--main-title-font-weight-mobile);
+    width: 100%;
+    padding-top: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+    .submitButton {
+    background-color: #36b2ff;
+    padding: 5px 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    border-radius: 12px;
+    border: .5px outset rgba(230, 225, 225, 0.388);
+    box-shadow: inset 0px 0px 2px #87CEFA, 
+        inset -1px 2px 10px rgb(255, 255, 255),
+        inset 0 0 15px white,
+        inset 5px 0px 2px #ffffffd9,
+        1px 8px 15px rgba(128, 128, 128, 0.416);
   }
 }

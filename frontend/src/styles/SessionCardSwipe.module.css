@@ -10,7 +10,12 @@
   padding: 2rem;
   overflow-y: auto;
   margin-top: 100px;
-  margin-left :80px;/*accounts for sidebar when its minimized*/
+  margin-left :260px;/*accounts for sidebar when its minimized*/
+  transition: margin-left 0.5s ease;
+}
+
+.mainContentCollapsed {
+  margin-left: 80px;
 }
 
 .heading {
@@ -169,6 +174,43 @@
   font-size: 1rem;
   margin-right: 10px;
   width: 200px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+  .container {
+    background: var(--main-background-mobile);
+  }
+
+  .mainContent {
+    margin-left: 0;
+  }
+
+  .sidebarToggle {
+    display: none;
+    
+  }
+
+  .heading {
+    /* color: black; */
+    font-weight: var(--main-title-font-weight-mobile);
+    color: var(--main-title-color-mobile);
+  }
+
+  .cardReaderBox {
+    background: linear-gradient(rgb(236, 241, 255), rgb(77, 128, 228));
+  }
+
 }
 
 

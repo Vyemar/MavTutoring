@@ -7,7 +7,12 @@
 .mainContent {
   flex: 1;
   padding: 2rem;
-  margin-left :80px;/*accounts for sidebar when its minimized*/
+  margin-left :280px;/*accounts for sidebar when its minimized*/
+  transition: margin-left 0.5s ease;
+}
+
+.mainContentCollapsed {
+  margin-left: 90px;
 }
 
 .heading {
@@ -152,4 +157,49 @@ h2 {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+  .container {
+    background: var(--main-background-mobile);
+  }
+
+  .mainContent {
+    margin-left: 0;
+    padding: 10px;
+    height: 100vh;
+    padding-bottom: 10rem;
+  }
+
+  .heading {
+    color: var(--main-title-color-mobile);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: var(--title-font-weight-mobile);
+  }
+
+  .upcomingSessions,
+  .completedSessions {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid rgba(128, 128, 128, 0.252);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 }
