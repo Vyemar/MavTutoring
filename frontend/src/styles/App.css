@@ -36,12 +36,3 @@
     transform: rotate(360deg);
   }
 }
-
-
-
-
-:root {
-  --main-background-mobile: white;
-  --main-title-font-weight-mobile: 500;
-  --main-title-color-mobile: black;
-}

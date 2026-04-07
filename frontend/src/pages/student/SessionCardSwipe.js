@@ -160,7 +160,7 @@ function SessionCardSwipe() {
 
       <StudentSidebar selected="student-card-swipe" />
 
-      <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
+      <div className={styles.mainContent}>
         <h1 className={styles.heading}>Student Session Check-In/Out</h1>
 
         <div className={styles.cardReaderBox}>

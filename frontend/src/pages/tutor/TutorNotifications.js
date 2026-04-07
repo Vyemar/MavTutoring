@@ -62,7 +62,7 @@ useEffect(() => {
   return (
     <div className={styles.container}>
       <TutorSidebar selected="tutor-notifications"></TutorSidebar>
-      <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
+      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "110px" : "290px" , transition: "margin-left 0.5s ease"}}>
         <h1 className={styles.heading}>Tutor Notifications</h1>
         {loading && <div className={styles.spinnerContainer}>
           <div className={styles.spinner}></div>

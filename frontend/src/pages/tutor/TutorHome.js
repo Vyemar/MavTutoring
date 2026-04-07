@@ -34,7 +34,8 @@ function TutorHome() {
             <TutorSidebar selected="home"/>
 
             {/* Main Content */}
-      <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
+            <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "90px" : "280px" , transition: "margin-left 0.5s ease"}}
+>
                 <div className={styles.headingRow}>
                           <div>
                             <h1>

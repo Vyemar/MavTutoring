@@ -35,8 +35,11 @@ export default function AdminEmail() {
 return (
   <div className={styles.container}>
     <AdminSidebar selected="admin-email" />
-      <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
-        <div className={`${styles.headerSection} ${isCollapsed ? styles.headerSectionCollapsed : ""}`}>
+    <div
+      className={styles.mainContent}
+      style={{ "--sidebar-width": sidebarWidth }}
+    >
+      <div className={styles.headerSection}>
         <h1 className={styles.heading}>Admin Email</h1>
       </div>
 

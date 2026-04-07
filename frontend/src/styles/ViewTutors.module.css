@@ -27,12 +27,6 @@
   margin-left :80px;/*accounts for sidebar when its minimized*/
   padding: 12px;
   color: black;
-  margin-left: 290px;
-  transition: margin-left 0.5s ease;
-}
-
-.mainContentCollapsed {
-  margin-left: 100px;
 }
 
 .searchInfoContent{
@@ -142,57 +136,4 @@
   100% {
     transform: rotate(360deg);
   }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@media (max-width: 768px) {
-  .App {
-    background-color: black;
-
-  }
-
-  .searchBarContainer {
-    border: 1px solid rgba(128, 128, 128, 0.328);
-    border-radius: 8px;
-    /* background-color: black; */
-  }
-  
-  .container {
-    background: var(--main-background-mobile);
-    width: 100%;
-    height: 100vh;
-  }
-
-  .mainContent {
-    margin-left: 0;
-    padding: 5px;
-    width: 100%;
-    overflow-y: auto;
-  }
-
-    .heading {
-    color: var(--main-title-color-mobile);
-    font-weight: var(--main-title-font-weight-mobile);
-    width: 100%;
-    padding-top: 25px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-  }
-
 }

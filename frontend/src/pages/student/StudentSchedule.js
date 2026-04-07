@@ -262,7 +262,7 @@ function StudentSchedule() {
     return (
       <div className={styles.container}>
         <StudentSidebar selected="student-schedule" />
-        <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
+        <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "260px" }}>
           <div className={styles.spinnerContainer}>
             <div className={styles.spinner}></div>
             <p>Loading...</p>
@@ -276,7 +276,7 @@ function StudentSchedule() {
     return (
       <div className={styles.container}>
         <StudentSidebar selected="student-schedule" />
-        <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
+        <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "260px" }}>
           <div className={styles.error}>
             Session expired or not found. Please log in again.
           </div>
@@ -288,7 +288,7 @@ function StudentSchedule() {
   return (
     <div className={styles.container}>
       <StudentSidebar selected="student-schedule" />
-      <div className={`${styles.mainContent} ${isCollapsed ? styles.mainContentCollapsed : ""}`}>
+      <div className={styles.mainContent} style={{ marginLeft: isCollapsed ? "80px" : "270px" , transition: "margin-left 0.5s ease"}}>
         <div className={styles.scheduleContainer}>
           <h1 className={styles.heading}>Schedule a Session</h1>
 

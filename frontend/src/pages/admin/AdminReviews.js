@@ -19,7 +19,7 @@ const AdminReviews = () => {
   return (
     <div className="admin-layout" style={{ display: 'flex' }}>
       <AdminSidebar selected="admin-reviews" />
-      <main className={`${styles.reviewsBackground} ${isCollapsed ? styles.reviewsBackgroundCollapsed : ""}`}>
+      <main className={styles.reviewsBackground} style={{ marginLeft: isCollapsed ? "80px" : "260px", transition: "margin-left 0.5s ease", "--sidebar-width": sidebarWidth }}>
         {/* Left Review List */}
         <div className={styles.reviewsContainer}>
           <h1 className={styles.reviewsTitle}>Tutor Reviews</h1>
@@ -93,7 +93,7 @@ const AdminReviews = () => {
               <strong>Submitted on:</strong>{' '}
               {new Date(selectedReview.createdAt).toLocaleString()}
             </p>
-            <button onClick={() => setSelectedReview(null)} style={{ marginTop: '15px' }} className={styles.closeButton}>
+            <button onClick={() => setSelectedReview(null)} style={{ marginTop: '15px' }}>
               Close
             </button>
           </div>

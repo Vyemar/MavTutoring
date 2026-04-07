@@ -18,67 +18,27 @@ import {
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { SlCalender } from "react-icons/sl";
 
-//mobile view
-import useBugHouseInfo from "../../hooks/useBugHouseInfo";
-import { FaEnvelope, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
-import useMobileDrawer from "../../hooks/useMobileDrawer";
-import useSidebarNavigation from "../../hooks/useSidebarNavigation";
-import MobileMenuTrigger from "./MobileMenuTrigger";
-import MobileDrawer from "./MobileDrawer";
-//mobile view
-
 const TutorSidebar = ({ selected }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isCollapsed, toggleSidebar } = useSidebar();
   
-  //======== Mobile Navigation State ========
-  const {isMobile, isMobileMenuOpen, setIsMobileMenuOpen} = useMobileDrawer();
-  //Handles page navigation and automatically closes the mobile drawer right after navigation
-  const goTo = useSidebarNavigation(location, navigate, isMobile, setIsMobileMenuOpen);
-  const bugHouseInfo = useBugHouseInfo(); //Fetching BugHouse Info and contact Info by using custom hook
-
-  const tutorMenuItems = [
-      {
-        key: "tutor-profile",
-        label: "My Profile",
-        icon: CgProfile,
-        onClick: () => goTo("/tutor-profile"),
-      },
-      {
-        key: "tutor-card-swipe",
-        label: "Session Check-In",
-        icon: FaRegAddressCard,
-        onClick: () => goTo("/tutor/card-swipe"),
-      },
-  ];
+  const goTo = (path) => {
+    if (location.pathname !== path) {
+      navigate(path);
+    }
+  };
   
   return (
-    <>
-        {/* ==================Mobile View ====================*/}
-    <MobileMenuTrigger
-      isMobile={isMobile}
-      isMobileMenuOpen={isMobileMenuOpen}
-      setIsMobileMenuOpen={setIsMobileMenuOpen}
-    />
-    <MobileDrawer
-      isMobile={isMobile}
-      isMobileMenuOpen={isMobileMenuOpen}
-      setIsMobileMenuOpen={setIsMobileMenuOpen}
-      bugHouseInfo={bugHouseInfo}
-      handleLogout={handleLogout}
-      menuItems={tutorMenuItems}
-    />
-  {/* ==================Mobile View ====================*/}
-    <div className={`${styles.sidebar} ${!isMobile && isCollapsed ? styles.sidebarActive : ""}`}>
-      <BaseSidebar isCollapsed={!isMobile && isCollapsed}>
+    <div className={`${styles.sidebar} ${isCollapsed ? styles.sidebarActive : ""}`}>
+      <BaseSidebar isCollapsed={isCollapsed}>
         <div
           className={`${styles.burgerContainer} ${isCollapsed ? styles.burgerContainerActive : ""}`}
         >
           <div className={styles.burgerTrigger} onClick={toggleSidebar}></div>
           <div className={styles.burgerMenu}></div>
         </div>
-        <div className={`${styles.contentsContainer} ${!isMobile && isCollapsed ? styles.contentsContainerActive : ""}`}>
+        <div className={`${styles.contentsContainer} ${isCollapsed ? styles.contentsContainerActive : ""}`}>
           <ul className={styles.ulStudent}>
             <li 
               className={`${styles.liStudent} ${selected === "home" ? styles.active : ""}`} 
@@ -90,7 +50,7 @@ const TutorSidebar = ({ selected }) => {
               <span className={styles.aItem}>Dashboard</span>
             </li>
             <li 
-              className={`${styles.liStudent} ${selected === "tutor-profile" ? styles.active : ""} ${styles.hiddenMobile}`}  //add hiddenMobile class for hiding item in mobile view
+              className={`${styles.liStudent} ${selected === "tutor-profile" ? styles.active : ""}`} 
               onClick={() => goTo("/tutor-profile")}
             >
               <div className={styles.iconContainer}>
@@ -126,7 +86,7 @@ const TutorSidebar = ({ selected }) => {
               <span className={styles.aItem}>My Sessions</span>
             </li>
             <li  
-              className={`${styles.liTutor} ${selected === "tutor-card-swipe" ? styles.active : ""} ${styles.hiddenMobile}`}  //add hiddenMobile class for hiding item in mobile view 
+              className={`${styles.liTutor} ${selected === "tutor-card-swipe" ? styles.active : ""}`} 
               onClick={() => goTo("/tutor/card-swipe")}
             >
               <div className={styles.iconContainer}>
@@ -144,7 +104,7 @@ const TutorSidebar = ({ selected }) => {
               <span className={styles.aItem}>Notifications</span>
             </li>
             <li 
-              className={`${styles.liStudent} ${styles.hiddenMobile}`}  //add hiddenMobile class for hiding item in mobile view 
+              className={styles.liStudent} 
               onClick={handleLogout}
             >
               <div className={styles.iconContainer}>
@@ -156,7 +116,6 @@ const TutorSidebar = ({ selected }) => {
         </div>
       </BaseSidebar>
     </div>
-    </>
   );
 }
 

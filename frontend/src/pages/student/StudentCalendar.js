@@ -4,10 +4,6 @@ import "../../styles/CalendarDaypilot.css";
 import { axiosGetData } from '../../utils/api'; // Import the API utility
 import axios from 'axios';
 
-
-// Mobile View
-import useIsMobile from '../../hooks/useIsMobile';
-
 /* Hello I am Rajesh, I was working on most of database and UI,
    this is only for calendar which i would recommend next team
    to swtich to FullCalendar instead of react-big-calendar because
@@ -37,7 +33,6 @@ const StudentCalendar = () => {
   const [tutors, setTutors] = useState([]);
   const [upcomingSessions, setUpcomingSessions] = useState([]);
   const [error, setError] = useState('');
-  const isMobile = useIsMobile();
   
 
   const onTimeRangeSelected = async (args) => {
@@ -171,7 +166,7 @@ const StudentCalendar = () => {
       <div className={"navigator"}>
         <DayPilotNavigator
           selectMode={view}
-          showMonths={isMobile ? 1 : 3}
+          showMonths={3}
           skipMonths={1}
           onTimeRangeSelected={args => setStartDate(args.day)}
           events={events}
